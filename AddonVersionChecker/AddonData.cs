@@ -34,7 +34,7 @@ namespace AddonVersionChecker
         private readonly string json;
         private System.Version addonVersion = new System.Version();
         private string download = string.Empty;
-        private System.Version gameVersion = new System.Version();
+        private System.Version gameVersion;
         private string name = string.Empty;
         private AddonData remoteAddonData;
         private string url = string.Empty;
@@ -190,6 +190,7 @@ namespace AddonVersionChecker
             }
             catch
             {
+                this.gameVersion = new System.Version(Versioning.GetVersionString());
                 MonoBehaviour.print(this.Name + ": Does not include a valid game version.");
             }
         }

@@ -34,6 +34,7 @@ namespace AddonVersionChecker
         #region Fields
 
         private static readonly List<AddonData> addons = new List<AddonData>();
+        private static bool isLocked;
 
         #endregion
 
@@ -44,6 +45,7 @@ namespace AddonVersionChecker
             // Populate all addons asynchronously so that the UI thread is not blocked.
             new Thread(() =>
             {
+                isLocked = true;
                 lock (addons)
                 {
                     foreach (var file in Directory.GetFiles(UrlDir.ApplicationRootPath, "*.version", SearchOption.AllDirectories))
@@ -56,6 +58,7 @@ namespace AddonVersionChecker
                         addons.Add(addon);
                     }
                 }
+                isLocked = false;
             }).Start();
         }
 
@@ -69,6 +72,14 @@ namespace AddonVersionChecker
         public static List<AddonData> Addons
         {
             get { return addons; }
+        }
+
+        /// <summary>
+        ///     Gets whether the addon data has been locked.
+        /// </summary>
+        public static bool IsLocked
+        {
+            get { return isLocked; }
         }
 
         /// <summary>
@@ -101,21 +112,14 @@ namespace AddonVersionChecker
 
         private static void LoadRemoteAddonData(AddonData addon)
         {
-            try
-            {
-                // Fetch the remote json data.
-                var www = new WWW(addon.Url);
+            // Fetch the remote json data.
+            var www = new WWW(addon.Url);
 
-                // This method is run within a non-gui thread so blocking doesn't matter.
-                while (!www.isDone) { }
+            // Running in thread so blocking is not a concern.
+            while (!www.isDone) { }
 
-                // Create the remote addon data using the remote jason data.
-                addon.RemoteAddonData = new AddonData(www.text);
-            }
-            catch
-            {
-                print("Could not fetch remote version information for " + addon.Name + ".");
-            }
+            // Create the remote addon data using the remote jason data.
+            addon.RemoteAddonData = new AddonData(www.text);
         }
 
         #endregion
