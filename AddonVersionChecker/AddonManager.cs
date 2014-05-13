@@ -107,7 +107,7 @@ namespace AddonVersionChecker
         /// </summary>
         public static bool HasCompatibilityIssues
         {
-            get { return addons.Any(addon => !addon.GameCompatible || !addon.GameCompatibleMininmum || !addon.GameCompatibleMaximum); }
+            get { return addons.Any(addon => !addon.GameCompatible); }
         }
 
         #endregion

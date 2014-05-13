@@ -18,7 +18,6 @@
 #region Using Directives
 
 using System;
-using System.Security.AccessControl;
 
 using LitJson;
 
@@ -144,13 +143,21 @@ namespace AddonVersionChecker
         /// </summary>
         public bool UpdateAvailable
         {
-            get { return this.addonVersion.CompareTo(this.remoteAddonData.addonVersion) < 0; }
+            get { return this.addonVersion.CompareTo(this.remoteAddonData.addonVersion) < 0 && this.remoteAddonData.GameCompatible; }
         }
 
         /// <summary>
         ///     Gets whether the add-on is compatible with the current game version.
         /// </summary>
         public bool GameCompatible
+        {
+            get { return this.GameCompatibleVersion && this.GameCompatibleMininmum && this.GameCompatibleMaximum; }
+        }
+
+        /// <summary>
+        ///     Gets whether the add-on is compatible with only the current game version.
+        /// </summary>
+        public bool GameCompatibleVersion
         {
             get { return this.gameVersion.CompareTo(this.currentGameVersion) == 0; }
         }

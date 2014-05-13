@@ -209,7 +209,7 @@ namespace AddonVersionChecker
             GUILayout.Label("COMPATIBILITY ISSUES", this.nameTitleStyle);
             foreach (var addon in AddonManager.Addons)
             {
-                if (!addon.GameCompatible)
+                if (!addon.GameCompatibleVersion)
                 {
                     GUILayout.Label(addon.Name + " version " + addon.AddonVersion + " was built to run on KSP " + addon.GameVersion + ".", this.messageStyle);
                 }
