@@ -31,10 +31,20 @@ Here's an example of a '.version' file:
 	"VERSION":{
 		"MAJOR":1,
 		"MINOR":0,
-		"PATCH":0,
-		"BUILD":1
+		"PATCH":1,
+		"BUILD":0
 	},
 	"KSP_VERSION":{
+		"MAJOR":0,
+		"MINOR":23,
+		"PATCH":5
+	},
+	"KSP_VERSION_MIN":{
+		"MAJOR":0,
+		"MINOR":23,
+		"PATCH":5
+	},
+	"KSP_VERSION_MAX":{
 		"MAJOR":0,
 		"MINOR":23,
 		"PATCH":5
@@ -45,9 +55,11 @@ A breakdown of the elements of this file are:
 
 NAME			Display name of the add-on.
 URL				Remote .version file used for update checking.
-DOWNLOAD 		Location where the latest version can be downloaded. (Only used in the remote .version file.)
-VERSION 		Version of your add-on (MAJOR, MINOR, PATCH, BUILD). (KSP-AVC also supports a simple "VERSION":"1.0.0" string.)
-KSP_VERSION 	Version of KSP which the add-on was intended to run on.
+DOWNLOAD 		Location where the latest version can be downloaded. (Only used in the remote .version file)(Optional)
+VERSION 		Version of your add-on. (MAJOR, MINOR, PATCH, BUILD)(KSP-AVC also supports a simple "VERSION":"1.0.0" string.)
+KSP_VERSION 	Version of KSP which the add-on was intended to run on. (MAJOR, MINOR, PATCH)(Overrides min/max compatibility)(Optional)
+KSP_VERSION_MIN	Minimum version of KSP compatible with the add-on. (MAJOR, MINOR, PATCH)(Optional)
+KSP_VERSION_MAX Maximum version of KSP compatible with the add-on. (MAJOR, MINOR, PATCH)(Optional)
 
 For simple management of your '.version' files you can use the KSP-AVC Online website at: ksp-avc.cybutek.net
 
