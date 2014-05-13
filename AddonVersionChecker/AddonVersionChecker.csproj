@@ -37,6 +37,7 @@
     <Compile Include="AddonManager.cs" />
     <Compile Include="CheckerGui.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ThreadLog.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Assembly-CSharp">

@@ -17,7 +17,9 @@
 
 #region Using Directives
 
+using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading;
@@ -48,15 +50,17 @@ namespace AddonVersionChecker
                 isLocked = true;
                 lock (addons)
                 {
+                    ThreadLog.Log("Starting Add-on Population.");
                     foreach (var file in Directory.GetFiles(UrlDir.ApplicationRootPath, "*.version", SearchOption.AllDirectories))
                     {
-                        var addon = new AddonData(File.ReadAllText(file));
+                        var addon = new AddonData(File.ReadAllText(file), file);
                         if (addon.Url.Length > 0)
                         {
                             LoadRemoteAddonData(addon);
                         }
                         addons.Add(addon);
                     }
+                    ThreadLog.Log("Finished Add-on Population.");
                 }
                 isLocked = false;
             }).Start();
@@ -103,7 +107,17 @@ namespace AddonVersionChecker
         /// </summary>
         public static bool HasCompatibilityIssues
         {
-            get { return addons.Any(addon => !addon.GameCompatible); }
+            get { return addons.Any(addon => !addon.GameCompatible || !addon.GameCompatibleMininmum || !addon.GameCompatibleMaximum); }
+        }
+
+        #endregion
+
+        #region Updating
+
+        private void Update()
+        {
+            // Flush all log messages into the ksp log file.
+            ThreadLog.Flush();
         }
 
         #endregion
@@ -115,11 +129,23 @@ namespace AddonVersionChecker
             // Fetch the remote json data.
             var www = new WWW(addon.Url);
 
+            var timer = new Stopwatch();
+            timer.Start();
             // Running in thread so blocking is not a concern.
-            while (!www.isDone) { }
+            while (!www.isDone)
+            {
+                if (timer.ElapsedMilliseconds > 2000)
+                {
+                    addon.RemoteAddonData = addon;
+                    ThreadLog.Log(addon.FileName.Replace(UrlDir.ApplicationRootPath, String.Empty) + " fetching of " + addon.Url + " timed out.");
+                    return;
+                }
+            }
+
+            ThreadLog.Log(addon.FileName.Replace(UrlDir.ApplicationRootPath, String.Empty) + " fetched remote version file at " + addon.Url + ".");
 
             // Create the remote addon data using the remote jason data.
-            addon.RemoteAddonData = new AddonData(www.text);
+            addon.RemoteAddonData = new AddonData(www.text, addon.Url);
         }
 
         #endregion

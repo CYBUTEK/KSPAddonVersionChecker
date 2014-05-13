@@ -19,6 +19,8 @@
 
 using UnityEngine;
 
+using Version = System.Version;
+
 #endregion
 
 namespace AddonVersionChecker
@@ -209,7 +211,29 @@ namespace AddonVersionChecker
             {
                 if (!addon.GameCompatible)
                 {
-                    GUILayout.Label(addon.Name + " version " + addon.AddonVersion + " was built to run on KSP version " + addon.GameVersion + ".", this.messageStyle);
+                    GUILayout.Label(addon.Name + " version " + addon.AddonVersion + " was built to run on KSP " + addon.GameVersion + ".", this.messageStyle);
+                }
+                else if (!addon.GameCompatibleMininmum)
+                {
+                    if (addon.GameVersionMaximum == AddonData.DefaultMaximumVersion)
+                    {
+                        GUILayout.Label(addon.Name + " version " + addon.AddonVersion + " was built to run on KSP " + addon.GameVersionMinimum + " and above.", this.messageStyle);
+                    }
+                    else
+                    {
+                        GUILayout.Label(addon.Name + " version " + addon.AddonVersion + " was built to run on KSP " + addon.GameVersionMinimum + " - " + addon.GameVersionMaximum + ".", this.messageStyle);
+                    }        
+                }
+                else if (!addon.GameCompatibleMaximum)
+                {
+                    if (addon.GameVersionMinimum == AddonData.DefaultMinimumVersion)
+                    {
+                        GUILayout.Label(addon.Name + " version " + addon.AddonVersion + " was built to run on KSP " + addon.GameVersionMaximum + " and below.", this.messageStyle);
+                    }
+                    else
+                    {
+                        GUILayout.Label(addon.Name + " version " + addon.AddonVersion + " was built to run on KSP " + addon.GameVersionMinimum + " - " + addon.GameVersionMaximum + ".", this.messageStyle);
+                    }     
                 }
             }
             GUILayout.EndVertical();

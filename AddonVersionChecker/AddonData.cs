@@ -18,10 +18,9 @@
 #region Using Directives
 
 using System;
+using System.Security.AccessControl;
 
 using LitJson;
-
-using UnityEngine;
 
 #endregion
 
@@ -31,10 +30,14 @@ namespace AddonVersionChecker
     {
         #region Fields
 
-        private readonly string json;
+        private readonly System.Version currentGameVersion = CurrentGameVersion;
+        private readonly string filename = string.Empty;
+        private readonly string json = string.Empty;
         private System.Version addonVersion = new System.Version();
         private string download = string.Empty;
-        private System.Version gameVersion;
+        private System.Version gameVersion = CurrentGameVersion;
+        private System.Version gameVersionMaximum = DefaultMaximumVersion;
+        private System.Version gameVersionMinimum = DefaultMinimumVersion;
         private string name = string.Empty;
         private AddonData remoteAddonData;
         private string url = string.Empty;
@@ -43,8 +46,9 @@ namespace AddonVersionChecker
 
         #region Constructors
 
-        public AddonData(string json)
+        public AddonData(string json, string filename)
         {
+            this.filename = filename;
             this.json = json;
             this.ParseJson();
             this.remoteAddonData = this;
@@ -55,7 +59,15 @@ namespace AddonVersionChecker
         #region Properties
 
         /// <summary>
-        ///     Gets the addon name.
+        ///     Gets the version filename including path.
+        /// </summary>
+        public string FileName
+        {
+            get { return this.filename; }
+        }
+
+        /// <summary>
+        ///     Gets the add-on name.
         /// </summary>
         public string Name
         {
@@ -87,11 +99,27 @@ namespace AddonVersionChecker
         }
 
         /// <summary>
-        ///     Gets the game version for which the addon was created to run on.
+        ///     Gets the game version for which the add-on was created to run on.
         /// </summary>
         public System.Version GameVersion
         {
             get { return this.gameVersion; }
+        }
+
+        /// <summary>
+        ///     Gets the minimum game version for which the add-on was created to run on.
+        /// </summary>
+        public System.Version GameVersionMinimum
+        {
+            get { return this.gameVersionMinimum; }
+        }
+
+        /// <summary>
+        ///     Gets the maximum game version for which the add-on was created to run on.
+        /// </summary>
+        public System.Version GameVersionMaximum
+        {
+            get { return this.gameVersionMaximum; }
         }
 
         /// <summary>
@@ -120,19 +148,45 @@ namespace AddonVersionChecker
         }
 
         /// <summary>
-        ///     Gets whether the addon is compatible with the current game version.
+        ///     Gets whether the add-on is compatible with the current game version.
         /// </summary>
         public bool GameCompatible
         {
-            get { return this.gameVersion.CompareTo(new System.Version(Versioning.version_major, Versioning.version_minor, Versioning.Revision)) == 0; }
+            get { return this.gameVersion.CompareTo(this.currentGameVersion) == 0; }
         }
 
         /// <summary>
-        ///     Gets the compatibility difference with the current game version.
+        ///     Gets whether the add-on is compatible with a game version of the same or more than the minimum.
         /// </summary>
-        public int GameCompatibility
+        public bool GameCompatibleMininmum
         {
-            get { return this.gameVersion.CompareTo(new System.Version(Versioning.version_major, Versioning.version_minor, Versioning.Revision)); }
+            get { return this.gameVersionMinimum.CompareTo(this.currentGameVersion) <= 0; }
+        }
+
+        /// <summary>
+        ///     Gets whether the add-on is compatible with a game version of the same of less than the maximum.
+        /// </summary>
+        public bool GameCompatibleMaximum
+        {
+            get { return this.gameVersionMaximum.CompareTo(this.currentGameVersion) >= 0; }
+        }
+
+        public static System.Version DefaultMinimumVersion
+        {
+            get { return new System.Version(); }
+        }
+
+        public static System.Version DefaultMaximumVersion
+        {
+            get { return new System.Version(int.MaxValue, int.MaxValue, int.MaxValue, int.MaxValue); }
+        }
+
+        /// <summary>
+        ///     Gets the current game version.
+        /// </summary>
+        public static System.Version CurrentGameVersion
+        {
+            get { return new System.Version(Versioning.version_major, Versioning.version_minor, Versioning.Revision); }
         }
 
         #endregion
@@ -143,59 +197,94 @@ namespace AddonVersionChecker
         {
             var data = JsonMapper.ToObject(this.json);
 
+            this.SetPrimaryFields(data);
+            this.SetGameVersion(data);
+        }
+
+        private void SetPrimaryFields(JsonData data)
+        {
             // NAME
             try
             {
                 this.name = (string)data["NAME"];
+                ThreadLog.Log(this.filename.Replace(UrlDir.ApplicationRootPath, string.Empty) + " \"NAME\" = " + this.name);
             }
             catch
             {
-                MonoBehaviour.print("There was a problem reading the addon name from a version file.");
+                ThreadLog.Log(this.filename.Replace(UrlDir.ApplicationRootPath, string.Empty) + " \"NAME\" is not valid or missing. (required field)");
             }
 
             // URL
             try
             {
                 this.url = (string)data["URL"];
+                ThreadLog.Log(this.filename.Replace(UrlDir.ApplicationRootPath, string.Empty) + " \"URL\" = " + this.url);
             }
             catch
             {
-                MonoBehaviour.print(this.Name + ": Does not include a remote version file URL.");
+                ThreadLog.Log(this.filename.Replace(UrlDir.ApplicationRootPath, string.Empty) + " \"URL\" is not valid or missing. (required field)");
             }
 
             // DOWNLOAD
             try
             {
                 this.download = (string)data["DOWNLOAD"];
+                ThreadLog.Log(this.filename.Replace(UrlDir.ApplicationRootPath, string.Empty) + " \"DOWNLOAD\" = " + this.download);
             }
             catch
             {
-                MonoBehaviour.print(this.Name + ": Does not include a download location.");
+                ThreadLog.Log(this.filename.Replace(UrlDir.ApplicationRootPath, string.Empty) + " \"DOWNLOAD\" is not valid or missing. (optional field)");
             }
 
             // VERSION
             try
             {
-                this.addonVersion = ParseVersion(data["VERSION"]);
+                this.addonVersion = this.ParseVersion(data["VERSION"]);
+                ThreadLog.Log(this.filename.Replace(UrlDir.ApplicationRootPath, string.Empty) + " \"VERSION\" = " + this.addonVersion);
             }
             catch
             {
-                MonoBehaviour.print(this.Name + ": Does not include a valid addon version.");
-            }
-
-            // KSP_VERSION
-            try
-            {
-                this.gameVersion = ParseVersion(data["KSP_VERSION"]);
-            }
-            catch
-            {
-                this.gameVersion = new System.Version(Versioning.GetVersionString());
-                MonoBehaviour.print(this.Name + ": Does not include a valid game version.");
+                ThreadLog.Log(this.filename.Replace(UrlDir.ApplicationRootPath, string.Empty) + " \"VERSION\" is not valid or missing. (required field)");
             }
         }
 
-        private static System.Version ParseVersion(JsonData data)
+        private void SetGameVersion(JsonData data)
+        {
+            // KSP_VERSION
+            try
+            {
+                this.gameVersion = this.ParseVersion(data["KSP_VERSION"]);
+                ThreadLog.Log(this.filename.Replace(UrlDir.ApplicationRootPath, string.Empty) + " \"KSP_VERSION\" = " + this.gameVersion);
+            }
+            catch
+            {
+                ThreadLog.Log(this.filename.Replace(UrlDir.ApplicationRootPath, string.Empty) + " \"KSP_VERSION\" is not valid or missing. (optional field)");
+            }
+
+            // KSP_VERSION_MIN
+            try
+            {
+                this.gameVersionMinimum = this.ParseVersion(data["KSP_VERSION_MIN"]);
+                ThreadLog.Log(this.filename.Replace(UrlDir.ApplicationRootPath, string.Empty) + " \"KSP_VERSION_MIN\" = " + this.gameVersionMinimum);
+            }
+            catch
+            {
+                ThreadLog.Log(this.filename.Replace(UrlDir.ApplicationRootPath, string.Empty) + " \"KSP_VERSION_MIN\" is not valid or missing. (optional field)");
+            }
+
+            // KSP_VERSION_MAX
+            try
+            {
+                this.gameVersionMaximum = this.ParseVersion(data["KSP_VERSION_MAX"]);
+                ThreadLog.Log(this.filename.Replace(UrlDir.ApplicationRootPath, string.Empty) + " \"KSP_VERSION_MAX\" = " + this.gameVersionMaximum);
+            }
+            catch
+            {
+                ThreadLog.Log(this.filename.Replace(UrlDir.ApplicationRootPath, string.Empty) + " \"KSP_VERSION_MAX\" is not valid or missing. (optional field)");
+            }
+        }
+
+        private System.Version ParseVersion(JsonData data)
         {
             // Data is not an object so it must be a string value.
             if (!data.IsObject)
@@ -223,6 +312,7 @@ namespace AddonVersionChecker
             }
             catch (Exception ex)
             {
+                ThreadLog.Log(this.filename.Replace(UrlDir.ApplicationRootPath, string.Empty) + " a problem was encountered whilst parsing a version.");
                 throw new Exception(ex.Message, ex);
             }
         }
