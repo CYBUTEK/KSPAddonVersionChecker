@@ -193,7 +193,12 @@ namespace AddonVersionChecker
         /// </summary>
         public static System.Version CurrentGameVersion
         {
-            get { return new System.Version(Versioning.version_major, Versioning.version_minor, Versioning.Revision); }
+            get
+            {
+                return Versioning.Revision == 0
+                    ? new System.Version(Versioning.version_major, Versioning.version_minor)
+                    : new System.Version(Versioning.version_major, Versioning.version_minor, Versioning.Revision);
+            }
         }
 
         #endregion
@@ -308,10 +313,16 @@ namespace AddonVersionChecker
                         return new System.Version((int)data["MAJOR"], (int)data["MINOR"]);
 
                     case 3:
-                        return new System.Version((int)data["MAJOR"], (int)data["MINOR"], (int)data["PATCH"]);
+                        return (int)data["PATCH"] == 0
+                            ? new System.Version((int)data["MAJOR"], (int)data["MINOR"])
+                            : new System.Version((int)data["MAJOR"], (int)data["MINOR"], (int)data["PATCH"]);
 
                     case 4:
-                        return new System.Version((int)data["MAJOR"], (int)data["MINOR"], (int)data["PATCH"], (int)data["BUILD"]);
+                        return (int)data["PATCH"] == 0
+                            ? new System.Version((int)data["MAJOR"], (int)data["MINOR"])
+                            : (int)data["BUILD"] == 0
+                                ? new System.Version((int)data["MAJOR"], (int)data["MINOR"], (int)data["PATCH"])
+                                : new System.Version((int)data["MAJOR"], (int)data["MINOR"], (int)data["PATCH"], (int)data["BUILD"]);
 
                     default:
                         return new System.Version();

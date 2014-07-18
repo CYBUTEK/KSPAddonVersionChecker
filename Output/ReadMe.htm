@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset='UTF-8'>
+	<title>KSP-AVC Plugin - ReadMe</title>
+	<link href='http://fonts.googleapis.com/css?family=PT+Sans:400,700' rel='stylesheet' type='text/css'>
+	<style>
+		* {
+			margin: 0; padding: 0;
+			box-sizing: border-box; moz-box-sizing: border-box; webkit-box-sizing: border-box;
+		}
+
+		html, body {
+			height: 100%;
+			font-family: 'PT Sans', Verdana, Geneva, sans-serif;
+		}
+
+		a {
+			text-decoration: none;
+			font-weight: 700;
+			color: inherit;
+		}
+
+		a:hover {
+			text-decoration: underline;
+		}
+
+		h3 {
+			display: block;
+			line-height: 1.5em;
+			font-size: 1.1em;
+			font-weight: 700;
+		}
+
+		p {
+			display: block;
+			margin: 0 0.5em;
+			text-align: justify;
+		}
+
+		ul {
+			display: block;
+			margin-left: 1.5em;
+			list-style-type: square;
+		}
+
+		li {
+			margin-top: 0.5em;
+			text-align: justify;
+		}
+
+		header {
+			display: block;
+			padding: 25px;
+			text-align: center;
+			font-size: 3rem;
+			font-weight: 700;
+			letter-spacing: 0.2em;
+			color: white;
+			background-color: black;
+		}
+
+		section {
+			display: block;
+			margin: 10px;
+			padding: 0.5em 1em;
+			line-height: 1.5em;
+			background-color: #DDD;
+		}
+
+		footer {
+			display: block;
+			text-align: center;
+			line-height: 50px;
+			font-size: 0.8rem;
+			letter-spacing: 0.2em;
+			color: white;
+			background-color: black;
+		}
+
+		#changelog > li {
+			margin-top: 1em;
+		}
+
+		#changelog > li:first-child {
+			margin-top: 0.5em;
+		}
+
+		#root {
+			clear: both;
+			min-height: 100%;
+			height: auto !important;
+			height: 100%;
+			margin-bottom: -50px;
+		}
+
+		#root > #root_footer {
+			height: 50px;
+		}
+
+		#footer {
+			clear: both;
+			position: relative;
+			height: 50px;
+		}
+	</style>
+</head>
+<body>
+	<div id='root'>
+		<header>KSP Add-on Version Checker</header>
+
+		<section>
+			<h3>Current Version</h3>
+			<p>1.0.2</p>
+		</section>
+
+		<section>
+			<h3>Developer</h3>
+			<p>CYBUTEK</p>
+		</section>
+
+		<section>
+			<h3>KSP-AVC Ready</h3>
+			<p>
+				KSP Add-on Version Checker is a standardised system for versioning mods. You can get more information on the
+				<a href='http://forum.kerbalspaceprogram.com/threads/79745' target='_blank'>forum thread</a>.
+			</p>
+		</section>
+
+		<section>
+			<h3>Description</h3>
+			<p>
+				On starting KSP this plugin will search your game directory for '.version' files.  It will then proceed to check each one for version related issues.  If any issues are found, an issue monitor will be displayed notifying you of what they are.  There are two main types of version issues, with the first being related to the add-on's version and the second being its compatibility with your version of KSP.  Some add-ons will also support a download option in their version check.  If you require an update of an add-on and it has a download location set, you will be given a button which will open up your default browser and take you there.  This could link directly to the .zip file or to a page with details on how to update.  Note that you will need to close down KSP, install the updates and then restart KSP for them to work.
+			</p>
+		</section>
+
+		<section>
+			<h3>Installation</h3>
+			<ul>
+				<li>Copy the 'KSP-AVC' folder into the 'GameData' folder located within your Kerbal Space Program installation directory.</li>
+			</ul>
+		</section>
+
+		<section>
+			<h3>'.version' File Example</h3>
+			<p>
+				{<br>
+				&nbsp;&nbsp;&nbsp;&nbsp;"NAME":"KSP-AVC",<br>
+				&nbsp;&nbsp;&nbsp;&nbsp;"URL":"http://ksp-avc.cybutek.net/version.php?id=2",<br>
+				&nbsp;&nbsp;&nbsp;&nbsp;"DOWNLOAD":"",<br>
+				&nbsp;&nbsp;&nbsp;&nbsp;"VERSION":{<br>
+				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"MAJOR":1,<br>
+				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"MINOR":0,<br>
+				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"PATCH":1,<br>
+				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"BUILD":0<br>
+				&nbsp;&nbsp;&nbsp;&nbsp;},<br>
+				&nbsp;&nbsp;&nbsp;&nbsp;"KSP_VERSION":{<br>
+				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"MAJOR":0,<br>
+				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"MINOR":23,<br>
+				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"PATCH":5<br>
+				&nbsp;&nbsp;&nbsp;&nbsp;},<br>
+				&nbsp;&nbsp;&nbsp;&nbsp;"KSP_VERSION_MIN":{<br>
+				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"MAJOR":0,<br>
+				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"MINOR":23,<br>
+				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"PATCH":5<br>
+				&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+				&nbsp;&nbsp;&nbsp;&nbsp;"KSP_VERSION_MAX":{<br>
+				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"MAJOR":0,<br>
+				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"MINOR":23,<br>
+				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"PATCH":5<br>
+				&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+				}
+			</p>
+		</section>
+
+		<section>
+			<h3>'.version' File Breakdown</h3>
+			<p>
+				NAME			Display name of the add-on.<br>
+				URL				Remote .version file used for update checking.<br>
+				DOWNLOAD 		Location where the latest version can be downloaded. (Only used in the remote .version file)(Optional)<br>
+				VERSION 		Version of your add-on. (MAJOR, MINOR, PATCH, BUILD)(KSP-AVC also supports a simple "VERSION":"1.0.0" string.)<br>
+				KSP_VERSION 	Version of KSP which the add-on was intended to run on. (MAJOR, MINOR, PATCH)(Overrides min/max compatibility)(Optional)<br>
+				KSP_VERSION_MIN	Minimum version of KSP compatible with the add-on. (MAJOR, MINOR, PATCH)(Optional)<br>
+				KSP_VERSION_MAX Maximum version of KSP compatible with the add-on. (MAJOR, MINOR, PATCH)(Optional)<br>
+				<br>
+				For simple management of your '.version' files you can use the KSP-AVC Online website at: <a href='http://ksp-avc.cybutek.net' target='_blank'>ksp-avc.cybutek.net</a>.
+			</p>
+		</section>
+
+		<section>
+			<h3>Change Log</h3>
+			<ul id='changelog'>
+				<li>
+					1.0.2
+					<ul>
+						<li>Updated for KSP version 0.24.</li>
+						<li>Fixed a small bug with parsing KSP versions.</li>
+					</ul>
+				</li>
+				<li>
+					1.0.1
+					<ul>
+						<li>Added minimum and maximum KSP version support.</li>
+						<li>Updates will only be shown if the remote version is compatible with the installed version of KSP.</li>
+					</ul>
+				</li>
+			</ul>
+		</section>
+
+		<section>
+			<h3>Software License</h3>
+			<p>
+				Copyright &copy; 2014 CYBUTEK
+				<br><br>
+				This program is free software: you can redistribute it and/or modify<br>
+				it under the terms of the GNU General Public License as published by<br>
+				the Free Software Foundation, either version 3 of the License, or<br>
+				(at your option) any later version.
+				<br><br>
+				This program is distributed in the hope that it will be useful,<br>
+				but WITHOUT ANY WARRANTY; without even the implied warranty of<br>
+				MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the<br>
+				GNU General Public License for more details.
+				<br><br>
+				Licensed under <a href='http://www.gnu.org/licenses/gpl-3.0.html' target='_blank'>GNU General Public License v3</a>
+			</p>
+		</section>
+
+		<div id='root_footer'></div>
+	</div>
+
+	<footer id='footer'>
+		ReadMe Design by <a href='http://ksp.cybutek.net' target='_blank'><strong>CYBUTEK</strong></a> (GPLv3)
+	</footer>
+</body>
+</html>
