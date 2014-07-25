@@ -207,10 +207,17 @@ namespace AddonVersionChecker
 
         private void ParseJson()
         {
-            var data = JsonMapper.ToObject(this.json);
+            try
+            {
+                var data = JsonMapper.ToObject(this.json);
 
-            this.SetPrimaryFields(data);
-            this.SetGameVersion(data);
+                this.SetPrimaryFields(data);
+                this.SetGameVersion(data);
+            }
+            catch (Exception ex)
+            {
+                Logger.Exception(ex, "AddonData->ParseJson");
+            }
         }
 
         private void SetPrimaryFields(JsonData data)
@@ -219,44 +226,44 @@ namespace AddonVersionChecker
             try
             {
                 this.name = (string)data["NAME"];
-                ThreadLog.Log(this.filename.Replace(UrlDir.ApplicationRootPath, string.Empty) + " \"NAME\" = " + this.name);
+                Logger.Log(this.filename.Replace(UrlDir.ApplicationRootPath, string.Empty) + " \"NAME\" = " + this.name);
             }
             catch
             {
-                ThreadLog.Log(this.filename.Replace(UrlDir.ApplicationRootPath, string.Empty) + " \"NAME\" is not valid or missing. (required field)");
+                Logger.Log(this.filename.Replace(UrlDir.ApplicationRootPath, string.Empty) + " \"NAME\" is not valid or missing. (required field)");
             }
 
             // URL
             try
             {
                 this.url = (string)data["URL"];
-                ThreadLog.Log(this.filename.Replace(UrlDir.ApplicationRootPath, string.Empty) + " \"URL\" = " + this.url);
+                Logger.Log(this.filename.Replace(UrlDir.ApplicationRootPath, string.Empty) + " \"URL\" = " + this.url);
             }
             catch
             {
-                ThreadLog.Log(this.filename.Replace(UrlDir.ApplicationRootPath, string.Empty) + " \"URL\" is not valid or missing. (required field)");
+                Logger.Log(this.filename.Replace(UrlDir.ApplicationRootPath, string.Empty) + " \"URL\" is not valid or missing. (required field)");
             }
 
             // DOWNLOAD
             try
             {
                 this.download = (string)data["DOWNLOAD"];
-                ThreadLog.Log(this.filename.Replace(UrlDir.ApplicationRootPath, string.Empty) + " \"DOWNLOAD\" = " + this.download);
+                Logger.Log(this.filename.Replace(UrlDir.ApplicationRootPath, string.Empty) + " \"DOWNLOAD\" = " + this.download);
             }
             catch
             {
-                ThreadLog.Log(this.filename.Replace(UrlDir.ApplicationRootPath, string.Empty) + " \"DOWNLOAD\" is not valid or missing. (optional field)");
+                Logger.Log(this.filename.Replace(UrlDir.ApplicationRootPath, string.Empty) + " \"DOWNLOAD\" is not valid or missing. (optional field)");
             }
 
             // VERSION
             try
             {
                 this.addonVersion = this.ParseVersion(data["VERSION"]);
-                ThreadLog.Log(this.filename.Replace(UrlDir.ApplicationRootPath, string.Empty) + " \"VERSION\" = " + this.addonVersion);
+                Logger.Log(this.filename.Replace(UrlDir.ApplicationRootPath, string.Empty) + " \"VERSION\" = " + this.addonVersion);
             }
             catch
             {
-                ThreadLog.Log(this.filename.Replace(UrlDir.ApplicationRootPath, string.Empty) + " \"VERSION\" is not valid or missing. (required field)");
+                Logger.Log(this.filename.Replace(UrlDir.ApplicationRootPath, string.Empty) + " \"VERSION\" is not valid or missing. (required field)");
             }
         }
 
@@ -266,33 +273,33 @@ namespace AddonVersionChecker
             try
             {
                 this.gameVersion = this.ParseVersion(data["KSP_VERSION"]);
-                ThreadLog.Log(this.filename.Replace(UrlDir.ApplicationRootPath, string.Empty) + " \"KSP_VERSION\" = " + this.gameVersion);
+                Logger.Log(this.filename.Replace(UrlDir.ApplicationRootPath, string.Empty) + " \"KSP_VERSION\" = " + this.gameVersion);
             }
             catch
             {
-                ThreadLog.Log(this.filename.Replace(UrlDir.ApplicationRootPath, string.Empty) + " \"KSP_VERSION\" is not valid or missing. (optional field)");
+                Logger.Log(this.filename.Replace(UrlDir.ApplicationRootPath, string.Empty) + " \"KSP_VERSION\" is not valid or missing. (optional field)");
             }
 
             // KSP_VERSION_MIN
             try
             {
                 this.gameVersionMinimum = this.ParseVersion(data["KSP_VERSION_MIN"]);
-                ThreadLog.Log(this.filename.Replace(UrlDir.ApplicationRootPath, string.Empty) + " \"KSP_VERSION_MIN\" = " + this.gameVersionMinimum);
+                Logger.Log(this.filename.Replace(UrlDir.ApplicationRootPath, string.Empty) + " \"KSP_VERSION_MIN\" = " + this.gameVersionMinimum);
             }
             catch
             {
-                ThreadLog.Log(this.filename.Replace(UrlDir.ApplicationRootPath, string.Empty) + " \"KSP_VERSION_MIN\" is not valid or missing. (optional field)");
+                Logger.Log(this.filename.Replace(UrlDir.ApplicationRootPath, string.Empty) + " \"KSP_VERSION_MIN\" is not valid or missing. (optional field)");
             }
 
             // KSP_VERSION_MAX
             try
             {
                 this.gameVersionMaximum = this.ParseVersion(data["KSP_VERSION_MAX"]);
-                ThreadLog.Log(this.filename.Replace(UrlDir.ApplicationRootPath, string.Empty) + " \"KSP_VERSION_MAX\" = " + this.gameVersionMaximum);
+                Logger.Log(this.filename.Replace(UrlDir.ApplicationRootPath, string.Empty) + " \"KSP_VERSION_MAX\" = " + this.gameVersionMaximum);
             }
             catch
             {
-                ThreadLog.Log(this.filename.Replace(UrlDir.ApplicationRootPath, string.Empty) + " \"KSP_VERSION_MAX\" is not valid or missing. (optional field)");
+                Logger.Log(this.filename.Replace(UrlDir.ApplicationRootPath, string.Empty) + " \"KSP_VERSION_MAX\" is not valid or missing. (optional field)");
             }
         }
 
@@ -330,7 +337,7 @@ namespace AddonVersionChecker
             }
             catch (Exception ex)
             {
-                ThreadLog.Log(this.filename.Replace(UrlDir.ApplicationRootPath, string.Empty) + " a problem was encountered whilst parsing a version.");
+                Logger.Log(this.filename.Replace(UrlDir.ApplicationRootPath, string.Empty) + " a problem was encountered whilst parsing a version.");
                 throw new Exception(ex.Message, ex);
             }
         }

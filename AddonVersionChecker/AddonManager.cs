@@ -22,6 +22,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Threading;
 
 using UnityEngine;
@@ -47,22 +48,29 @@ namespace AddonVersionChecker
             // Populate all addons asynchronously so that the UI thread is not blocked.
             new Thread(() =>
             {
-                isLocked = true;
-                lock (addons)
+                try
                 {
-                    ThreadLog.Log("Starting Add-on Population.");
-                    foreach (var file in Directory.GetFiles(UrlDir.ApplicationRootPath, "*.version", SearchOption.AllDirectories))
+                    isLocked = true;
+                    lock (addons)
                     {
-                        var addon = new AddonData(File.ReadAllText(file), file);
-                        if (addon.Url.Length > 0)
+                        Logger.Log("Starting Add-on Population.");
+                        foreach (var file in Directory.GetFiles(UrlDir.ApplicationRootPath, "*.version", SearchOption.AllDirectories))
                         {
-                            LoadRemoteAddonData(addon);
+                            var addon = new AddonData(File.ReadAllText(file), file);
+                            if (addon.Url.Length > 0)
+                            {
+                                LoadRemoteAddonData(addon);
+                            }
+                            addons.Add(addon);
                         }
-                        addons.Add(addon);
+                        Logger.Log("Finished Add-on Population.");
                     }
-                    ThreadLog.Log("Finished Add-on Population.");
+                    isLocked = false;
                 }
-                isLocked = false;
+                catch (Exception ex)
+                {
+                    Logger.Exception(ex, "AddonManager->Awake");
+                }
             }).Start();
         }
 
@@ -112,40 +120,37 @@ namespace AddonVersionChecker
 
         #endregion
 
-        #region Updating
-
-        private void Update()
-        {
-            // Flush all log messages into the ksp log file.
-            ThreadLog.Flush();
-        }
-
-        #endregion
-
         #region Private Methods
 
         private static void LoadRemoteAddonData(AddonData addon)
         {
-            // Fetch the remote json data.
-            var www = new WWW(addon.Url);
-
-            var timer = new Stopwatch();
-            timer.Start();
-            // Running in thread so blocking is not a concern.
-            while (!www.isDone)
+            try
             {
-                if (timer.ElapsedMilliseconds > 2000)
+                // Fetch the remote json data.
+                var www = new WWW(addon.Url);
+
+                var timer = new Stopwatch();
+                timer.Start();
+                // Running in thread so blocking is not a concern.
+                while (!www.isDone)
                 {
-                    addon.RemoteAddonData = addon;
-                    ThreadLog.Log(addon.FileName.Replace(UrlDir.ApplicationRootPath, String.Empty) + " fetching of " + addon.Url + " timed out.");
-                    return;
+                    if (timer.ElapsedMilliseconds > 2000)
+                    {
+                        addon.RemoteAddonData = addon;
+                        Logger.Log(addon.FileName.Replace(UrlDir.ApplicationRootPath, String.Empty) + " fetching of " + addon.Url + " timed out.");
+                        return;
+                    }
                 }
+
+                Logger.Log(addon.FileName.Replace(UrlDir.ApplicationRootPath, String.Empty) + " fetched remote version file at " + addon.Url + ".");
+
+                // Create the remote addon data using the remote jason data.
+                addon.RemoteAddonData = new AddonData(www.text, addon.Url);
             }
-
-            ThreadLog.Log(addon.FileName.Replace(UrlDir.ApplicationRootPath, String.Empty) + " fetched remote version file at " + addon.Url + ".");
-
-            // Create the remote addon data using the remote jason data.
-            addon.RemoteAddonData = new AddonData(www.text, addon.Url);
+            catch (Exception ex)
+            {
+                Logger.Exception(ex, "AddonManager->LoadRemoteAddonData");
+            }
         }
 
         #endregion

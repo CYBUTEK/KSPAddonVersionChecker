@@ -17,9 +17,9 @@
 
 #region Using Directives
 
-using UnityEngine;
+using AddonVersionChecker.Extensions;
 
-using Version = System.Version;
+using UnityEngine;
 
 #endregion
 
@@ -31,7 +31,7 @@ namespace AddonVersionChecker
         #region Fields
 
         private readonly int windowId = typeof(CheckerGui).GetHashCode();
-        private Rect windowPosition;
+        private Rect windowPosition = new Rect(Screen.width, Screen.height, 0, 0);
 
         #endregion
 
@@ -138,14 +138,12 @@ namespace AddonVersionChecker
 
         private void OnGUI()
         {
-            if (AddonManager.IsLocked || !AddonManager.HasIssues)
+            if (AddonManager.IsLocked || !AddonManager.HasIssues || FirstRunGui.IsOpen)
             {
                 return;
             }
 
-            this.windowPosition = GUILayout.Window(this.windowId, this.windowPosition, this.Window, "KSP Add-on Version Checker - Issue Monitor", this.windowStyle);
-            this.windowPosition.x = Mathf.Clamp(this.windowPosition.x, 0, Screen.width - this.windowPosition.width);
-            this.windowPosition.y = Mathf.Clamp(this.windowPosition.y, 0, Screen.height - this.windowPosition.height);
+            this.windowPosition = GUILayout.Window(this.windowId, this.windowPosition, this.Window, "KSP Add-on Version Checker - Issue Monitor", this.windowStyle).CentreWindow();
         }
 
         private void Window(int id)
@@ -164,8 +162,6 @@ namespace AddonVersionChecker
             {
                 Destroy(this);
             }
-
-            GUI.DragWindow();
         }
 
         private void DrawUpdateIssues()
@@ -222,7 +218,7 @@ namespace AddonVersionChecker
                     else
                     {
                         GUILayout.Label(addon.Name + " version " + addon.AddonVersion + " was built to run on KSP " + addon.GameVersionMinimum + " - " + addon.GameVersionMaximum + ".", this.messageStyle);
-                    }        
+                    }
                 }
                 else if (!addon.GameCompatibleMaximum)
                 {
@@ -233,7 +229,7 @@ namespace AddonVersionChecker
                     else
                     {
                         GUILayout.Label(addon.Name + " version " + addon.AddonVersion + " was built to run on KSP " + addon.GameVersionMinimum + " - " + addon.GameVersionMaximum + ".", this.messageStyle);
-                    }     
+                    }
                 }
             }
             GUILayout.EndVertical();

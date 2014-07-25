@@ -36,8 +36,11 @@
     <Compile Include="AddonData.cs" />
     <Compile Include="AddonManager.cs" />
     <Compile Include="CheckerGui.cs" />
+    <Compile Include="Extensions\RectExtensions.cs" />
+    <Compile Include="FirstRunGui.cs" />
+    <Compile Include="Logger.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="ThreadLog.cs" />
+    <Compile Include="Settings.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Assembly-CSharp">
@@ -48,6 +51,7 @@
       <HintPath>..\Libraries\LitJson.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.XML" />
     <Reference Include="UnityEngine">
       <HintPath>..\Game\KSP_x64_Data\Managed\UnityEngine.dll</HintPath>
       <Private>False</Private>
