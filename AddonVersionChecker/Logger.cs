@@ -33,7 +33,8 @@ namespace AddonVersionChecker
     {
         #region Constants
 
-        private const string FileName = "KSP-AVC.log";
+        private static readonly string fileName;
+        private static readonly AssemblyName assemblyName;
 
         #endregion
 
@@ -47,12 +48,12 @@ namespace AddonVersionChecker
 
         static Logger()
         {
-            File.Delete(FileName);
-            using (var file = File.AppendText(FileName))
-            {
-                messages.Add("Version: " + Assembly.GetExecutingAssembly().GetName().Version);
-                Blank();
-            }
+            assemblyName = Assembly.GetExecutingAssembly().GetName();
+            fileName = Path.ChangeExtension(Assembly.GetExecutingAssembly().Location, "log");
+            File.Delete(fileName);
+
+            messages.Add("Version: " + assemblyName.Version);
+            Blank();
         }
 
         private void Awake()
@@ -134,11 +135,12 @@ namespace AddonVersionChecker
             {
                 if (messages.Count > 0)
                 {
-                    using (var file = File.AppendText(FileName))
+                    using (var file = File.AppendText(fileName))
                     {
                         foreach (var message in messages)
                         {
                             file.WriteLine(message);
+                            print(assemblyName.Name + " -> " + message);
                         }
                     }
                     messages.Clear();

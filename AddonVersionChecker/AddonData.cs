@@ -236,7 +236,7 @@ namespace AddonVersionChecker
             // URL
             try
             {
-                this.url = (string)data["URL"];
+                this.url = this.CheckUrlCompatibility((string)data["URL"]);
                 Logger.Log(this.filename.Replace(UrlDir.ApplicationRootPath, string.Empty) + " \"URL\" = " + this.url);
             }
             catch
@@ -339,6 +339,25 @@ namespace AddonVersionChecker
             {
                 Logger.Log(this.filename.Replace(UrlDir.ApplicationRootPath, string.Empty) + " a problem was encountered whilst parsing a version.");
                 throw new Exception(ex.Message, ex);
+            }
+        }
+
+        private string CheckUrlCompatibility(string url)
+        {
+            try
+            {
+                if (url.Contains("github.com"))
+                {
+                    Logger.Log("Replaced github.com with raw.githubusercontent.com in URL.");
+                    return url.Replace("github.com", "raw.githubusercontent.com");
+                }
+
+                return url;
+            }
+            catch (Exception ex)
+            {
+                Logger.Exception(ex, "AddonManager->CheckUrlCompatibility");
+                return url;
             }
         }
 
