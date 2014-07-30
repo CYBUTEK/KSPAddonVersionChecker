@@ -24,7 +24,7 @@ using System.Xml.Serialization;
 
 #endregion
 
-namespace AddonVersionChecker
+namespace KSP_AVC
 {
     public class Settings
     {

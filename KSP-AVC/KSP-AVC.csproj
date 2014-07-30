@@ -7,7 +7,7 @@
     <ProjectGuid>{F745CC0C-B7A0-4EF2-BF5A-1D3F0C19202C}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>AddonVersionChecker</RootNamespace>
+    <RootNamespace>KSP_AVC</RootNamespace>
     <AssemblyName>KSP-AVC</AssemblyName>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>

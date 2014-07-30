@@ -26,7 +26,7 @@ using UnityEngine;
 
 #endregion
 
-namespace AddonVersionChecker
+namespace KSP_AVC
 {
     [KSPAddon(KSPAddon.Startup.Instantly, false)]
     public class Logger : MonoBehaviour

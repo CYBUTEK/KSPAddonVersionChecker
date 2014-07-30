@@ -23,7 +23,7 @@ using LitJson;
 
 #endregion
 
-namespace AddonVersionChecker
+namespace KSP_AVC
 {
     public class AddonData
     {

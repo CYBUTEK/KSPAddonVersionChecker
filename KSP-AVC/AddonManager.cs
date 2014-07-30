@@ -22,14 +22,13 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Reflection;
 using System.Threading;
 
 using UnityEngine;
 
 #endregion
 
-namespace AddonVersionChecker
+namespace KSP_AVC
 {
     [KSPAddon(KSPAddon.Startup.Instantly, false)]
     public class AddonManager : MonoBehaviour

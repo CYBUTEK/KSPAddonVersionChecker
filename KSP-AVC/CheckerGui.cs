@@ -17,13 +17,13 @@
 
 #region Using Directives
 
-using AddonVersionChecker.Extensions;
+using KSP_AVC.Extensions;
 
 using UnityEngine;
 
 #endregion
 
-namespace AddonVersionChecker
+namespace KSP_AVC
 {
     [KSPAddon(KSPAddon.Startup.Instantly, false)]
     public class CheckerGui : MonoBehaviour
