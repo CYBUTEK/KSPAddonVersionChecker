@@ -22,6 +22,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
+using KSPAchievements;
+
 using UnityEngine;
 
 #endregion
@@ -51,6 +53,14 @@ namespace MiniAVC
                     return;
                 }
                 alreadyRunning = true;
+
+                // Unload if KSP-AVC is detected.
+                if (AssemblyLoader.loadedAssemblies.Any(a => a.name == "KSP-AVC"))
+                {
+                    Logger.Log("KSP-AVC was detected...  Unloading MiniAVC!");
+                    Destroy(this);
+                    return;
+                }
 
                 // Load all the addons which are being supported by MiniAVC.
                 foreach (var path in AssemblyLoader.loadedAssemblies.Where(a => a.name == "MiniAVC").Select(a => Path.GetDirectoryName(a.path)))
