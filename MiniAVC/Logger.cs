@@ -50,7 +50,7 @@ namespace MiniAVC
         static Logger()
         {
             assemblyName = Assembly.GetExecutingAssembly().GetName();
-            fileName = "MiniAVC.log";
+            fileName = assemblyName.Name + ".log";
             File.Delete(fileName);
 
             messages.Add(new[] {"Executing: " + assemblyName.Name + " - " + assemblyName.Version});
