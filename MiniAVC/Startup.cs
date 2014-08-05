@@ -22,8 +22,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
-using KSPAchievements;
-
 using UnityEngine;
 
 #endregion
@@ -89,7 +87,7 @@ namespace MiniAVC
                 }
 
                 // Create and show first run gui if required.
-                if (this.addons.Any(a => a.Settings.FirstRun && a.IsLocalReady))
+                if (this.addons.Any(a => a.Settings.FirstRun && a.IsLocalReady && !string.IsNullOrEmpty(a.LocalInfo.Url)))
                 {
                     foreach (var addon in this.addons.Where(a => a.Settings.FirstRun && a.IsLocalReady))
                     {

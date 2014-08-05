@@ -129,6 +129,7 @@ namespace MiniAVC
                     this.Addon.Settings.AllowCheck = false;
                     this.Addon.Settings.Save();
                     Logger.Log("Remote checking has been disabled for: " + this.Addon.Name);
+                    this.Addon.RunProcessRemoteInfo();
                     Destroy(this);
                 }
                 GUILayout.EndHorizontal();

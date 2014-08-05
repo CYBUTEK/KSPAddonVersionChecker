@@ -30,7 +30,6 @@ namespace MiniAVC
     {
         #region Fields
 
-        private readonly object locker = new object();
         private readonly string rootPath;
         private readonly AddonSettings settings;
         private AddonInfo localInfo;
@@ -66,46 +65,22 @@ namespace MiniAVC
 
         public string RootPath
         {
-            get
-            {
-                lock (this.locker)
-                {
-                    return this.rootPath;
-                }
-            }
+            get { return this.rootPath; }
         }
 
         public AddonSettings Settings
         {
-            get
-            {
-                lock (this.locker)
-                {
-                    return this.settings;
-                }
-            }
+            get { return this.settings; }
         }
 
         public AddonInfo LocalInfo
         {
-            get
-            {
-                lock (this.locker)
-                {
-                    return this.localInfo;
-                }
-            }
+            get { return this.localInfo; }
         }
 
         public AddonInfo RemoteInfo
         {
-            get
-            {
-                lock (this.locker)
-                {
-                    return this.remoteInfo;
-                }
-            }
+            get { return this.remoteInfo; }
         }
 
         public bool HasVersionFile { get; private set; }
@@ -142,7 +117,7 @@ namespace MiniAVC
 
         public void RunProcessRemoteInfo()
         {
-            ThreadPool.QueueUserWorkItem(this.ProcessRemoteInfo, this.LocalInfo.Url);
+            ThreadPool.QueueUserWorkItem(this.ProcessRemoteInfo);
         }
 
         #endregion
@@ -151,59 +126,56 @@ namespace MiniAVC
 
         private void ProcessLocalInfo(object state)
         {
-            lock (this.locker)
+            try
             {
-                try
+                using (var stream = new StreamReader(File.OpenRead((string)state)))
                 {
-                    using (var stream = new StreamReader(File.OpenRead((string)state)))
-                    {
-                        this.localInfo = new AddonInfo((string)state, stream.ReadToEnd());
-                    }
-                    if (!this.settings.FirstRun)
-                    {
-                        this.RunProcessRemoteInfo();
-                    }
-                    Logger.Log(this.localInfo);
+                    this.localInfo = new AddonInfo((string)state, stream.ReadToEnd());
                 }
-                catch (Exception ex)
+                if (!this.settings.FirstRun || string.IsNullOrEmpty(this.localInfo.Url))
                 {
-                    Logger.Exception(ex);
+                    this.RunProcessRemoteInfo();
                 }
 
                 this.IsLocalReady = true;
+            }
+            catch (Exception ex)
+            {
+                Logger.Exception(ex);
             }
         }
 
         private void ProcessRemoteInfo(object state)
         {
-            lock (this.locker)
+            try
             {
-                try
+                if (!this.Settings.AllowCheck || string.IsNullOrEmpty(this.localInfo.Url))
                 {
-                    if (!this.Settings.AllowCheck || this.localInfo.Url == null)
-                    {
-                        this.remoteInfo = this.localInfo;
-                        this.IsRemoteReady = true;
-                        this.IsProcessingComplete = true;
-                        return;
-                    }
-
-                    using (var web = WebRequest.Create((string)state).GetResponse())
-                    {
-                        using (var stream = new StreamReader(web.GetResponseStream()))
-                        {
-                            this.remoteInfo = new AddonInfo((string)state, stream.ReadToEnd());
-                        }
-                    }
-                    Logger.Log(this.remoteInfo);
+                    this.remoteInfo = this.localInfo;
+                    this.IsRemoteReady = true;
+                    this.IsProcessingComplete = true;
+                    Logger.Log(this.localInfo);
+                    Logger.Blank();
+                    return;
                 }
-                catch (Exception ex)
+
+                using (var web = WebRequest.Create(this.localInfo.Url).GetResponse())
                 {
-                    Logger.Exception(ex);
+                    using (var stream = new StreamReader(web.GetResponseStream()))
+                    {
+                        this.remoteInfo = new AddonInfo(this.localInfo.Url, stream.ReadToEnd());
+                    }
                 }
 
                 this.IsRemoteReady = true;
                 this.IsProcessingComplete = true;
+                Logger.Log(this.localInfo);
+                Logger.Log(this.remoteInfo);
+                Logger.Blank();
+            }
+            catch (Exception ex)
+            {
+                Logger.Exception(ex);
             }
         }
 

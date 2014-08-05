@@ -192,10 +192,10 @@ namespace MiniAVC
         public override string ToString()
         {
             return this.path +
-                   "\n\tNAME: " + (string.IsNullOrEmpty(this.Name) ? "NULL" : this.Name) +
+                   "\n\tNAME: " + (string.IsNullOrEmpty(this.Name) ? "NULL (required)" : this.Name) +
                    "\n\tURL: " + (string.IsNullOrEmpty(this.Url) ? "NULL" : this.Url) +
                    "\n\tDOWNLOAD: " + (string.IsNullOrEmpty(this.Download) ? "NULL" : this.Download) +
-                   "\n\tVERSION: " + (this.Version != null ? this.Version.ToString() : "NULL") +
+                   "\n\tVERSION: " + (this.Version != null ? this.Version.ToString() : "NULL (required)") +
                    "\n\tKSP_VERSION: " + this.KspVersion +
                    "\n\tKSP_VERSION_MIN: " + (this.kspVersionMin != null ? this.kspVersion.ToString() : "NULL") +
                    "\n\tKSP_VERSION_MAX: " + (this.kspVersionMax != null ? this.kspVersionMax.ToString() : "NULL") +
