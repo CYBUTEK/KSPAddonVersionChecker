@@ -54,6 +54,7 @@ namespace MiniAVC
             File.Delete(fileName);
 
             messages.Add(new[] {"Executing: " + assemblyName.Name + " - " + assemblyName.Version});
+            messages.Add(new[] {"Assembly: " + Assembly.GetExecutingAssembly().Location});
             Blank();
         }
 
@@ -85,7 +86,7 @@ namespace MiniAVC
                         messages.Add(new[] {"Log " + DateTime.Now.TimeOfDay, obj.ToString()});
                         foreach (var o in obj as IEnumerable)
                         {
-                            messages.Add(new []{"\t", o.ToString()});
+                            messages.Add(new[] {"\t", o.ToString()});
                         }
                     }
                     else
