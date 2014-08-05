@@ -102,6 +102,7 @@ namespace MiniAVC
                 }
 
                 // Create and show issue gui if required.
+                var removeAddons = new List<Addon>();
                 if (this.addons.Any(a => a.IsProcessingComplete))
                 {
                     foreach (var addon in this.addons.Where(a => a.IsProcessingComplete))
@@ -111,13 +112,15 @@ namespace MiniAVC
                             this.shownIssueGui = this.gameObject.AddComponent<IssueGui>();
                             this.shownIssueGui.Addon = addon;
                             this.shownIssueGui.enabled = true;
-                            this.addons.Remove(addon);
+                            removeAddons.Add(addon);
                             break;
                         }
 
-                        this.addons.Remove(addon);
+                        removeAddons.Add(addon);
                     }
                 }
+
+                this.addons.RemoveAll(removeAddons.Contains);
             }
             catch (Exception ex)
             {
