@@ -19,69 +19,112 @@
 
 using System.Reflection;
 
-using KSP_AVC.Extensions;
-
 using UnityEngine;
 
 #endregion
 
 namespace KSP_AVC
 {
-    [KSPAddon(KSPAddon.Startup.Instantly, false)]
     public class FirstRunGui : MonoBehaviour
     {
-        private bool isUpdate;
-        private GUIStyle labelStyle;
-        private int windowId;
-        private Rect windowPosition = new Rect(Screen.width, Screen.height, 0, 0);
+        #region Fields
 
-        public static bool IsOpen { get; private set; }
+        private bool hasCentred;
+        private Rect position = new Rect(Screen.width, Screen.height, 0, 0);
+
+        #endregion
+
+        #region Properties
+
+        public bool HasBeenUpdated { get; set; }
+
+        #endregion
+
+        #region Initialisation
 
         private void Awake()
         {
-            if (new System.Version(Settings.Instance.Version) < Assembly.GetExecutingAssembly().GetName().Version)
-            {
-                this.isUpdate = true;
-                Settings.Instance.Version = Assembly.GetExecutingAssembly().GetName().Version.ToString();
-            }
-            else if (!Settings.Instance.FirstRun)
-            {
-                Destroy(this);
-            }
-            else
-            {
-                Settings.Instance.FirstRun = false;
-            }
+            DontDestroyOnLoad(this);
+            Logger.Log("FirstRunGui was created.");
+        }
 
-            IsOpen = true;
-            this.windowId = this.GetHashCode();
+        private void Start()
+        {
+            this.InitialiseStyles();
+        }
 
-            this.labelStyle = new GUIStyle(HighLogic.Skin.label)
+        #endregion
+
+        #region Styles
+
+        private GUIStyle buttonStyle;
+        private GUIStyle titleStyle;
+
+        private void InitialiseStyles()
+        {
+            this.titleStyle = new GUIStyle(HighLogic.Skin.label)
             {
+                normal =
+                {
+                    textColor = Color.white
+                },
+                fontSize = 13,
+                fontStyle = FontStyle.Bold,
                 alignment = TextAnchor.MiddleCenter,
                 stretchWidth = true
             };
+
+            this.buttonStyle = new GUIStyle(HighLogic.Skin.button)
+            {
+                normal =
+                {
+                    textColor = Color.white
+                }
+            };
         }
+
+        #endregion
+
+        #region Drawing
 
         private void OnGUI()
         {
-            this.windowPosition = GUILayout.Window(this.windowId, this.windowPosition, this.Window, this.isUpdate ? "KSP-AVC Updated" : "KSP-AVC Installed", HighLogic.Skin.window, GUILayout.Width(300.0f)).CentreWindow();
-        }
-
-        private void Window(int windowId)
-        {
-            GUILayout.Label(this.isUpdate ? "Thank you for updating the KSP-AVC plugin." : "Thank you for installing the KSP-AVC plugin.", this.labelStyle);
-
-            if (GUILayout.Button("Close", HighLogic.Skin.button))
+            this.position = GUILayout.Window(this.GetInstanceID(), this.position, this.Window, "KSP-AVC Plugin - " + (this.HasBeenUpdated ? "Updated" : "Installed"), HighLogic.Skin.window);
+            if (!this.hasCentred && this.position.width > 0 && this.position.height > 0)
             {
-                Destroy(this);
+                this.position.center = new Vector2(Screen.width * 0.5f, Screen.height * 0.5f);
+                this.hasCentred = true;
             }
         }
 
+        private void Window(int id)
+        {
+            GUILayout.BeginVertical(HighLogic.Skin.box);
+            if (this.HasBeenUpdated)
+            {
+                GUILayout.Label("You have successfully updated to v" + Assembly.GetExecutingAssembly().GetName().Version, this.titleStyle, GUILayout.Width(300.0f));
+            }
+            else
+            {
+                GUILayout.Label("You have successfully installed v" + Assembly.GetExecutingAssembly().GetName().Version, this.titleStyle, GUILayout.Width(300.0f));
+            }
+            GUILayout.EndVertical();
+            if (GUILayout.Button("CLOSE", this.buttonStyle))
+            {
+                Destroy(this);
+            }
+            GUI.DragWindow();
+        }
+
+        #endregion
+
+        #region Destruction
+
         private void OnDestroy()
         {
-            Settings.Save();
-            IsOpen = false;
+            Logger.Log("FirstRunGui was destroyed.");
         }
+
+        #endregion
     }
 }

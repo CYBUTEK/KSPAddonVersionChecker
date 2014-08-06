@@ -17,7 +17,7 @@
 
 #region Using Directives
 
-using KSP_AVC.Extensions;
+using System.Linq;
 
 using UnityEngine;
 
@@ -25,21 +25,21 @@ using UnityEngine;
 
 namespace KSP_AVC
 {
-    [KSPAddon(KSPAddon.Startup.Instantly, false)]
-    public class CheckerGui : MonoBehaviour
+    public class IssueGui : MonoBehaviour
     {
         #region Fields
 
-        private readonly int windowId = typeof(CheckerGui).GetHashCode();
-        private Rect windowPosition = new Rect(Screen.width, Screen.height, 0, 0);
+        private bool hasCentred;
+        private Rect position = new Rect(Screen.width, Screen.height, 0, 0);
 
         #endregion
 
-        #region Constructors
+        #region Initialisation
 
         private void Awake()
         {
             DontDestroyOnLoad(this);
+            Logger.Log("IssueGui was created.");
         }
 
         private void Start()
@@ -53,18 +53,15 @@ namespace KSP_AVC
 
         private GUIStyle boxStyle;
         private GUIStyle closeStyle;
-        private GUIStyle downloadStyle;
+        private GUIStyle downloadButtonStyle;
+        private GUIStyle labelStyle;
         private GUIStyle messageStyle;
-        private GUIStyle nameStyle;
+        private GUIStyle nameLabelStyle;
         private GUIStyle nameTitleStyle;
-        private GUIStyle versionStyle;
-        private GUIStyle versionTitleStyle;
-        private GUIStyle windowStyle;
+        private GUIStyle titleStyle;
 
         private void InitialiseStyles()
         {
-            this.windowStyle = new GUIStyle(HighLogic.Skin.window);
-
             this.boxStyle = new GUIStyle(HighLogic.Skin.box)
             {
                 padding = new RectOffset(10, 10, 5, 5)
@@ -81,7 +78,7 @@ namespace KSP_AVC
                 fontStyle = FontStyle.Bold
             };
 
-            this.versionTitleStyle = new GUIStyle(HighLogic.Skin.label)
+            this.titleStyle = new GUIStyle(HighLogic.Skin.label)
             {
                 normal =
                 {
@@ -92,21 +89,21 @@ namespace KSP_AVC
                 fontStyle = FontStyle.Bold
             };
 
-            this.nameStyle = new GUIStyle(HighLogic.Skin.label)
+            this.nameLabelStyle = new GUIStyle(HighLogic.Skin.label)
             {
                 fixedWidth = 300.0f,
                 fixedHeight = 25.0f,
                 alignment = TextAnchor.MiddleLeft,
             };
 
-            this.versionStyle = new GUIStyle(HighLogic.Skin.label)
+            this.labelStyle = new GUIStyle(HighLogic.Skin.label)
             {
                 fixedWidth = 100.0f,
                 fixedHeight = 25.0f,
                 alignment = TextAnchor.MiddleCenter,
             };
 
-            this.downloadStyle = new GUIStyle(HighLogic.Skin.button)
+            this.downloadButtonStyle = new GUIStyle(HighLogic.Skin.button)
             {
                 normal =
                 {
@@ -119,7 +116,7 @@ namespace KSP_AVC
 
             this.messageStyle = new GUIStyle(HighLogic.Skin.label)
             {
-                fixedWidth = this.nameStyle.fixedWidth + (this.versionStyle.fixedWidth * 3)
+                fixedWidth = this.nameLabelStyle.fixedWidth + (this.labelStyle.fixedWidth * 3)
             };
 
             this.closeStyle = new GUIStyle(HighLogic.Skin.button)
@@ -138,30 +135,29 @@ namespace KSP_AVC
 
         private void OnGUI()
         {
-            if (AddonManager.IsLocked || !AddonManager.HasIssues || FirstRunGui.IsOpen)
+            this.position = GUILayout.Window(this.GetInstanceID(), this.position, this.Window, "KSP Add-on Version Checker - Issue Monitor", HighLogic.Skin.window);
+            if (!this.hasCentred && this.position.width > 0 && this.position.height > 0)
             {
-                return;
+                this.position.center = new Vector2(Screen.width * 0.5f, Screen.height * 0.5f);
+                this.hasCentred = true;
             }
-
-            this.windowPosition = GUILayout.Window(this.windowId, this.windowPosition, this.Window, "KSP Add-on Version Checker - Issue Monitor", this.windowStyle).CentreWindow();
         }
 
         private void Window(int id)
         {
-            if (AddonManager.HasUpdateIssues)
+            if (AddonLibrary.Addons.Any(a => a.IsUpdateAvailable))
             {
                 this.DrawUpdateIssues();
             }
-
-            if (AddonManager.HasCompatibilityIssues)
+            if (AddonLibrary.Addons.Any(a => !a.IsCompatible))
             {
                 this.DrawCompatibilityIssues();
             }
-
             if (GUILayout.Button("CLOSE", this.closeStyle))
             {
                 Destroy(this);
             }
+            GUI.DragWindow();
         }
 
         private void DrawUpdateIssues()
@@ -169,32 +165,29 @@ namespace KSP_AVC
             GUILayout.BeginVertical(this.boxStyle);
             GUILayout.BeginHorizontal();
             GUILayout.Label("ADD-ON NAME", this.nameTitleStyle);
-            GUILayout.Label("CURRENT", this.versionTitleStyle);
-            GUILayout.Label("AVAILABLE", this.versionTitleStyle);
-            GUILayout.Label("DOWNLOAD", this.versionTitleStyle);
+            GUILayout.Label("CURRENT", this.titleStyle);
+            GUILayout.Label("AVAILABLE", this.titleStyle);
+            GUILayout.Label("DOWNLOAD", this.titleStyle);
             GUILayout.EndHorizontal();
 
-            foreach (var addon in AddonManager.Addons)
+            foreach (var addon in AddonLibrary.Addons.Where(a => a.IsUpdateAvailable))
             {
-                if (addon.UpdateAvailable)
+                GUILayout.BeginHorizontal();
+                GUILayout.Label(addon.Name, this.nameLabelStyle);
+                GUILayout.Label(addon.LocalInfo.Version.ToString(), this.labelStyle);
+                GUILayout.Label(addon.RemoteInfo.Version.ToString(), this.labelStyle);
+                if (!string.IsNullOrEmpty(addon.RemoteInfo.Download))
                 {
-                    GUILayout.BeginHorizontal();
-                    GUILayout.Label(addon.Name, this.nameStyle);
-                    GUILayout.Label(addon.AddonVersion.ToString(), this.versionStyle);
-                    GUILayout.Label(addon.RemoteAddonData.AddonVersion.ToString(), this.versionStyle);
-                    if (addon.RemoteAddonData.Download.Length > 0)
+                    if (GUILayout.Button("DOWNLOAD", this.downloadButtonStyle))
                     {
-                        if (GUILayout.Button("DOWNLOAD", this.downloadStyle))
-                        {
-                            Application.OpenURL(addon.RemoteAddonData.Download);
-                        }
+                        Application.OpenURL(addon.RemoteInfo.Download);
                     }
-                    else
-                    {
-                        GUILayout.Label("-----", this.versionStyle);
-                    }
-                    GUILayout.EndHorizontal();
                 }
+                else
+                {
+                    GUILayout.Label("-----", this.labelStyle);
+                }
+                GUILayout.EndHorizontal();
             }
             GUILayout.EndVertical();
         }
@@ -203,36 +196,20 @@ namespace KSP_AVC
         {
             GUILayout.BeginVertical(this.boxStyle);
             GUILayout.Label("COMPATIBILITY ISSUES", this.nameTitleStyle);
-            foreach (var addon in AddonManager.Addons)
+            foreach (var addon in AddonLibrary.Addons.Where(a => !a.IsCompatible))
             {
-                if (!addon.GameCompatibleVersion)
-                {
-                    GUILayout.Label(addon.Name + " version " + addon.AddonVersion + " was built to run on KSP " + addon.GameVersion + ".", this.messageStyle);
-                }
-                else if (!addon.GameCompatibleMininmum)
-                {
-                    if (addon.GameVersionMaximum == AddonData.DefaultMaximumVersion)
-                    {
-                        GUILayout.Label(addon.Name + " version " + addon.AddonVersion + " was built to run on KSP " + addon.GameVersionMinimum + " and above.", this.messageStyle);
-                    }
-                    else
-                    {
-                        GUILayout.Label(addon.Name + " version " + addon.AddonVersion + " was built to run on KSP " + addon.GameVersionMinimum + " - " + addon.GameVersionMaximum + ".", this.messageStyle);
-                    }
-                }
-                else if (!addon.GameCompatibleMaximum)
-                {
-                    if (addon.GameVersionMinimum == AddonData.DefaultMinimumVersion)
-                    {
-                        GUILayout.Label(addon.Name + " version " + addon.AddonVersion + " was built to run on KSP " + addon.GameVersionMaximum + " and below.", this.messageStyle);
-                    }
-                    else
-                    {
-                        GUILayout.Label(addon.Name + " version " + addon.AddonVersion + " was built to run on KSP " + addon.GameVersionMinimum + " - " + addon.GameVersionMaximum + ".", this.messageStyle);
-                    }
-                }
+                GUILayout.Label("The currently installed version of " + addon.Name + " was built to run on KSP " + addon.LocalInfo.KspVersion, this.messageStyle);
             }
             GUILayout.EndVertical();
+        }
+
+        #endregion
+
+        #region Destroyed
+
+        private void OnDestroy()
+        {
+            Logger.Log("IssueGui was destroyed.");
         }
 
         #endregion

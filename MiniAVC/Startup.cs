@@ -101,21 +101,19 @@ namespace MiniAVC
 
                 // Create and show issue gui if required.
                 var removeAddons = new List<Addon>();
-                if (this.addons.Any(a => a.IsProcessingComplete))
-                {
-                    foreach (var addon in this.addons.Where(a => a.IsProcessingComplete))
-                    {
-                        if (addon.IsUpdateAvailable || !addon.IsCompatible)
-                        {
-                            this.shownIssueGui = this.gameObject.AddComponent<IssueGui>();
-                            this.shownIssueGui.Addon = addon;
-                            this.shownIssueGui.enabled = true;
-                            removeAddons.Add(addon);
-                            break;
-                        }
 
+                foreach (var addon in this.addons.Where(a => a.IsProcessingComplete))
+                {
+                    if (addon.IsUpdateAvailable || !addon.IsCompatible)
+                    {
+                        this.shownIssueGui = this.gameObject.AddComponent<IssueGui>();
+                        this.shownIssueGui.Addon = addon;
+                        this.shownIssueGui.enabled = true;
                         removeAddons.Add(addon);
+                        break;
                     }
+
+                    removeAddons.Add(addon);
                 }
 
                 this.addons.RemoveAll(removeAddons.Contains);

@@ -47,28 +47,20 @@ namespace KSP_AVC
         public bool FirstRun
         {
             get { return this.firstRun; }
-            set
-            {
-                this.firstRun = value;
-                Logger.Log("Settings->FirstRun = " + value);
-            }
+            set { this.firstRun = value; }
         }
 
         public string Version
         {
             get { return this.version; }
-            set
-            {
-                this.version = value;
-                Logger.Log("Settings->Version = " + value);
-            }
+            set { this.version = value; }
         }
 
         #endregion
 
-        #region Save and Load
+        #region Save / Load
 
-        private static readonly string fileName = Path.Combine(new FileInfo(Assembly.GetExecutingAssembly().Location).Directory.ToString(), "KSP-AVC.cfg");
+        private static readonly string fileName = Path.ChangeExtension(Assembly.GetExecutingAssembly().Location, "xml");
 
         public static void Save()
         {
@@ -81,7 +73,7 @@ namespace KSP_AVC
             }
             catch (Exception ex)
             {
-                Logger.Exception(ex, "Settings->Save");
+                Logger.Exception(ex);
             }
         }
 
@@ -102,7 +94,7 @@ namespace KSP_AVC
             }
             catch (Exception ex)
             {
-                Logger.Exception(ex, "Settings->Load");
+                Logger.Exception(ex);
                 return new Settings();
             }
         }
