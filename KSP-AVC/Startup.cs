@@ -33,6 +33,7 @@ namespace KSP_AVC
         #region Fields
 
         private FirstRunGui firstRunGui;
+        private CheckGui checkGui;
 
         #endregion
 
@@ -86,7 +87,13 @@ namespace KSP_AVC
                     {
                         this.gameObject.AddComponent<IssueGui>();
                     }
+                    Destroy(this.checkGui);
                     Destroy(this);
+                }
+
+                if (this.checkGui == null)
+                {
+                    this.checkGui = this.gameObject.AddComponent<CheckGui>();
                 }
             }
             catch (Exception ex)

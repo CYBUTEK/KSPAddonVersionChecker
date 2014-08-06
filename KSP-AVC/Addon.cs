@@ -42,7 +42,7 @@ namespace KSP_AVC
             try
             {
                 this.HasVersionFile = true;
-                this.ProcessLocalInfo(path);
+                this.RunProcessLocalInfo(path);
             }
             catch (Exception ex)
             {
