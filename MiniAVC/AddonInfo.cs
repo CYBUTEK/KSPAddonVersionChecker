@@ -114,6 +114,11 @@ namespace MiniAVC
             get { return this.IsCompatibleKspVersion || ((this.kspVersionMin != null || this.kspVersionMax != null) && this.IsCompatibleKspVersionMin && this.IsCompatibleKspVersionMax); }
         }
 
+        public static System.Version ActualKspVersion
+        {
+            get { return actualKspVersion; }
+        }
+
         #endregion
 
         #region Parse Json
@@ -165,18 +170,23 @@ namespace MiniAVC
         {
             if (data is Dictionary<string, object>)
             {
-                var version = data as Dictionary<string, object>;
+                var dataVersion = data as Dictionary<string, object>;
 
-                switch (version.Count)
+                switch (dataVersion.Count)
                 {
                     case 2:
-                        return new System.Version((int)(long)version["MAJOR"], (int)(long)version["MINOR"]);
+                        return new System.Version((int)(long)dataVersion["MAJOR"], (int)(long)dataVersion["MINOR"]);
 
                     case 3:
-                        return new System.Version((int)(long)version["MAJOR"], (int)(long)version["MINOR"], (int)(long)version["PATCH"]);
+                        return (int)(long)dataVersion["PATCH"] == 0
+                            ? new System.Version((int)(long)dataVersion["MAJOR"], (int)(long)dataVersion["MINOR"])
+                            : new System.Version((int)(long)dataVersion["MAJOR"], (int)(long)dataVersion["MINOR"], (int)(long)dataVersion["PATCH"]);
 
                     case 4:
-                        return new System.Version((int)(long)version["MAJOR"], (int)(long)version["MINOR"], (int)(long)version["PATCH"], (int)(long)version["BUILD"]);
+                        return (int)(long)dataVersion["BUILD"] == 0 ? (int)(long)dataVersion["PATCH"] == 0
+                            ? new System.Version((int)(long)dataVersion["MAJOR"], (int)(long)dataVersion["MINOR"])
+                            : new System.Version((int)(long)dataVersion["MAJOR"], (int)(long)dataVersion["MINOR"], (int)(long)dataVersion["PATCH"])
+                            : new System.Version((int)(long)dataVersion["MAJOR"], (int)(long)dataVersion["MINOR"], (int)(long)dataVersion["PATCH"], (int)(long)dataVersion["BUILD"]);
 
                     default:
                         return null;
