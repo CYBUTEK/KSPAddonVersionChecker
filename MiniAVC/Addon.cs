@@ -112,12 +112,26 @@ namespace MiniAVC
 
         public void RunProcessLocalInfo(string file)
         {
-            ThreadPool.QueueUserWorkItem(this.ProcessLocalInfo, file);
+            try
+            {
+                ThreadPool.QueueUserWorkItem(this.ProcessLocalInfo, file);
+            }
+            catch (Exception ex)
+            {
+                Logger.Exception(ex);
+            }
         }
 
         public void RunProcessRemoteInfo()
         {
-            ThreadPool.QueueUserWorkItem(this.ProcessRemoteInfo);
+            try
+            {
+                ThreadPool.QueueUserWorkItem(this.ProcessRemoteInfo);
+            }
+            catch (Exception ex)
+            {
+                Logger.Exception(ex);
+            }
         }
 
         #endregion
@@ -128,9 +142,10 @@ namespace MiniAVC
         {
             try
             {
-                using (var stream = new StreamReader(File.OpenRead((string)state)))
+                var path = (string)state;
+                using (var stream = new StreamReader(File.OpenRead(path)))
                 {
-                    this.localInfo = new AddonInfo((string)state, stream.ReadToEnd());
+                    this.localInfo = new AddonInfo(path, stream.ReadToEnd());
                     this.IsLocalReady = true;
                 }
                 if (!this.settings.FirstRun || string.IsNullOrEmpty(this.localInfo.Url))
@@ -174,7 +189,26 @@ namespace MiniAVC
             }
             catch (Exception ex)
             {
-                Logger.Exception(ex);
+                if (ex is WebException)
+                {
+                    try
+                    {
+                        var response = (ex as WebException).Response as HttpWebResponse;
+                        this.remoteInfo = this.localInfo;
+                        this.IsRemoteReady = true;
+                        this.IsProcessingComplete = true;
+                        Logger.Log(this.localInfo);
+                        Logger.Log(this.localInfo.Url + ": " + response.StatusCode);
+                    }
+                    catch (Exception ex1)
+                    {
+                        Logger.Exception(ex1);
+                    }
+                }
+                else
+                {
+                    Logger.Exception(ex);
+                }
             }
         }
 

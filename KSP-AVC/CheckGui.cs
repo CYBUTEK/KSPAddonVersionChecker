@@ -39,12 +39,27 @@ namespace KSP_AVC
 
         private void Awake()
         {
-            DontDestroyOnLoad(this);
+            try
+            {
+                DontDestroyOnLoad(this);
+                Logger.Log("CheckGui was created.");
+            }
+            catch (Exception ex)
+            {
+                Logger.Exception(ex);
+            }
         }
 
         private void Start()
         {
-            this.InitialiseStyles();
+            try
+            {
+                this.InitialiseStyles();
+            }
+            catch (Exception ex)
+            {
+                Logger.Exception(ex);
+            }
         }
 
         #endregion
@@ -55,17 +70,24 @@ namespace KSP_AVC
 
         private void InitialiseStyles()
         {
-            this.titleStyle = new GUIStyle(HighLogic.Skin.label)
+            try
             {
-                normal =
+                this.titleStyle = new GUIStyle(HighLogic.Skin.label)
                 {
-                    textColor = Color.white
-                },
-                fontSize = 13,
-                fontStyle = FontStyle.Bold,
-                alignment = TextAnchor.MiddleCenter,
-                stretchWidth = true
-            };
+                    normal =
+                    {
+                        textColor = Color.white
+                    },
+                    fontSize = 13,
+                    fontStyle = FontStyle.Bold,
+                    alignment = TextAnchor.MiddleCenter,
+                    stretchWidth = true
+                };
+            }
+            catch (Exception ex)
+            {
+                Logger.Exception(ex);
+            }
         }
 
         #endregion
@@ -108,6 +130,15 @@ namespace KSP_AVC
             {
                 Logger.Exception(ex);
             }
+        }
+
+        #endregion
+
+        #region Destruction
+
+        private void OnDestroy()
+        {
+            Logger.Log("CheckGui was destroyed.");
         }
 
         #endregion

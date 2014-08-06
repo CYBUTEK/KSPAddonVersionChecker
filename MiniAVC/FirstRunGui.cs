@@ -47,6 +47,18 @@ namespace MiniAVC
             try
             {
                 this.enabled = false;
+                Logger.Log("FirstRunGui was created.");
+            }
+            catch (Exception ex)
+            {
+                Logger.Exception(ex);
+            }
+        }
+
+        private void Start()
+        {
+            try
+            {
                 this.InitialiseStyles();
             }
             catch (Exception ex)
@@ -64,25 +76,32 @@ namespace MiniAVC
 
         private void InitialiseStyles()
         {
-            this.titleStyle = new GUIStyle(HighLogic.Skin.label)
+            try
             {
-                normal =
+                this.titleStyle = new GUIStyle(HighLogic.Skin.label)
                 {
-                    textColor = Color.white
-                },
-                fontSize = 13,
-                fontStyle = FontStyle.Bold,
-                alignment = TextAnchor.MiddleCenter,
-                stretchWidth = true
-            };
+                    normal =
+                    {
+                        textColor = Color.white
+                    },
+                    fontSize = 13,
+                    fontStyle = FontStyle.Bold,
+                    alignment = TextAnchor.MiddleCenter,
+                    stretchWidth = true
+                };
 
-            this.buttonStyle = new GUIStyle(HighLogic.Skin.button)
-            {
-                normal =
+                this.buttonStyle = new GUIStyle(HighLogic.Skin.button)
                 {
-                    textColor = Color.white
-                }
-            };
+                    normal =
+                    {
+                        textColor = Color.white
+                    }
+                };
+            }
+            catch (Exception ex)
+            {
+                Logger.Exception(ex);
+            }
         }
 
         #endregion
@@ -139,6 +158,15 @@ namespace MiniAVC
             {
                 Logger.Exception(ex);
             }
+        }
+
+        #endregion
+
+        #region Destruction
+
+        private void OnDestroy()
+        {
+            Logger.Log("FirstRunGui was destroyed.");
         }
 
         #endregion

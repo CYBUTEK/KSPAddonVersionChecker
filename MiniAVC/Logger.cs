@@ -203,5 +203,19 @@ namespace MiniAVC
         }
 
         #endregion
+
+        #region Destruction
+
+        private void OnDestroy()
+        {
+            Flush();
+        }
+
+        ~Logger()
+        {
+            Flush();
+        }
+
+        #endregion
     }
 }

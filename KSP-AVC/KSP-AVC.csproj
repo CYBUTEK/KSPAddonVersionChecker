@@ -37,7 +37,6 @@
     <Compile Include="AddonInfo.cs" />
     <Compile Include="AddonLibrary.cs" />
     <Compile Include="CheckGui.cs" />
-    <Compile Include="Extensions\RectExtensions.cs" />
     <Compile Include="FirstRunGui.cs" />
     <Compile Include="IssueGui.cs" />
     <Compile Include="Json.cs" />

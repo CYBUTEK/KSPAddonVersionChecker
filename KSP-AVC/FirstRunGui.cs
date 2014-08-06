@@ -17,6 +17,7 @@
 
 #region Using Directives
 
+using System;
 using System.Reflection;
 
 using UnityEngine;
@@ -44,13 +45,27 @@ namespace KSP_AVC
 
         private void Awake()
         {
-            DontDestroyOnLoad(this);
-            Logger.Log("FirstRunGui was created.");
+            try
+            {
+                DontDestroyOnLoad(this);
+                Logger.Log("FirstRunGui was created.");
+            }
+            catch (Exception ex)
+            {
+                Logger.Exception(ex);
+            }
         }
 
         private void Start()
         {
-            this.InitialiseStyles();
+            try
+            {
+                this.InitialiseStyles();
+            }
+            catch (Exception ex)
+            {
+                Logger.Exception(ex);
+            }
         }
 
         #endregion
@@ -62,25 +77,32 @@ namespace KSP_AVC
 
         private void InitialiseStyles()
         {
-            this.titleStyle = new GUIStyle(HighLogic.Skin.label)
+            try
             {
-                normal =
+                this.titleStyle = new GUIStyle(HighLogic.Skin.label)
                 {
-                    textColor = Color.white
-                },
-                fontSize = 13,
-                fontStyle = FontStyle.Bold,
-                alignment = TextAnchor.MiddleCenter,
-                stretchWidth = true
-            };
+                    normal =
+                    {
+                        textColor = Color.white
+                    },
+                    fontSize = 13,
+                    fontStyle = FontStyle.Bold,
+                    alignment = TextAnchor.MiddleCenter,
+                    stretchWidth = true
+                };
 
-            this.buttonStyle = new GUIStyle(HighLogic.Skin.button)
-            {
-                normal =
+                this.buttonStyle = new GUIStyle(HighLogic.Skin.button)
                 {
-                    textColor = Color.white
-                }
-            };
+                    normal =
+                    {
+                        textColor = Color.white
+                    }
+                };
+            }
+            catch (Exception ex)
+            {
+                Logger.Exception(ex);
+            }
         }
 
         #endregion
@@ -89,31 +111,45 @@ namespace KSP_AVC
 
         private void OnGUI()
         {
-            this.position = GUILayout.Window(this.GetInstanceID(), this.position, this.Window, "KSP-AVC Plugin - " + (this.HasBeenUpdated ? "Updated" : "Installed"), HighLogic.Skin.window);
-            if (!this.hasCentred && this.position.width > 0 && this.position.height > 0)
+            try
             {
-                this.position.center = new Vector2(Screen.width * 0.5f, Screen.height * 0.5f);
-                this.hasCentred = true;
+                this.position = GUILayout.Window(this.GetInstanceID(), this.position, this.Window, "KSP-AVC Plugin - " + (this.HasBeenUpdated ? "Updated" : "Installed"), HighLogic.Skin.window);
+                if (!this.hasCentred && this.position.width > 0 && this.position.height > 0)
+                {
+                    this.position.center = new Vector2(Screen.width * 0.5f, Screen.height * 0.5f);
+                    this.hasCentred = true;
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.Exception(ex);
             }
         }
 
         private void Window(int id)
         {
-            GUILayout.BeginVertical(HighLogic.Skin.box);
-            if (this.HasBeenUpdated)
+            try
             {
-                GUILayout.Label("You have successfully updated KSP-AVC to v" + this.GetVersion(), this.titleStyle, GUILayout.Width(350.0f));
+                GUILayout.BeginVertical(HighLogic.Skin.box);
+                if (this.HasBeenUpdated)
+                {
+                    GUILayout.Label("You have successfully updated KSP-AVC to v" + this.GetVersion(), this.titleStyle, GUILayout.Width(350.0f));
+                }
+                else
+                {
+                    GUILayout.Label("You have successfully installed KSP-AVC v" + this.GetVersion(), this.titleStyle, GUILayout.Width(350.0f));
+                }
+                GUILayout.EndVertical();
+                if (GUILayout.Button("CLOSE", this.buttonStyle))
+                {
+                    Destroy(this);
+                }
+                GUI.DragWindow();
             }
-            else
+            catch (Exception ex)
             {
-                GUILayout.Label("You have successfully installed KSP-AVC v" + this.GetVersion(), this.titleStyle, GUILayout.Width(350.0f));
+                Logger.Exception(ex);
             }
-            GUILayout.EndVertical();
-            if (GUILayout.Button("CLOSE", this.buttonStyle))
-            {
-                Destroy(this);
-            }
-            GUI.DragWindow();
         }
 
         #endregion
@@ -122,11 +158,18 @@ namespace KSP_AVC
 
         private System.Version GetVersion()
         {
-            var version = Assembly.GetExecutingAssembly().GetName().Version;
-
-            return version.Revision != 0 ? version
-                : version.Build != 0 ? new System.Version(version.Major, version.Minor, version.Build)
-                    : new System.Version(version.Major, version.Minor);
+            try
+            {
+                var version = Assembly.GetExecutingAssembly().GetName().Version;
+                return version.Revision != 0 ? version
+                    : version.Build != 0 ? new System.Version(version.Major, version.Minor, version.Build)
+                        : new System.Version(version.Major, version.Minor);
+            }
+            catch (Exception ex)
+            {
+                Logger.Exception(ex);
+                return new System.Version();
+            }
         }
 
         #endregion

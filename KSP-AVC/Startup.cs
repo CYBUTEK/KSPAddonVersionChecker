@@ -32,8 +32,8 @@ namespace KSP_AVC
     {
         #region Fields
 
-        private FirstRunGui firstRunGui;
         private CheckGui checkGui;
+        private FirstRunGui firstRunGui;
 
         #endregion
 
@@ -41,7 +41,15 @@ namespace KSP_AVC
 
         private void Awake()
         {
-            DontDestroyOnLoad(this);
+            try
+            {
+                DontDestroyOnLoad(this);
+                Logger.Log("Startup was created.");
+            }
+            catch (Exception ex)
+            {
+                Logger.Exception(ex);
+            }
         }
 
         private void Start()
@@ -100,6 +108,15 @@ namespace KSP_AVC
             {
                 Logger.Exception(ex);
             }
+        }
+
+        #endregion
+
+        #region Destruction
+
+        private void OnDestroy()
+        {
+            Logger.Log("Startup was destroyed.");
         }
 
         #endregion

@@ -17,6 +17,7 @@
 
 #region Using Directives
 
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -38,8 +39,15 @@ namespace KSP_AVC
 
         static AddonLibrary()
         {
-            rootPath = UrlDir.ApplicationRootPath;
-            ThreadPool.QueueUserWorkItem(ProcessAddonPopulation);
+            try
+            {
+                rootPath = UrlDir.ApplicationRootPath;
+                ThreadPool.QueueUserWorkItem(ProcessAddonPopulation);
+            }
+            catch (Exception ex)
+            {
+                Logger.Exception(ex);
+            }
         }
 
         #endregion
@@ -56,9 +64,16 @@ namespace KSP_AVC
 
         private static void ProcessAddonPopulation(object state)
         {
-            var threadAddons = Directory.GetFiles(rootPath, "*.version", SearchOption.AllDirectories).Select(p => p.Replace(rootPath, string.Empty)).Select(path => new Addon(path)).ToList();
-            Addons = threadAddons;
-            Populated = true;
+            try
+            {
+                var threadAddons = Directory.GetFiles(rootPath, "*.version", SearchOption.AllDirectories).Select(p => p.Replace(rootPath, string.Empty)).Select(path => new Addon(path)).ToList();
+                Addons = threadAddons;
+                Populated = true;
+            }
+            catch (Exception ex)
+            {
+                Logger.Exception(ex);
+            }
         }
 
         #endregion

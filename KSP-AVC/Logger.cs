@@ -53,8 +53,11 @@ namespace KSP_AVC
             fileName = Path.ChangeExtension(Assembly.GetExecutingAssembly().Location, "log");
             File.Delete(fileName);
 
-            messages.Add(new[] {"Executing: " + assemblyName.Name + " - " + assemblyName.Version});
-            messages.Add(new[] {"Assembly: " + Assembly.GetExecutingAssembly().Location});
+            lock (messages)
+            {
+                messages.Add(new[] {"Executing: " + assemblyName.Name + " - " + assemblyName.Version});
+                messages.Add(new[] {"Assembly: " + Assembly.GetExecutingAssembly().Location});
+            }
             Blank();
         }
 
@@ -198,6 +201,20 @@ namespace KSP_AVC
         }
 
         private void LateUpdate()
+        {
+            Flush();
+        }
+
+        #endregion
+
+        #region Destruction
+
+        private void OnDestroy()
+        {
+            Flush();
+        }
+
+        ~Logger()
         {
             Flush();
         }

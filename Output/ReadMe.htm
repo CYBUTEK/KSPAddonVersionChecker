@@ -111,7 +111,7 @@
 
 		<section>
 			<h3>Current Version</h3>
-			<p>1.1</p>
+			<p>1.1.1</p>
 		</section>
 
 		<section>
@@ -181,7 +181,7 @@
 						The display name for the add-on.<br>
 					</li>
 					<li><b>URL</b> - Optional<br>
-						<i>Location of a remote version file for update checking.</i>
+						Location of a remote version file for update checking.
 					</li>
 					<li><b>DOWNLOAD</b> - Optional<br>
 						Web address where the latest version can be downloaded.<br>
@@ -210,6 +210,12 @@
 		<section>
 			<h3>Change Log</h3>
 			<ul id='changelog'>
+				<li>1.1.1
+					<ul>
+						<li>Added: Blanket exception handling and logging.
+						<li>Added: Logger will flush on destruction and GC finaliser.</li>
+					</ul>
+				</li>
 				<li>1.1
 					<ul>
 						<li>Complete re-write of the core code.</li>

@@ -93,12 +93,26 @@ namespace KSP_AVC
 
         public void RunProcessLocalInfo(string path)
         {
-            ThreadPool.QueueUserWorkItem(this.ProcessLocalInfo, path);
+            try
+            {
+                ThreadPool.QueueUserWorkItem(this.ProcessLocalInfo, path);
+            }
+            catch (Exception ex)
+            {
+                Logger.Exception(ex);
+            }
         }
 
         public void RunProcessRemoteInfo()
         {
-            ThreadPool.QueueUserWorkItem(this.ProcessRemoteInfo);
+            try
+            {
+                ThreadPool.QueueUserWorkItem(this.ProcessRemoteInfo);
+            }
+            catch (Exception ex)
+            {
+                Logger.Exception(ex);
+            }
         }
 
         #endregion
@@ -155,12 +169,19 @@ namespace KSP_AVC
             {
                 if (ex is WebException)
                 {
-                    var response = (ex as WebException).Response as HttpWebResponse;
-                    this.remoteInfo = this.localInfo;
-                    this.IsRemoteReady = true;
-                    this.IsProcessingComplete = true;
-                    Logger.Log(this.localInfo);
-                    Logger.Log(this.localInfo.Url + ": " + response.StatusCode);
+                    try
+                    {
+                        var response = (ex as WebException).Response as HttpWebResponse;
+                        this.remoteInfo = this.localInfo;
+                        this.IsRemoteReady = true;
+                        this.IsProcessingComplete = true;
+                        Logger.Log(this.localInfo);
+                        Logger.Log(this.localInfo.Url + ": " + response.StatusCode);
+                    }
+                    catch (Exception ex1)
+                    {
+                        Logger.Exception(ex1);
+                    }
                 }
                 else
                 {

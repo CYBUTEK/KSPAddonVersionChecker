@@ -47,6 +47,18 @@ namespace MiniAVC
             try
             {
                 this.enabled = false;
+                Logger.Log("IssueGui was created.");
+            }
+            catch (Exception ex)
+            {
+                Logger.Exception(ex);
+            }
+        }
+
+        private void Start()
+        {
+            try
+            {
                 this.InitialiseStyles();
             }
             catch (Exception ex)
@@ -133,7 +145,7 @@ namespace MiniAVC
                     GUILayout.Label("Installed: " + this.Addon.LocalInfo.Version, this.labelStyle, GUILayout.Width(150.0f));
                     GUILayout.Label("Available: " + this.Addon.RemoteInfo.Version, this.labelStyle, GUILayout.Width(150.0f));
                     GUILayout.EndHorizontal();
-                    
+
                     if (!string.IsNullOrEmpty(this.Addon.RemoteInfo.Download))
                     {
                         if (GUILayout.Button("DOWNLOAD", this.buttonStyle))
@@ -162,6 +174,15 @@ namespace MiniAVC
             {
                 Logger.Exception(ex);
             }
+        }
+
+        #endregion
+
+        #region Destruction
+
+        private void OnDestroy()
+        {
+            Logger.Log("IssueGui was destroyed.");
         }
 
         #endregion

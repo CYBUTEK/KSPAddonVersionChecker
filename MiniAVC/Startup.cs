@@ -40,6 +40,8 @@ namespace MiniAVC
 
         #endregion
 
+        #region Initialisation
+
         private void Awake()
         {
             try
@@ -59,7 +61,18 @@ namespace MiniAVC
                     Destroy(this);
                     return;
                 }
+                Logger.Log("Starter was created.");
+            }
+            catch (Exception ex)
+            {
+                Logger.Exception(ex);
+            }
+        }
 
+        private void Start()
+        {
+            try
+            {
                 // Load all the addons which are being supported by MiniAVC.
                 foreach (var path in AssemblyLoader.loadedAssemblies.Where(a => a.name == "MiniAVC").Select(a => Path.GetDirectoryName(a.path)))
                 {
@@ -75,6 +88,8 @@ namespace MiniAVC
                 Logger.Exception(ex);
             }
         }
+
+        #endregion
 
         private void Update()
         {

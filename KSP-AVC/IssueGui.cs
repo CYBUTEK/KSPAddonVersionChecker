@@ -17,6 +17,7 @@
 
 #region Using Directives
 
+using System;
 using System.Linq;
 
 using UnityEngine;
@@ -38,13 +39,27 @@ namespace KSP_AVC
 
         private void Awake()
         {
-            DontDestroyOnLoad(this);
-            Logger.Log("IssueGui was created.");
+            try
+            {
+                DontDestroyOnLoad(this);
+                Logger.Log("IssueGui was created.");
+            }
+            catch (Exception ex)
+            {
+                Logger.Exception(ex);
+            }
         }
 
         private void Start()
         {
-            this.InitialiseStyles();
+            try
+            {
+                this.InitialiseStyles();
+            }
+            catch (Exception ex)
+            {
+                Logger.Exception(ex);
+            }
         }
 
         #endregion
@@ -62,71 +77,78 @@ namespace KSP_AVC
 
         private void InitialiseStyles()
         {
-            this.boxStyle = new GUIStyle(HighLogic.Skin.box)
+            try
             {
-                padding = new RectOffset(10, 10, 5, 5)
-            };
-
-            this.nameTitleStyle = new GUIStyle(HighLogic.Skin.label)
-            {
-                normal =
+                this.boxStyle = new GUIStyle(HighLogic.Skin.box)
                 {
-                    textColor = Color.white
-                },
-                fixedWidth = 300.0f,
-                alignment = TextAnchor.MiddleLeft,
-                fontStyle = FontStyle.Bold
-            };
+                    padding = new RectOffset(10, 10, 5, 5)
+                };
 
-            this.titleStyle = new GUIStyle(HighLogic.Skin.label)
-            {
-                normal =
+                this.nameTitleStyle = new GUIStyle(HighLogic.Skin.label)
                 {
-                    textColor = Color.white
-                },
-                fixedWidth = 100.0f,
-                alignment = TextAnchor.MiddleCenter,
-                fontStyle = FontStyle.Bold
-            };
+                    normal =
+                    {
+                        textColor = Color.white
+                    },
+                    fixedWidth = 300.0f,
+                    alignment = TextAnchor.MiddleLeft,
+                    fontStyle = FontStyle.Bold
+                };
 
-            this.nameLabelStyle = new GUIStyle(HighLogic.Skin.label)
-            {
-                fixedWidth = 300.0f,
-                fixedHeight = 25.0f,
-                alignment = TextAnchor.MiddleLeft,
-            };
-
-            this.labelStyle = new GUIStyle(HighLogic.Skin.label)
-            {
-                fixedWidth = 100.0f,
-                fixedHeight = 25.0f,
-                alignment = TextAnchor.MiddleCenter,
-            };
-
-            this.downloadButtonStyle = new GUIStyle(HighLogic.Skin.button)
-            {
-                normal =
+                this.titleStyle = new GUIStyle(HighLogic.Skin.label)
                 {
-                    textColor = Color.white
-                },
-                fixedWidth = 100.0f,
-                fixedHeight = 25.0f,
-                alignment = TextAnchor.MiddleCenter,
-            };
+                    normal =
+                    {
+                        textColor = Color.white
+                    },
+                    fixedWidth = 100.0f,
+                    alignment = TextAnchor.MiddleCenter,
+                    fontStyle = FontStyle.Bold
+                };
 
-            this.messageStyle = new GUIStyle(HighLogic.Skin.label)
-            {
-                fixedWidth = this.nameLabelStyle.fixedWidth + (this.labelStyle.fixedWidth * 3)
-            };
-
-            this.closeStyle = new GUIStyle(HighLogic.Skin.button)
-            {
-                normal =
+                this.nameLabelStyle = new GUIStyle(HighLogic.Skin.label)
                 {
-                    textColor = Color.white
-                },
-                fixedHeight = 25.0f
-            };
+                    fixedWidth = 300.0f,
+                    fixedHeight = 25.0f,
+                    alignment = TextAnchor.MiddleLeft,
+                };
+
+                this.labelStyle = new GUIStyle(HighLogic.Skin.label)
+                {
+                    fixedWidth = 100.0f,
+                    fixedHeight = 25.0f,
+                    alignment = TextAnchor.MiddleCenter,
+                };
+
+                this.downloadButtonStyle = new GUIStyle(HighLogic.Skin.button)
+                {
+                    normal =
+                    {
+                        textColor = Color.white
+                    },
+                    fixedWidth = 100.0f,
+                    fixedHeight = 25.0f,
+                    alignment = TextAnchor.MiddleCenter,
+                };
+
+                this.messageStyle = new GUIStyle(HighLogic.Skin.label)
+                {
+                    fixedWidth = this.nameLabelStyle.fixedWidth + (this.labelStyle.fixedWidth * 3)
+                };
+
+                this.closeStyle = new GUIStyle(HighLogic.Skin.button)
+                {
+                    normal =
+                    {
+                        textColor = Color.white
+                    },
+                    fixedHeight = 25.0f
+                };
+            }
+            catch (Exception ex)
+            {
+                Logger.Exception(ex);
+            }
         }
 
         #endregion
@@ -135,72 +157,100 @@ namespace KSP_AVC
 
         private void OnGUI()
         {
-            this.position = GUILayout.Window(this.GetInstanceID(), this.position, this.Window, "KSP Add-on Version Checker - Issue Monitor", HighLogic.Skin.window);
-            if (!this.hasCentred && this.position.width > 0 && this.position.height > 0)
+            try
             {
-                this.position.center = new Vector2(Screen.width * 0.5f, Screen.height * 0.5f);
-                this.hasCentred = true;
+                this.position = GUILayout.Window(this.GetInstanceID(), this.position, this.Window, "KSP Add-on Version Checker - Issue Monitor", HighLogic.Skin.window);
+                if (!this.hasCentred && this.position.width > 0 && this.position.height > 0)
+                {
+                    this.position.center = new Vector2(Screen.width * 0.5f, Screen.height * 0.5f);
+                    this.hasCentred = true;
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.Exception(ex);
             }
         }
 
         private void Window(int id)
         {
-            if (AddonLibrary.Addons.Any(a => a.IsUpdateAvailable))
+            try
             {
-                this.DrawUpdateIssues();
+                if (AddonLibrary.Addons.Any(a => a.IsUpdateAvailable))
+                {
+                    this.DrawUpdateIssues();
+                }
+                if (AddonLibrary.Addons.Any(a => !a.IsCompatible))
+                {
+                    this.DrawCompatibilityIssues();
+                }
+                if (GUILayout.Button("CLOSE", this.closeStyle))
+                {
+                    Destroy(this);
+                }
+                GUI.DragWindow();
             }
-            if (AddonLibrary.Addons.Any(a => !a.IsCompatible))
+            catch (Exception ex)
             {
-                this.DrawCompatibilityIssues();
+                Logger.Exception(ex);
             }
-            if (GUILayout.Button("CLOSE", this.closeStyle))
-            {
-                Destroy(this);
-            }
-            GUI.DragWindow();
         }
 
         private void DrawUpdateIssues()
         {
-            GUILayout.BeginVertical(this.boxStyle);
-            GUILayout.BeginHorizontal();
-            GUILayout.Label("ADD-ON NAME", this.nameTitleStyle);
-            GUILayout.Label("CURRENT", this.titleStyle);
-            GUILayout.Label("AVAILABLE", this.titleStyle);
-            GUILayout.Label("DOWNLOAD", this.titleStyle);
-            GUILayout.EndHorizontal();
-
-            foreach (var addon in AddonLibrary.Addons.Where(a => a.IsUpdateAvailable))
+            try
             {
+                GUILayout.BeginVertical(this.boxStyle);
                 GUILayout.BeginHorizontal();
-                GUILayout.Label(addon.Name, this.nameLabelStyle);
-                GUILayout.Label(addon.LocalInfo.Version.ToString(), this.labelStyle);
-                GUILayout.Label(addon.RemoteInfo.Version.ToString(), this.labelStyle);
-                if (!string.IsNullOrEmpty(addon.RemoteInfo.Download))
-                {
-                    if (GUILayout.Button("DOWNLOAD", this.downloadButtonStyle))
-                    {
-                        Application.OpenURL(addon.RemoteInfo.Download);
-                    }
-                }
-                else
-                {
-                    GUILayout.Label("-----", this.labelStyle);
-                }
+                GUILayout.Label("ADD-ON NAME", this.nameTitleStyle);
+                GUILayout.Label("CURRENT", this.titleStyle);
+                GUILayout.Label("AVAILABLE", this.titleStyle);
+                GUILayout.Label("DOWNLOAD", this.titleStyle);
                 GUILayout.EndHorizontal();
+
+                foreach (var addon in AddonLibrary.Addons.Where(a => a.IsUpdateAvailable))
+                {
+                    GUILayout.BeginHorizontal();
+                    GUILayout.Label(addon.Name, this.nameLabelStyle);
+                    GUILayout.Label(addon.LocalInfo.Version.ToString(), this.labelStyle);
+                    GUILayout.Label(addon.RemoteInfo.Version.ToString(), this.labelStyle);
+                    if (!string.IsNullOrEmpty(addon.RemoteInfo.Download))
+                    {
+                        if (GUILayout.Button("DOWNLOAD", this.downloadButtonStyle))
+                        {
+                            Application.OpenURL(addon.RemoteInfo.Download);
+                        }
+                    }
+                    else
+                    {
+                        GUILayout.Label("-----", this.labelStyle);
+                    }
+                    GUILayout.EndHorizontal();
+                }
+                GUILayout.EndVertical();
             }
-            GUILayout.EndVertical();
+            catch (Exception ex)
+            {
+                Logger.Exception(ex);
+            }
         }
 
         private void DrawCompatibilityIssues()
         {
-            GUILayout.BeginVertical(this.boxStyle);
-            GUILayout.Label("COMPATIBILITY ISSUES", this.nameTitleStyle);
-            foreach (var addon in AddonLibrary.Addons.Where(a => !a.IsCompatible))
+            try
             {
-                GUILayout.Label("The currently installed version of " + addon.Name + " was built to run on KSP " + addon.LocalInfo.KspVersion, this.messageStyle);
+                GUILayout.BeginVertical(this.boxStyle);
+                GUILayout.Label("COMPATIBILITY ISSUES", this.nameTitleStyle);
+                foreach (var addon in AddonLibrary.Addons.Where(a => !a.IsCompatible))
+                {
+                    GUILayout.Label("The currently installed version of " + addon.Name + " was built to run on KSP " + addon.LocalInfo.KspVersion, this.messageStyle);
+                }
+                GUILayout.EndVertical();
             }
-            GUILayout.EndVertical();
+            catch (Exception ex)
+            {
+                Logger.Exception(ex);
+            }
         }
 
         #endregion

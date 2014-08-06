@@ -43,7 +43,14 @@ namespace KSP_AVC
 
         static AddonInfo()
         {
-            actualKspVersion = new System.Version(Versioning.version_major, Versioning.version_minor, Versioning.Revision);
+            try
+            {
+                actualKspVersion = new System.Version(Versioning.version_major, Versioning.version_minor, Versioning.Revision);
+            }
+            catch (Exception ex)
+            {
+                Logger.Exception(ex);
+            }
         }
 
         public AddonInfo(string path, string json)
@@ -125,74 +132,89 @@ namespace KSP_AVC
 
         private void Parse(string json)
         {
-            var data = Json.Deserialize(json) as Dictionary<string, object>;
-            if (data == null)
+            try
             {
-                this.ParseError = true;
-                return;
-            }
-            foreach (var key in data.Keys)
-            {
-                switch (key)
+                var data = Json.Deserialize(json) as Dictionary<string, object>;
+                if (data == null)
                 {
-                    case "NAME":
-                        this.Name = (string)data["NAME"];
-                        break;
-
-                    case "URL":
-                        this.Url = this.FormatCompatibleUrl((string)data["URL"]);
-                        break;
-
-                    case "DOWNLOAD":
-                        this.Download = (string)data["DOWNLOAD"];
-                        break;
-
-                    case "VERSION":
-                        this.Version = this.GetVersion(data["VERSION"]);
-                        break;
-
-                    case "KSP_VERSION":
-                        this.kspVersion = this.GetVersion(data["KSP_VERSION"]);
-                        break;
-
-                    case "KSP_VERSION_MIN":
-                        this.kspVersionMin = this.GetVersion(data["KSP_VERSION_MIN"]);
-                        break;
-
-                    case "KSP_VERSION_MAX":
-                        this.kspVersionMax = this.GetVersion(data["KSP_VERSION_MAX"]);
-                        break;
+                    this.ParseError = true;
+                    return;
                 }
+                foreach (var key in data.Keys)
+                {
+                    switch (key)
+                    {
+                        case "NAME":
+                            this.Name = (string)data["NAME"];
+                            break;
+
+                        case "URL":
+                            this.Url = this.FormatCompatibleUrl((string)data["URL"]);
+                            break;
+
+                        case "DOWNLOAD":
+                            this.Download = (string)data["DOWNLOAD"];
+                            break;
+
+                        case "VERSION":
+                            this.Version = this.GetVersion(data["VERSION"]);
+                            break;
+
+                        case "KSP_VERSION":
+                            this.kspVersion = this.GetVersion(data["KSP_VERSION"]);
+                            break;
+
+                        case "KSP_VERSION_MIN":
+                            this.kspVersionMin = this.GetVersion(data["KSP_VERSION_MIN"]);
+                            break;
+
+                        case "KSP_VERSION_MAX":
+                            this.kspVersionMax = this.GetVersion(data["KSP_VERSION_MAX"]);
+                            break;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.Exception(ex);
             }
         }
 
         private System.Version GetVersion(object data)
         {
-            if (data is Dictionary<string, object>)
+            try
             {
-                var dataVersion = data as Dictionary<string, object>;
-
-                switch (dataVersion.Count)
+                if (data is Dictionary<string, object>)
                 {
-                    case 2:
-                        return new System.Version((int)(long)dataVersion["MAJOR"], (int)(long)dataVersion["MINOR"]);
+                    var dataVersion = data as Dictionary<string, object>;
 
-                    case 3:
-                        return (int)(long)dataVersion["PATCH"] == 0
-                            ? new System.Version((int)(long)dataVersion["MAJOR"], (int)(long)dataVersion["MINOR"])
-                            : new System.Version((int)(long)dataVersion["MAJOR"], (int)(long)dataVersion["MINOR"], (int)(long)dataVersion["PATCH"]);
+                    switch (dataVersion.Count)
+                    {
+                        case 2:
+                            return new System.Version((int)(long)dataVersion["MAJOR"], (int)(long)dataVersion["MINOR"]);
 
-                    case 4:
-                        return (int)(long)dataVersion["BUILD"] == 0 ? (int)(long)dataVersion["PATCH"] == 0
-                            ? new System.Version((int)(long)dataVersion["MAJOR"], (int)(long)dataVersion["MINOR"])
-                            : new System.Version((int)(long)dataVersion["MAJOR"], (int)(long)dataVersion["MINOR"], (int)(long)dataVersion["PATCH"])
-                            : new System.Version((int)(long)dataVersion["MAJOR"], (int)(long)dataVersion["MINOR"], (int)(long)dataVersion["PATCH"], (int)(long)dataVersion["BUILD"]);
+                        case 3:
+                            return (int)(long)dataVersion["PATCH"] == 0
+                                ? new System.Version((int)(long)dataVersion["MAJOR"], (int)(long)dataVersion["MINOR"])
+                                : new System.Version((int)(long)dataVersion["MAJOR"], (int)(long)dataVersion["MINOR"], (int)(long)dataVersion["PATCH"]);
 
-                    default:
-                        return null;
+                        case 4:
+                            return (int)(long)dataVersion["BUILD"] == 0 ? (int)(long)dataVersion["PATCH"] == 0
+                                ? new System.Version((int)(long)dataVersion["MAJOR"], (int)(long)dataVersion["MINOR"])
+                                : new System.Version((int)(long)dataVersion["MAJOR"], (int)(long)dataVersion["MINOR"], (int)(long)dataVersion["PATCH"])
+                                : new System.Version((int)(long)dataVersion["MAJOR"], (int)(long)dataVersion["MINOR"], (int)(long)dataVersion["PATCH"], (int)(long)dataVersion["BUILD"]);
+
+                        default:
+                            return null;
+                    }
                 }
+                return new System.Version((string)data);
             }
-            return new System.Version((string)data);
+            catch (Exception ex)
+            {
+                Logger.Exception(ex);
+                return new System.Version();
+            }
         }
 
         private string FormatCompatibleUrl(string url)
