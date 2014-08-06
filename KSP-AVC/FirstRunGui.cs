@@ -102,11 +102,11 @@ namespace KSP_AVC
             GUILayout.BeginVertical(HighLogic.Skin.box);
             if (this.HasBeenUpdated)
             {
-                GUILayout.Label("You have successfully updated to v" + this.GetVersion(), this.titleStyle, GUILayout.Width(300.0f));
+                GUILayout.Label("You have successfully updated KSP-AVC to v" + this.GetVersion(), this.titleStyle, GUILayout.Width(350.0f));
             }
             else
             {
-                GUILayout.Label("You have successfully installed v" + this.GetVersion(), this.titleStyle, GUILayout.Width(300.0f));
+                GUILayout.Label("You have successfully installed KSP-AVC v" + this.GetVersion(), this.titleStyle, GUILayout.Width(350.0f));
             }
             GUILayout.EndVertical();
             if (GUILayout.Button("CLOSE", this.buttonStyle))

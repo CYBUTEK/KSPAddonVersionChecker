@@ -111,7 +111,7 @@
 
 		<section>
 			<h3>Current Version</h3>
-			<p>1.0.4</p>
+			<p>1.1</p>
 		</section>
 
 		<section>
@@ -142,65 +142,90 @@
 		</section>
 
 		<section>
-			<h3>'.version' File Example</h3>
+			<h3>Version File Example</h3>
 			<p>
 				{<br>
 				&nbsp;&nbsp;&nbsp;&nbsp;"NAME":"KSP-AVC",<br>
 				&nbsp;&nbsp;&nbsp;&nbsp;"URL":"http://ksp-avc.cybutek.net/version.php?id=2",<br>
-				&nbsp;&nbsp;&nbsp;&nbsp;"DOWNLOAD":"",<br>
+				&nbsp;&nbsp;&nbsp;&nbsp;"DOWNLOAD":"http://kerbal.curseforge.com/ksp-mods/220462-ksp-avc-add-on-version-checker",<br>
 				&nbsp;&nbsp;&nbsp;&nbsp;"VERSION":{<br>
 				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"MAJOR":1,<br>
-				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"MINOR":0,<br>
-				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"PATCH":1,<br>
+				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"MINOR":1,<br>
+				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"PATCH":0,<br>
 				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"BUILD":0<br>
 				&nbsp;&nbsp;&nbsp;&nbsp;},<br>
 				&nbsp;&nbsp;&nbsp;&nbsp;"KSP_VERSION":{<br>
 				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"MAJOR":0,<br>
-				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"MINOR":23,<br>
-				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"PATCH":5<br>
+				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"MINOR":24,<br>
+				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"PATCH":2<br>
 				&nbsp;&nbsp;&nbsp;&nbsp;},<br>
 				&nbsp;&nbsp;&nbsp;&nbsp;"KSP_VERSION_MIN":{<br>
 				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"MAJOR":0,<br>
-				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"MINOR":23,<br>
-				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"PATCH":5<br>
+				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"MINOR":24,<br>
+				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"PATCH":0<br>
 				&nbsp;&nbsp;&nbsp;&nbsp;}<br>
 				&nbsp;&nbsp;&nbsp;&nbsp;"KSP_VERSION_MAX":{<br>
 				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"MAJOR":0,<br>
-				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"MINOR":23,<br>
-				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"PATCH":5<br>
+				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"MINOR":24,<br>
+				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"PATCH":2<br>
 				&nbsp;&nbsp;&nbsp;&nbsp;}<br>
 				}
 			</p>
 		</section>
 
 		<section>
-			<h3>'.version' File Breakdown</h3>
+			<h3>Version File Breakdown</h3>
 			<p>
-				NAME			Display name of the add-on.<br>
-				URL				Remote .version file used for update checking.<br>
-				DOWNLOAD 		Location where the latest version can be downloaded. (Only used in the remote .version file)(Optional)<br>
-				VERSION 		Version of your add-on. (MAJOR, MINOR, PATCH, BUILD)(KSP-AVC also supports a simple "VERSION":"1.0.0" string.)<br>
-				KSP_VERSION 	Version of KSP which the add-on was intended to run on. (MAJOR, MINOR, PATCH)(Overrides min/max compatibility)(Optional)<br>
-				KSP_VERSION_MIN	Minimum version of KSP compatible with the add-on. (MAJOR, MINOR, PATCH)(Optional)<br>
-				KSP_VERSION_MAX Maximum version of KSP compatible with the add-on. (MAJOR, MINOR, PATCH)(Optional)<br>
+				<ul>
+					<li><b>NAME</b> - Required<br>
+						The display name for the add-on.<br>
+					</li>
+					<li><b>URL</b> - Optional<br>
+						<i>Location of a remote version file for update checking.</i>
+					</li>
+					<li><b>DOWNLOAD</b> - Optional<br>
+						Web address where the latest version can be downloaded.<br>
+						<i>This is only used from the remote version file.</i>
+					</li>
+					<li><b>VERSION</b> - Required<br>
+						The version of the add-on.
+					</li>
+					<li><b>KSP_VERSION</b> - Optional, Required for MIN/MAX<br>
+						Version of KSP that the add-on was made to support.
+					</li>
+					<li><b>KSP_VERSION_MIN</b> - Optional<br>
+						Minimum version of KSP that the add-on supports.<br>
+						<i>Requires KSP_VERSION field to work.</i>
+					</li>
+					<li><b>KSP_VERSION_MAX</b> - Optional<br>
+						Maximum version of KSP that the add-on supports.<br>
+						<i>Requires KSP_VERSION field to work.</i>
+					</li>
+				</ul>
 				<br>
-				For simple management of your '.version' files you can use the KSP-AVC Online website at: <a href='http://ksp-avc.cybutek.net' target='_blank'>ksp-avc.cybutek.net</a>.
+				For simple management of your version files you can use the KSP-AVC Online website at: <a href='http://ksp-avc.cybutek.net' target='_blank'>ksp-avc.cybutek.net</a>.
 			</p>
 		</section>
 
 		<section>
 			<h3>Change Log</h3>
 			<ul id='changelog'>
-				<li>
-					1.0.4
+				<li>1.1
+					<ul>
+						<li>Complete re-write of the core code using an addon information library.</li>
+						<li>Added: Replaced LitJson with embeded MiniJson for compatibility and to reduce dependancies.</li>
+						<li>Added: Better utilisation of multi-threading.</li>
+						<li>Fixed: Version formatting bug where it did not recognise build numbers in certain cases.</li>
+					</ul>
+				</li>
+				<li>1.0.4
 					<ul>
 						<li>Added: Url check to fix problems caused by non-raw github .version files.</li>
 						<li>Added: Logging system now also saves into the standard ksp log file.</li>
 						<li>Changed: Extended logging system now saves with the associated '.dll' file.</li>
 					</ul>
 				</li>
-				<li>
-					1.0.3
+				<li>1.0.3
 					<ul>
 						<li>Updated for KSP version 0.24.2.</li>
 						<li>Added: Extended logging system that saves to "KSP-AVC.log".</li>
@@ -208,15 +233,13 @@
 						<li>Changed: Window is now centred on the screen.</li>
 					</ul>
 				</li>
-				<li>
-					1.0.2
+				<li>1.0.2
 					<ul>
 						<li>Updated for KSP version 0.24.</li>
 						<li>Fixed a small bug with parsing KSP versions.</li>
 					</ul>
 				</li>
-				<li>
-					1.0.1
+				<li>1.0.1
 					<ul>
 						<li>Added minimum and maximum KSP version support.</li>
 						<li>Updates will only be shown if the remote version is compatible with the installed version of KSP.</li>

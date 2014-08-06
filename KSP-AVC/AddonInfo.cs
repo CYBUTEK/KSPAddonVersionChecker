@@ -140,7 +140,7 @@ namespace KSP_AVC
                         break;
 
                     case "URL":
-                        this.Url = (string)data["URL"];
+                        this.Url = this.FormatCompatibleUrl((string)data["URL"]);
                         break;
 
                     case "DOWNLOAD":
@@ -193,6 +193,25 @@ namespace KSP_AVC
                 }
             }
             return new System.Version((string)data);
+        }
+
+        private string FormatCompatibleUrl(string url)
+        {
+            try
+            {
+                if (url.Contains("github.com"))
+                {
+                    Logger.Log("Replaced github.com with raw.githubusercontent.com in URL.");
+                    return url.Replace("github.com", "raw.githubusercontent.com");
+                }
+
+                return url;
+            }
+            catch (Exception ex)
+            {
+                Logger.Exception(ex);
+                return url;
+            }
         }
 
         #endregion

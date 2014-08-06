@@ -153,7 +153,19 @@ namespace KSP_AVC
             }
             catch (Exception ex)
             {
-                Logger.Exception(ex);
+                if (ex is WebException)
+                {
+                    var response = (ex as WebException).Response as HttpWebResponse;
+                    this.remoteInfo = this.localInfo;
+                    this.IsRemoteReady = true;
+                    this.IsProcessingComplete = true;
+                    Logger.Log(this.localInfo);
+                    Logger.Log(this.localInfo.Url + ": " + response.StatusCode);
+                }
+                else
+                {
+                    Logger.Exception(ex);
+                }
             }
         }
 
