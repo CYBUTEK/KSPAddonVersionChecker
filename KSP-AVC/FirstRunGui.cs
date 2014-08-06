@@ -102,11 +102,11 @@ namespace KSP_AVC
             GUILayout.BeginVertical(HighLogic.Skin.box);
             if (this.HasBeenUpdated)
             {
-                GUILayout.Label("You have successfully updated to v" + Assembly.GetExecutingAssembly().GetName().Version, this.titleStyle, GUILayout.Width(300.0f));
+                GUILayout.Label("You have successfully updated to v" + this.GetVersion(), this.titleStyle, GUILayout.Width(300.0f));
             }
             else
             {
-                GUILayout.Label("You have successfully installed v" + Assembly.GetExecutingAssembly().GetName().Version, this.titleStyle, GUILayout.Width(300.0f));
+                GUILayout.Label("You have successfully installed v" + this.GetVersion(), this.titleStyle, GUILayout.Width(300.0f));
             }
             GUILayout.EndVertical();
             if (GUILayout.Button("CLOSE", this.buttonStyle))
@@ -114,6 +114,19 @@ namespace KSP_AVC
                 Destroy(this);
             }
             GUI.DragWindow();
+        }
+
+        #endregion
+
+        #region Private Methods
+
+        private System.Version GetVersion()
+        {
+            var version = Assembly.GetExecutingAssembly().GetName().Version;
+
+            return version.Revision != 0 ? version
+                : version.Build != 0 ? new System.Version(version.Major, version.Minor, version.Build)
+                    : new System.Version(version.Major, version.Minor);
         }
 
         #endregion

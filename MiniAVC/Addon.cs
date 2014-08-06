@@ -131,13 +131,12 @@ namespace MiniAVC
                 using (var stream = new StreamReader(File.OpenRead((string)state)))
                 {
                     this.localInfo = new AddonInfo((string)state, stream.ReadToEnd());
+                    this.IsLocalReady = true;
                 }
                 if (!this.settings.FirstRun || string.IsNullOrEmpty(this.localInfo.Url))
                 {
                     this.RunProcessRemoteInfo();
                 }
-
-                this.IsLocalReady = true;
             }
             catch (Exception ex)
             {

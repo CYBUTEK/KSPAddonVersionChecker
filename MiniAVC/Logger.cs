@@ -185,9 +185,11 @@ namespace MiniAVC
                     {
                         foreach (var message in messages)
                         {
-                            file.WriteLine(message.Length > 0 ? message.Length > 1 ? "[" + message[0] + "]: " + message[1] : message[0] : string.Empty)
-                                ;
-                            print(message.Length > 0 ? message.Length > 1 ? assemblyName.Name + " -> " + message[1] : assemblyName.Name + " -> " + message[0] : string.Empty);
+                            file.WriteLine(message.Length > 0 ? message.Length > 1 ? "[" + message[0] + "]: " + message[1] : message[0] : string.Empty);
+                            if (message.Length > 0)
+                            {
+                                print(message.Length > 1 ? assemblyName.Name + " -> " + message[1] : assemblyName.Name + " -> " + message[0]);
+                            }
                         }
                     }
                     messages.Clear();
