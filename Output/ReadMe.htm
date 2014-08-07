@@ -212,8 +212,11 @@
 			<ul id='changelog'>
 				<li>1.1.1
 					<ul>
-						<li>Added: Blanket exception handling and logging.
+						<li>Added: Blanket exception handling and logging.</li>
 						<li>Added: Logger will flush on destruction and GC finaliser.</li>
+						<li>Added: Check to remove '/tree/' from github urls.</li>
+						<li>Changed: Remote checking back to WWW because WebRequest in Mono does not support TLS/SSL.</li>
+						<li>Fixed: Possible null refs caused by invalid remote urls.</li>
 					</ul>
 				</li>
 				<li>1.1
