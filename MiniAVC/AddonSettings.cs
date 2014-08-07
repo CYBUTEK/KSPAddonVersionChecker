@@ -74,9 +74,9 @@ namespace MiniAVC
             }
         }
 
-        public static AddonSettings Load(string path)
+        public static AddonSettings Load(string rootPath)
         {
-            var fileName = Path.Combine(path, "MiniAVC.xml");
+            var fileName = Path.Combine(rootPath, "MiniAVC.xml");
             try
             {
                 AddonSettings settings;

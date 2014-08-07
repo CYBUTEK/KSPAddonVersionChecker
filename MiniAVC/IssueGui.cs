@@ -46,7 +46,7 @@ namespace MiniAVC
         {
             try
             {
-                this.enabled = false;
+                DontDestroyOnLoad(this);
                 Logger.Log("IssueGui was created.");
             }
             catch (Exception ex)
@@ -120,7 +120,7 @@ namespace MiniAVC
         {
             try
             {
-                this.position = GUILayout.Window(this.GetInstanceID(), this.position, this.Window, this.Addon.Name + " - MiniAVC", HighLogic.Skin.window);
+                this.position = GUILayout.Window(this.GetInstanceID(), this.position, this.Window, this.Addon.Name, HighLogic.Skin.window);
                 if (!this.hasCentred && this.position.width > 0 && this.position.height > 0)
                 {
                     this.position.center = new Vector2(Screen.width * 0.5f, Screen.height * 0.5f);

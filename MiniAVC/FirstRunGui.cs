@@ -18,6 +18,7 @@
 #region Using Directives
 
 using System;
+using System.Collections.Generic;
 
 using UnityEngine;
 
@@ -36,7 +37,9 @@ namespace MiniAVC
 
         #region Properties
 
-        public Addon Addon { get; set; }
+        public List<Addon> Addons { get; set; }
+
+        public AddonSettings Settings { get; set; }
 
         #endregion
 
@@ -46,7 +49,7 @@ namespace MiniAVC
         {
             try
             {
-                this.enabled = false;
+                DontDestroyOnLoad(this);
                 Logger.Log("FirstRunGui was created.");
             }
             catch (Exception ex)
@@ -72,6 +75,7 @@ namespace MiniAVC
         #region Styles
 
         private GUIStyle buttonStyle;
+        private GUIStyle labelStyle;
         private GUIStyle titleStyle;
 
         private void InitialiseStyles()
@@ -86,6 +90,12 @@ namespace MiniAVC
                     },
                     fontSize = 13,
                     fontStyle = FontStyle.Bold,
+                    alignment = TextAnchor.MiddleCenter,
+                    stretchWidth = true
+                };
+                this.labelStyle = new GUIStyle(HighLogic.Skin.label)
+                {
+                    fontSize = 13,
                     alignment = TextAnchor.MiddleCenter,
                     stretchWidth = true
                 };
@@ -112,7 +122,7 @@ namespace MiniAVC
         {
             try
             {
-                this.position = GUILayout.Window(this.GetInstanceID(), this.position, this.Window, this.Addon.Name + " - MiniAVC", HighLogic.Skin.window);
+                this.position = GUILayout.Window(this.GetInstanceID(), this.position, this.Window, "MiniAVC", HighLogic.Skin.window);
                 if (!this.hasCentred && this.position.width > 0 && this.position.height > 0)
                 {
                     this.position.center = new Vector2(Screen.width * 0.5f, Screen.height * 0.5f);
@@ -130,25 +140,35 @@ namespace MiniAVC
             try
             {
                 GUILayout.BeginVertical(HighLogic.Skin.box);
-                GUILayout.Label("Allow this add-on to check for updates?", this.titleStyle, GUILayout.Width(300.0f));
+                GUILayout.Label("Allow these add-ons to check for updates?", this.titleStyle, GUILayout.Width(300.0f));
+                foreach (var addon in this.Addons)
+                {
+                    GUILayout.Label(addon.Name, this.labelStyle);
+                }
                 GUILayout.EndVertical();
                 GUILayout.BeginHorizontal();
                 if (GUILayout.Button("YES", this.buttonStyle, GUILayout.Width(200.0f)))
                 {
-                    this.Addon.Settings.FirstRun = false;
-                    this.Addon.Settings.AllowCheck = true;
-                    this.Addon.Settings.Save();
-                    Logger.Log("Remote checking has been enabled for: " + this.Addon.Name);
-                    this.Addon.RunProcessRemoteInfo();
+                    this.Settings.FirstRun = false;
+                    this.Settings.AllowCheck = true;
+                    this.Settings.Save();
+                    foreach (var addon in this.Addons)
+                    {
+                        Logger.Log("Remote checking has been enabled for: " + addon.Name);
+                        addon.RunProcessRemoteInfo();
+                    }
                     Destroy(this);
                 }
                 if (GUILayout.Button("NO", this.buttonStyle))
                 {
-                    this.Addon.Settings.FirstRun = false;
-                    this.Addon.Settings.AllowCheck = false;
-                    this.Addon.Settings.Save();
-                    Logger.Log("Remote checking has been disabled for: " + this.Addon.Name);
-                    this.Addon.RunProcessRemoteInfo();
+                    this.Settings.FirstRun = false;
+                    this.Settings.AllowCheck = false;
+                    this.Settings.Save();
+                    foreach (var addon in this.Addons)
+                    {
+                        Logger.Log("Remote checking has been disabled for: " + addon.Name);
+                        addon.RunProcessRemoteInfo();
+                    }
                     Destroy(this);
                 }
                 GUILayout.EndHorizontal();

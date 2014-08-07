@@ -30,7 +30,6 @@ namespace MiniAVC
     {
         #region Fields
 
-        private readonly string rootPath;
         private readonly AddonSettings settings;
         private AddonInfo localInfo;
         private AddonInfo remoteInfo;
@@ -39,19 +38,12 @@ namespace MiniAVC
 
         #region Contructors
 
-        public Addon(string rootPath)
+        public Addon(string path, AddonSettings settings)
         {
             try
             {
-                this.rootPath = rootPath;
-                this.settings = AddonSettings.Load(rootPath);
-
-                var files = Directory.GetFiles(this.rootPath, "*.version", SearchOption.TopDirectoryOnly);
-                if (files.Length > 0)
-                {
-                    this.HasVersionFile = true;
-                    this.RunProcessLocalInfo(files[0]);
-                }
+                this.settings = settings;
+                this.RunProcessLocalInfo(path);
             }
             catch (Exception ex)
             {
@@ -62,11 +54,6 @@ namespace MiniAVC
         #endregion
 
         #region Properties
-
-        public string RootPath
-        {
-            get { return this.rootPath; }
-        }
 
         public AddonSettings Settings
         {
@@ -82,8 +69,6 @@ namespace MiniAVC
         {
             get { return this.remoteInfo; }
         }
-
-        public bool HasVersionFile { get; private set; }
 
         public bool IsLocalReady { get; private set; }
 

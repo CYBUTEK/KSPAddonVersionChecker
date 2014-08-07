@@ -51,11 +51,12 @@
   <ItemGroup>
     <Compile Include="Addon.cs" />
     <Compile Include="AddonInfo.cs" />
+    <Compile Include="AddonLibrary.cs" />
     <Compile Include="IssueGui.cs" />
     <Compile Include="FirstRunGui.cs" />
     <Compile Include="Json.cs" />
     <Compile Include="Logger.cs" />
-    <Compile Include="Startup.cs" />
+    <Compile Include="Starter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="AddonSettings.cs" />
   </ItemGroup>
