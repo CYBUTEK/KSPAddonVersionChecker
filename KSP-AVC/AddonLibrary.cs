@@ -41,7 +41,7 @@ namespace KSP_AVC
         {
             try
             {
-                rootPath = UrlDir.ApplicationRootPath;
+                rootPath = KSPUtil.ApplicationRootPath;
                 ThreadPool.QueueUserWorkItem(ProcessAddonPopulation);
             }
             catch (Exception ex)
@@ -66,7 +66,7 @@ namespace KSP_AVC
         {
             try
             {
-                var threadAddons = Directory.GetFiles(rootPath, "*.version", SearchOption.AllDirectories).Select(p => p.Replace(rootPath, string.Empty)).Select(path => new Addon(path)).ToList();
+                var threadAddons = Directory.GetFiles(Path.Combine(rootPath, "GameData"), "*.version", SearchOption.AllDirectories).Select(p => p.Replace(rootPath, string.Empty)).Select(path => new Addon(path)).ToList();
                 Addons = threadAddons;
                 Populated = true;
             }
