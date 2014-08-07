@@ -41,7 +41,6 @@ namespace KSP_AVC
         {
             try
             {
-                this.HasVersionFile = true;
                 this.RunProcessLocalInfo(path);
             }
             catch (Exception ex)
@@ -63,8 +62,6 @@ namespace KSP_AVC
         {
             get { return this.remoteInfo; }
         }
-
-        public bool HasVersionFile { get; private set; }
 
         public bool IsLocalReady { get; private set; }
 

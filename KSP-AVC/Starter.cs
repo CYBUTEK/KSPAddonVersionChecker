@@ -28,7 +28,7 @@ using UnityEngine;
 namespace KSP_AVC
 {
     [KSPAddon(KSPAddon.Startup.Instantly, false)]
-    public class Startup : MonoBehaviour
+    public class Starter : MonoBehaviour
     {
         #region Fields
 
@@ -44,7 +44,7 @@ namespace KSP_AVC
             try
             {
                 DontDestroyOnLoad(this);
-                Logger.Log("Startup was created.");
+                Logger.Log("Starter was created.");
             }
             catch (Exception ex)
             {
@@ -116,7 +116,7 @@ namespace KSP_AVC
 
         private void OnDestroy()
         {
-            Logger.Log("Startup was destroyed.");
+            Logger.Log("Starter was destroyed.");
         }
 
         #endregion
