@@ -44,6 +44,8 @@ namespace MiniAVC
         {
             try
             {
+                Logger.Log("Starter was created.");
+
                 // Only allow one instance to run.
                 if (alreadyRunning)
                 {
@@ -59,7 +61,6 @@ namespace MiniAVC
                     Destroy(this);
                     return;
                 }
-                Logger.Log("Starter was created.");
             }
             catch (Exception ex)
             {

@@ -19,8 +19,9 @@
 
 using System;
 using System.IO;
-using System.Net;
 using System.Threading;
+
+using UnityEngine;
 
 #endregion
 
@@ -148,7 +149,7 @@ namespace MiniAVC
         {
             try
             {
-                if (!this.Settings.AllowCheck || string.IsNullOrEmpty(this.localInfo.Url))
+                if (string.IsNullOrEmpty(this.localInfo.Url))
                 {
                     this.remoteInfo = this.localInfo;
                     this.IsRemoteReady = true;
@@ -158,40 +159,34 @@ namespace MiniAVC
                     return;
                 }
 
-                using (var web = WebRequest.Create(this.localInfo.Url).GetResponse())
+                using (var www = new WWW(this.localInfo.Url))
                 {
-                    using (var stream = new StreamReader(web.GetResponseStream()))
+                    while (!www.isDone) { }
+                    if (www.error == null)
                     {
-                        this.remoteInfo = new AddonInfo(this.localInfo.Url, stream.ReadToEnd());
+                        this.remoteInfo = new AddonInfo(this.localInfo.Url, www.text);
+                        this.IsRemoteReady = true;
+                        this.IsProcessingComplete = true;
+                        Logger.Log(this.localInfo);
+                        Logger.Log(this.remoteInfo);
                     }
-                }
-
-                this.IsRemoteReady = true;
-                this.IsProcessingComplete = true;
-                Logger.Log(this.localInfo);
-                Logger.Log(this.remoteInfo);
-                Logger.Blank();
-            }
-            catch (Exception ex)
-            {
-                if (ex is WebException)
-                {
-                    try
+                    else
                     {
                         this.remoteInfo = this.localInfo;
                         this.IsRemoteReady = true;
                         this.IsProcessingComplete = true;
                         Logger.Log(this.localInfo);
                     }
-                    catch (Exception ex1)
-                    {
-                        Logger.Exception(ex1);
-                    }
                 }
-                else
-                {
-                    Logger.Exception(ex);
-                }
+                Logger.Blank();
+            }
+            catch (Exception ex)
+            {
+                Logger.Exception(ex);
+                this.remoteInfo = this.localInfo;
+                this.IsRemoteReady = true;
+                this.IsProcessingComplete = true;
+                Logger.Log(this.localInfo);
             }
         }
 
