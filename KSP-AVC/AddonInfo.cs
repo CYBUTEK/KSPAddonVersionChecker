@@ -223,7 +223,6 @@ namespace KSP_AVC
             {
                 if (url.Contains("github.com"))
                 {
-                    Logger.Log("Replaced github.com with raw.githubusercontent.com in URL.");
                     return url.Replace("github.com", "raw.githubusercontent.com");
                 }
 

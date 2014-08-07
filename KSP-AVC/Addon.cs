@@ -168,12 +168,10 @@ namespace KSP_AVC
                 {
                     try
                     {
-                        var response = (ex as WebException).Response as HttpWebResponse;
                         this.remoteInfo = this.localInfo;
                         this.IsRemoteReady = true;
                         this.IsProcessingComplete = true;
                         Logger.Log(this.localInfo);
-                        Logger.Log(this.localInfo.Url + ": " + response.StatusCode);
                     }
                     catch (Exception ex1)
                     {
