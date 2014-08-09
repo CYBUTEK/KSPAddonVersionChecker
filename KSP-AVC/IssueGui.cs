@@ -176,11 +176,11 @@ namespace KSP_AVC
         {
             try
             {
-                if (AddonLibrary.Addons.Any(a => a.IsUpdateAvailable))
+                if (AddonLibrary.Addons.Any(a => !a.HasError && a.IsUpdateAvailable))
                 {
                     this.DrawUpdateIssues();
                 }
-                if (AddonLibrary.Addons.Any(a => !a.IsCompatible))
+                if (AddonLibrary.Addons.Any(a => !a.HasError && !a.IsCompatible))
                 {
                     this.DrawCompatibilityIssues();
                 }
@@ -208,7 +208,7 @@ namespace KSP_AVC
                 GUILayout.Label("DOWNLOAD", this.titleStyle);
                 GUILayout.EndHorizontal();
 
-                foreach (var addon in AddonLibrary.Addons.Where(a => a.IsUpdateAvailable))
+                foreach (var addon in AddonLibrary.Addons.Where(a => !a.HasError && a.IsUpdateAvailable))
                 {
                     GUILayout.BeginHorizontal();
                     GUILayout.Label(addon.Name, this.nameLabelStyle);
@@ -241,7 +241,7 @@ namespace KSP_AVC
             {
                 GUILayout.BeginVertical(this.boxStyle);
                 GUILayout.Label("COMPATIBILITY ISSUES", this.nameTitleStyle);
-                foreach (var addon in AddonLibrary.Addons.Where(a => !a.IsCompatible))
+                foreach (var addon in AddonLibrary.Addons.Where(a => !a.HasError && !a.IsCompatible))
                 {
                     GUILayout.Label("The currently installed version of " + addon.Name + " was built to run on KSP " + addon.LocalInfo.KspVersion, this.messageStyle);
                 }

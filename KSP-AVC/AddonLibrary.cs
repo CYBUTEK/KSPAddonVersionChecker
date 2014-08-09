@@ -21,6 +21,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Threading;
 
 #endregion
@@ -41,7 +42,11 @@ namespace KSP_AVC
         {
             try
             {
-                rootPath = KSPUtil.ApplicationRootPath;
+                rootPath = Assembly.GetExecutingAssembly().Location;
+                var gameDataIndex = rootPath.IndexOf("GameData", StringComparison.CurrentCultureIgnoreCase);
+                rootPath = rootPath.Remove(gameDataIndex, rootPath.Length - gameDataIndex);
+                rootPath = Path.Combine(rootPath, "GameData");
+                Logger.Log("Checking Root: " + rootPath);
                 ThreadPool.QueueUserWorkItem(ProcessAddonPopulation);
             }
             catch (Exception ex)
@@ -66,7 +71,7 @@ namespace KSP_AVC
         {
             try
             {
-                var threadAddons = Directory.GetFiles(Path.Combine(rootPath, "GameData"), "*.version", SearchOption.AllDirectories).Select(p => p.Replace(rootPath, string.Empty)).Select(path => new Addon(path)).ToList();
+                var threadAddons = Directory.GetFiles(rootPath, "*.version", SearchOption.AllDirectories).Select(path => new Addon(path)).ToList();
                 Addons = threadAddons;
                 Populated = true;
             }

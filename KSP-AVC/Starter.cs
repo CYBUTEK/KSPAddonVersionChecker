@@ -91,7 +91,7 @@ namespace KSP_AVC
 
                 if (AddonLibrary.Populated && AddonLibrary.Addons.All(a => a.IsProcessingComplete))
                 {
-                    if (AddonLibrary.Addons.Any(a => a.IsUpdateAvailable || !a.IsCompatible))
+                    if (AddonLibrary.Addons.Any(a => !a.HasError && (a.IsUpdateAvailable || !a.IsCompatible)))
                     {
                         this.gameObject.AddComponent<IssueGui>();
                     }
