@@ -19,6 +19,7 @@
 
 using System;
 using System.IO;
+using System.Security.Principal;
 using System.Threading;
 
 using UnityEngine;
@@ -71,6 +72,8 @@ namespace MiniAVC
             get { return this.remoteInfo; }
         }
 
+        public bool HasError { get; private set; }
+
         public bool IsLocalReady { get; private set; }
 
         public bool IsRemoteReady { get; private set; }
@@ -79,7 +82,7 @@ namespace MiniAVC
 
         public bool IsUpdateAvailable
         {
-            get { return this.IsProcessingComplete && this.RemoteInfo.Version > this.LocalInfo.Version && this.RemoteInfo.IsCompatibleKspVersion; }
+            get { return this.IsProcessingComplete && this.LocalInfo.Version != null && this.RemoteInfo.Version != null && this.RemoteInfo.Version > this.LocalInfo.Version && this.RemoteInfo.IsCompatibleKspVersion; }
         }
 
         public bool IsCompatible
@@ -129,19 +132,30 @@ namespace MiniAVC
             try
             {
                 var path = (string)state;
-                using (var stream = new StreamReader(File.OpenRead(path)))
+                if (File.Exists(path))
                 {
-                    this.localInfo = new AddonInfo(path, stream.ReadToEnd());
-                    this.IsLocalReady = true;
+                    using (var stream = new StreamReader(File.OpenRead(path)))
+                    {
+                        this.localInfo = new AddonInfo(path, stream.ReadToEnd());
+                        this.IsLocalReady = true;
+                    }
+                    if (!this.settings.FirstRun || string.IsNullOrEmpty(this.localInfo.Url))
+                    {
+                        this.RunProcessRemoteInfo();
+                    }
                 }
-                if (!this.settings.FirstRun || string.IsNullOrEmpty(this.localInfo.Url))
+                else
                 {
-                    this.RunProcessRemoteInfo();
+                    Logger.Log("File Not Found: " + path);
+                    this.HasError = true;
+                    this.IsProcessingComplete = true;
                 }
             }
             catch (Exception ex)
             {
                 Logger.Exception(ex);
+                this.HasError = true;
+                this.IsProcessingComplete = true;
             }
         }
 

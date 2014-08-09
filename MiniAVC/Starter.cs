@@ -59,7 +59,6 @@ namespace MiniAVC
                 {
                     Logger.Log("KSP-AVC was detected...  Unloading MiniAVC!");
                     Destroy(this);
-                    return;
                 }
             }
             catch (Exception ex)
@@ -102,7 +101,7 @@ namespace MiniAVC
                 var removeAddons = new List<Addon>();
                 foreach (var addon in AddonLibrary.Addons.Where(a => a.IsProcessingComplete))
                 {
-                    if (addon.IsUpdateAvailable || !addon.IsCompatible)
+                    if (!addon.HasError && (addon.IsUpdateAvailable || !addon.IsCompatible))
                     {
                         this.shownIssueGui = this.gameObject.AddComponent<IssueGui>();
                         this.shownIssueGui.Addon = addon;
