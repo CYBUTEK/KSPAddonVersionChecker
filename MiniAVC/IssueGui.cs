@@ -31,6 +31,7 @@ namespace MiniAVC
 
         private bool hasCentred;
         private Rect position = new Rect(Screen.width, Screen.height, 0, 0);
+        private ToolTipGui toolTipGui;
 
         #endregion
 
@@ -59,6 +60,7 @@ namespace MiniAVC
         {
             try
             {
+                this.toolTipGui = this.gameObject.AddComponent<ToolTipGui>();
                 this.InitialiseStyles();
             }
             catch (Exception ex)
@@ -152,6 +154,7 @@ namespace MiniAVC
                         {
                             Application.OpenURL(this.Addon.RemoteInfo.Download);
                         }
+                        this.toolTipGui.Text = GUILayoutUtility.GetLastRect().Contains(Event.current.mousePosition) ? this.Addon.RemoteInfo.Download : string.Empty;
                     }
                     GUILayout.EndVertical();
                 }

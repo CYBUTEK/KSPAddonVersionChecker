@@ -18,6 +18,7 @@
 #region Using Directives
 
 using System;
+using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 
@@ -34,6 +35,7 @@ namespace KSP_AVC
 
         private CheckGui checkGui;
         private FirstRunGui firstRunGui;
+        private Stopwatch stopwatch = new Stopwatch();
 
         #endregion
 
@@ -56,6 +58,7 @@ namespace KSP_AVC
         {
             try
             {
+                this.stopwatch.Start();
                 if (new System.Version(Settings.Instance.Version) < Assembly.GetExecutingAssembly().GetName().Version)
                 {
                     Settings.Instance.Version = Assembly.GetExecutingAssembly().GetName().Version.ToString();

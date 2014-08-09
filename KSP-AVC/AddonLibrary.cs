@@ -24,6 +24,8 @@ using System.Linq;
 using System.Reflection;
 using System.Threading;
 
+using UnityEngine;
+
 #endregion
 
 namespace KSP_AVC

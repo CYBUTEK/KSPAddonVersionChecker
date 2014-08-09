@@ -32,6 +32,7 @@ namespace KSP_AVC
 
         private bool hasCentred;
         private Rect position = new Rect(Screen.width, Screen.height, 0, 0);
+        private ToolTipGui toolTipGui;
 
         #endregion
 
@@ -54,6 +55,7 @@ namespace KSP_AVC
         {
             try
             {
+                this.toolTipGui = this.gameObject.AddComponent<ToolTipGui>();
                 this.InitialiseStyles();
             }
             catch (Exception ex)
@@ -208,6 +210,7 @@ namespace KSP_AVC
                 GUILayout.Label("DOWNLOAD", this.titleStyle);
                 GUILayout.EndHorizontal();
 
+                var toolTipText = string.Empty;
                 foreach (var addon in AddonLibrary.Addons.Where(a => !a.HasError && a.IsUpdateAvailable))
                 {
                     GUILayout.BeginHorizontal();
@@ -220,6 +223,11 @@ namespace KSP_AVC
                         {
                             Application.OpenURL(addon.RemoteInfo.Download);
                         }
+
+                        if (GUILayoutUtility.GetLastRect().Contains(Event.current.mousePosition))
+                        {
+                            toolTipText = addon.RemoteInfo.Download;
+                        }
                     }
                     else
                     {
@@ -227,6 +235,7 @@ namespace KSP_AVC
                     }
                     GUILayout.EndHorizontal();
                 }
+                this.toolTipGui.Text = toolTipText;
                 GUILayout.EndVertical();
             }
             catch (Exception ex)
@@ -259,6 +268,7 @@ namespace KSP_AVC
 
         private void OnDestroy()
         {
+            Destroy(this.toolTipGui);
             Logger.Log("IssueGui was destroyed.");
         }
 
