@@ -33,9 +33,9 @@ namespace KSP_AVC
     {
         #region Fields
 
+        private readonly Stopwatch stopwatch = new Stopwatch();
         private CheckGui checkGui;
         private FirstRunGui firstRunGui;
-        private Stopwatch stopwatch = new Stopwatch();
 
         #endregion
 
@@ -45,6 +45,8 @@ namespace KSP_AVC
         {
             try
             {
+                AssemblyLoader.ClearPlugins();
+                return;
                 DontDestroyOnLoad(this);
                 Logger.Log("Starter was created.");
             }

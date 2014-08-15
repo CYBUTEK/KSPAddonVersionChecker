@@ -19,7 +19,6 @@
 
 using System;
 using System.IO;
-using System.Security.Principal;
 using System.Threading;
 
 using UnityEngine;
@@ -163,7 +162,7 @@ namespace MiniAVC
         {
             try
             {
-                if (string.IsNullOrEmpty(this.localInfo.Url))
+                if (!this.settings.AllowCheck || string.IsNullOrEmpty(this.localInfo.Url))
                 {
                     this.remoteInfo = this.localInfo;
                     this.IsRemoteReady = true;
