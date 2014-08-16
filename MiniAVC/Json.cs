@@ -210,7 +210,7 @@ namespace MiniAVC
                             return TOKEN.NUMBER;
                     }
 
-                    switch (this.NextWord)
+                    switch (this.NextWord.ToLower())
                     {
                         case "false":
                             return TOKEN.FALSE;

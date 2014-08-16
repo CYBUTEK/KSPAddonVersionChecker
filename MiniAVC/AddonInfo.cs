@@ -150,38 +150,38 @@ namespace MiniAVC
                 }
                 foreach (var key in data.Keys)
                 {
-                    switch (key)
+                    switch (key.ToUpper())
                     {
                         case "NAME":
-                            this.Name = (string)data["NAME"];
+                            this.Name = (string)data[key];
                             break;
 
                         case "URL":
-                            this.Url = FormatCompatibleUrl((string)data["URL"]);
+                            this.Url = FormatCompatibleUrl((string)data[key]);
                             break;
 
                         case "DOWNLOAD":
-                            this.Download = (string)data["DOWNLOAD"];
+                            this.Download = (string)data[key];
                             break;
 
                         case "GITHUB":
-                            this.GitHub = new GitHubInfo(data["GITHUB"], this);
+                            this.GitHub = new GitHubInfo(data[key], this);
                             break;
 
                         case "VERSION":
-                            this.Version = GetVersion(data["VERSION"]);
+                            this.Version = GetVersion(data[key]);
                             break;
 
                         case "KSP_VERSION":
-                            this.kspVersion = GetVersion(data["KSP_VERSION"]);
+                            this.kspVersion = GetVersion(data[key]);
                             break;
 
                         case "KSP_VERSION_MIN":
-                            this.kspVersionMin = GetVersion(data["KSP_VERSION_MIN"]);
+                            this.kspVersionMin = GetVersion(data[key]);
                             break;
 
                         case "KSP_VERSION_MAX":
-                            this.kspVersionMax = GetVersion(data["KSP_VERSION_MAX"]);
+                            this.kspVersionMax = GetVersion(data[key]);
                             break;
                     }
                 }
@@ -192,30 +192,52 @@ namespace MiniAVC
             }
         }
 
-        private static VersionInfo GetVersion(object data)
+        private static VersionInfo GetVersion(object obj)
         {
             try
             {
-                if (data is Dictionary<string, object>)
+                if (obj is Dictionary<string, object>)
                 {
-                    var dataVersion = data as Dictionary<string, object>;
+                    return ParseVersion(obj as Dictionary<string, object>);
+                }
+                return new VersionInfo((string)obj);
+            }
+            catch (Exception ex)
+            {
+                Logger.Exception(ex);
+                return new VersionInfo();
+            }
+        }
 
-                    switch (dataVersion.Count)
+        private static VersionInfo ParseVersion(Dictionary<string, object> data)
+        {
+            try
+            {
+                var version = new VersionInfo();
+
+                foreach (var key in data.Keys)
+                {
+                    switch (key.ToUpper())
                     {
-                        case 2:
-                            return new VersionInfo((int)(long)dataVersion["MAJOR"], (int)(long)dataVersion["MINOR"]);
+                        case "MAJOR":
+                            version.Major = (long)data[key];
+                            break;
 
-                        case 3:
-                            return new VersionInfo((int)(long)dataVersion["MAJOR"], (int)(long)dataVersion["MINOR"], (int)(long)dataVersion["PATCH"]);
+                        case "MINOR":
+                            version.Minor = (long)data[key];
+                            break;
 
-                        case 4:
-                            return new VersionInfo((int)(long)dataVersion["MAJOR"], (int)(long)dataVersion["MINOR"], (int)(long)dataVersion["PATCH"], (int)(long)dataVersion["BUILD"]);
+                        case "PATCH":
+                            version.Patch = (long)data[key];
+                            break;
 
-                        default:
-                            return new VersionInfo();
+                        case "BUILD":
+                            version.Build = (long)data[key];
+                            break;
                     }
                 }
-                return new VersionInfo((string)data);
+
+                return version;
             }
             catch (Exception ex)
             {

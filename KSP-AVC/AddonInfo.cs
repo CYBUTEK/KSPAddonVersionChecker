@@ -19,7 +19,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text.RegularExpressions;
 
 using UnityEngine;
 
@@ -120,10 +119,7 @@ namespace KSP_AVC
 
         public bool IsCompactibleGitHubVersion
         {
-            get
-            {
-                return this.GitHub == null || this.GitHub.Version == null || this.Version.CompareTo(this.GitHub.Version) == 0;
-            }
+            get { return this.GitHub == null || this.GitHub.Version == null || this.Version.CompareTo(this.GitHub.Version) == 0; }
         }
 
         public bool IsCompatible
@@ -154,38 +150,38 @@ namespace KSP_AVC
                 }
                 foreach (var key in data.Keys)
                 {
-                    switch (key)
+                    switch (key.ToUpper())
                     {
                         case "NAME":
-                            this.Name = (string)data["NAME"];
+                            this.Name = (string)data[key];
                             break;
 
                         case "URL":
-                            this.Url = FormatCompatibleUrl((string)data["URL"]);
+                            this.Url = FormatCompatibleUrl((string)data[key]);
                             break;
 
                         case "DOWNLOAD":
-                            this.Download = (string)data["DOWNLOAD"];
+                            this.Download = (string)data[key];
                             break;
 
                         case "GITHUB":
-                            this.GitHub = new GitHubInfo(data["GITHUB"], this);
+                            this.GitHub = new GitHubInfo(data[key], this);
                             break;
 
                         case "VERSION":
-                            this.Version = GetVersion(data["VERSION"]);
+                            this.Version = GetVersion(data[key]);
                             break;
 
                         case "KSP_VERSION":
-                            this.kspVersion = GetVersion(data["KSP_VERSION"]);
+                            this.kspVersion = GetVersion(data[key]);
                             break;
 
                         case "KSP_VERSION_MIN":
-                            this.kspVersionMin = GetVersion(data["KSP_VERSION_MIN"]);
+                            this.kspVersionMin = GetVersion(data[key]);
                             break;
 
                         case "KSP_VERSION_MAX":
-                            this.kspVersionMax = GetVersion(data["KSP_VERSION_MAX"]);
+                            this.kspVersionMax = GetVersion(data[key]);
                             break;
                     }
                 }
@@ -202,29 +198,51 @@ namespace KSP_AVC
             {
                 if (obj is Dictionary<string, object>)
                 {
-                    var data = obj as Dictionary<string, object>;
-
-                    switch (data.Count)
-                    {
-                        case 2:
-                            return new VersionInfo((long)data["MAJOR"], (long)data["MINOR"]);
-
-                        case 3:
-                            return new VersionInfo((long)data["MAJOR"], (long)data["MINOR"], (long)data["PATCH"]);
-
-                        case 4:
-                            return new VersionInfo((long)data["MAJOR"], (long)data["MINOR"], (long)data["PATCH"], (long)data["BUILD"]);
-
-                        default:
-                            return new VersionInfo();
-                    }
+                    return ParseVersion(obj as Dictionary<string, object>);
                 }
                 return new VersionInfo((string)obj);
             }
             catch (Exception ex)
             {
                 Logger.Exception(ex);
-                return null;
+                return new VersionInfo();
+            }
+        }
+
+        private static VersionInfo ParseVersion(Dictionary<string, object> data)
+        {
+            try
+            {
+                var version = new VersionInfo();
+
+                foreach (var key in data.Keys)
+                {
+                    switch (key.ToUpper())
+                    {
+                        case "MAJOR":
+                            version.Major = (long)data[key];
+                            break;
+
+                        case "MINOR":
+                            version.Minor = (long)data[key];
+                            break;
+
+                        case "PATCH":
+                            version.Patch = (long)data[key];
+                            break;
+
+                        case "BUILD":
+                            version.Build = (long)data[key];
+                            break;
+                    }
+                }
+
+                return version;
+            }
+            catch (Exception ex)
+            {
+                Logger.Exception(ex);
+                return new VersionInfo();
             }
         }
 

@@ -119,10 +119,10 @@ namespace MiniAVC
 
         #region Properties
 
-        public long Major { get; private set; }
-        public long Minor { get; private set; }
-        public long Patch { get; private set; }
-        public long Build { get; private set; }
+        public long Major { get; set; }
+        public long Minor { get; set; }
+        public long Patch { get; set; }
+        public long Build { get; set; }
 
         public static VersionInfo Min
         {
@@ -136,19 +136,15 @@ namespace MiniAVC
 
         #endregion
 
-        #region Private Methods
+        #region Public Methods
 
-        private void SetVersion(long major, long minor, long patch, long build)
+        public void SetVersion(long major, long minor, long patch, long build)
         {
             this.Major = major;
             this.Minor = minor;
             this.Patch = patch;
             this.Build = build;
         }
-
-        #endregion
-
-        #region Public Methods
 
         public override string ToString()
         {
