@@ -78,11 +78,11 @@
 			background-color: black;
 		}
 
-		#changelog > li {
+		.nested_list > li {
 			margin-top: 1em;
 		}
 
-		#changelog > li:first-child {
+		.nested_list > li:first-child {
 			margin-top: 0.5em;
 		}
 
@@ -111,7 +111,7 @@
 
 		<section>
 			<h3>Current Version</h3>
-			<p>1.0.1.1</p>
+			<p>1.0.2.0</p>
 		</section>
 
 		<section>
@@ -149,6 +149,11 @@
 				&nbsp;&nbsp;&nbsp;&nbsp;"NAME":"KSP-AVC",<br>
 				&nbsp;&nbsp;&nbsp;&nbsp;"URL":"http://ksp-avc.cybutek.net/version.php?id=2",<br>
 				&nbsp;&nbsp;&nbsp;&nbsp;"DOWNLOAD":"http://kerbal.curseforge.com/ksp-mods/220462-ksp-avc-add-on-version-checker",<br>
+				&nbsp;&nbsp;&nbsp;&nbsp;"GITHUB":{<br>
+				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"USERNAME":"CYBUTEK",<br>
+				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"REPOSITORY":"KerbalEngineer",<br>
+				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"ALLOW_PRE_RELEASE":false,<br>
+				&nbsp;&nbsp;&nbsp;&nbsp;},<br>
 				&nbsp;&nbsp;&nbsp;&nbsp;"VERSION":{<br>
 				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"MAJOR":1,<br>
 				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"MINOR":1,<br>
@@ -177,7 +182,7 @@
 		<section>
 			<h3>Version File Breakdown</h3>
 			<p>
-				<ul>
+				<ul class='nested_list'>
 					<li><b>NAME</b> - Required<br>
 						The display name for the add-on.<br>
 					</li>
@@ -187,6 +192,23 @@
 					<li><b>DOWNLOAD</b> - Optional<br>
 						Web address where the latest version can be downloaded.<br>
 						<i>This is only used from the remote version file.</i>
+					</li>
+					<li><b>GITHUB</b> - Optional<br>
+						Allows KSP-AVC to do release checks with GitHub including setting a download location if one is not specified.<br>
+						If the latest release version is not equal to the version in the file, an update notification will not appear.<br>
+						<i>This is only used from the remote version file.</i>
+						<ul>
+							<li><b>USERNAME</b> - Required<br>
+								Your GitHub username.
+							</li>
+							<li><b>REPOSITORY</b> - Required<br>
+								The name of the source repository.
+							</li>
+							<li><b>ALLOW_PRE_RELEASE</b> - Optional<br>
+								Include pre-releases in the latest release search.<br>
+								<i>The default value is false.</i>
+							</li>
+						</ul>
 					</li>
 					<li><b>VERSION</b> - Required<br>
 						The version of the add-on.
@@ -210,7 +232,14 @@
 
 		<section>
 			<h3>Change Log</h3>
-			<ul id='changelog'>
+			<ul class='nested_list'>
+				<li>1.0.2.0
+					<ul>
+						<li>Added: GitHub latest release checking.</li>
+						<li>Added: Version file reading is now case insensitive.</li>
+						<li>Fixed: Bug in version equality checking. (Now using a custom VersionInfo object).</li>
+					</ul>
+				</li>
 				<li>1.0.1.1
 					<ul>
 						<li>Fixed: Bug where it did not do the allow check.</li>

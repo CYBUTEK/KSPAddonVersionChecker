@@ -117,7 +117,7 @@ namespace KSP_AVC
             get { return this.KspVersionMax >= actualKspVersion; }
         }
 
-        public bool IsCompactibleGitHubVersion
+        public bool IsCompatibleGitHubVersion
         {
             get { return this.GitHub == null || this.GitHub.Version == null || this.Version.CompareTo(this.GitHub.Version) == 0; }
         }
@@ -282,7 +282,7 @@ namespace KSP_AVC
                    "\n\tCompatibleKspVersion: " + this.IsCompatibleKspVersion +
                    "\n\tCompatibleKspVersionMin: " + this.IsCompatibleKspVersionMin +
                    "\n\tCompatibleKspVersionMax: " + this.IsCompatibleKspVersionMax +
-                   "\n\tCompatibleGitHubVersion: " + this.IsCompactibleGitHubVersion;
+                   "\n\tCompatibleGitHubVersion: " + this.IsCompatibleGitHubVersion;
         }
 
         #endregion

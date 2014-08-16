@@ -274,13 +274,15 @@ namespace MiniAVC
                    "\n\tNAME: " + (string.IsNullOrEmpty(this.Name) ? "NULL (required)" : this.Name) +
                    "\n\tURL: " + (string.IsNullOrEmpty(this.Url) ? "NULL" : this.Url) +
                    "\n\tDOWNLOAD: " + (string.IsNullOrEmpty(this.Download) ? "NULL" : this.Download) +
+                   "\n\tGITHUB: " + (this.GitHub != null ? this.GitHub.ToString() : "NULL") +
                    "\n\tVERSION: " + (this.Version != null ? this.Version.ToString() : "NULL (required)") +
                    "\n\tKSP_VERSION: " + this.KspVersion +
                    "\n\tKSP_VERSION_MIN: " + (this.kspVersionMin != null ? this.kspVersion.ToString() : "NULL") +
                    "\n\tKSP_VERSION_MAX: " + (this.kspVersionMax != null ? this.kspVersionMax.ToString() : "NULL") +
                    "\n\tCompatibleKspVersion: " + this.IsCompatibleKspVersion +
                    "\n\tCompatibleKspVersionMin: " + this.IsCompatibleKspVersionMin +
-                   "\n\tCompatibleKspVersionMax: " + this.IsCompatibleKspVersionMax;
+                   "\n\tCompatibleKspVersionMax: " + this.IsCompatibleKspVersionMax +
+                   "\n\tCompatibleGitHubVersion: " + this.IsCompatibleGitHubVersion;
         }
 
         #endregion

@@ -74,7 +74,7 @@ namespace KSP_AVC
 
         public bool IsUpdateAvailable
         {
-            get { return this.IsProcessingComplete && this.LocalInfo.Version != null && this.RemoteInfo.Version != null && this.RemoteInfo.Version > this.LocalInfo.Version && this.RemoteInfo.IsCompatibleKspVersion && this.RemoteInfo.IsCompactibleGitHubVersion; }
+            get { return this.IsProcessingComplete && this.LocalInfo.Version != null && this.RemoteInfo.Version != null && this.RemoteInfo.Version > this.LocalInfo.Version && this.RemoteInfo.IsCompatibleKspVersion && this.RemoteInfo.IsCompatibleGitHubVersion; }
         }
 
         public bool IsCompatible
