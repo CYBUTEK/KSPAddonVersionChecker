@@ -81,7 +81,7 @@ namespace MiniAVC
 
         public bool IsUpdateAvailable
         {
-            get { return this.IsProcessingComplete && this.LocalInfo.Version != null && this.RemoteInfo.Version != null && this.RemoteInfo.Version > this.LocalInfo.Version && this.RemoteInfo.IsCompatibleKspVersion; }
+            get { return this.IsProcessingComplete && this.LocalInfo.Version != null && this.RemoteInfo.Version != null && this.RemoteInfo.Version > this.LocalInfo.Version && this.RemoteInfo.IsCompatibleKspVersion && this.RemoteInfo.IsCompatibleGitHubVersion; }
         }
 
         public bool IsCompatible
@@ -178,6 +178,10 @@ namespace MiniAVC
                     if (www.error == null)
                     {
                         this.remoteInfo = new AddonInfo(this.localInfo.Url, www.text);
+                        if (this.remoteInfo.GitHub != null)
+                        {
+                            this.remoteInfo.GitHub.FetchVersion();
+                        }
                         this.IsRemoteReady = true;
                         this.IsProcessingComplete = true;
                         Logger.Log(this.localInfo);

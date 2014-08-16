@@ -74,7 +74,7 @@ namespace KSP_AVC
 
         public bool IsUpdateAvailable
         {
-            get { return this.IsProcessingComplete && this.LocalInfo.Version != null && this.RemoteInfo.Version != null && this.RemoteInfo.Version > this.LocalInfo.Version && this.RemoteInfo.IsCompatibleKspVersion; }
+            get { return this.IsProcessingComplete && this.LocalInfo.Version != null && this.RemoteInfo.Version != null && this.RemoteInfo.Version > this.LocalInfo.Version && this.RemoteInfo.IsCompatibleKspVersion && this.RemoteInfo.IsCompactibleGitHubVersion; }
         }
 
         public bool IsCompatible
@@ -168,6 +168,10 @@ namespace KSP_AVC
                     if (www.error == null)
                     {
                         this.remoteInfo = new AddonInfo(this.localInfo.Url, www.text);
+                        if (this.remoteInfo.GitHub != null)
+                        {
+                            this.remoteInfo.GitHub.FetchRemoteData();
+                        }
                         this.IsRemoteReady = true;
                         this.IsProcessingComplete = true;
                         Logger.Log(this.localInfo);

@@ -45,6 +45,7 @@
     <Compile Include="Settings.cs" />
     <Compile Include="Starter.cs" />
     <Compile Include="ToolTipGui.cs" />
+    <Compile Include="VersionInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Assembly-CSharp">

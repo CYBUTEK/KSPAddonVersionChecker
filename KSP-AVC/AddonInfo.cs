@@ -19,6 +19,9 @@
 
 using System;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
+
+using UnityEngine;
 
 #endregion
 
@@ -28,14 +31,13 @@ namespace KSP_AVC
     {
         #region Fields
 
-        private static readonly System.Version actualKspVersion;
-        private static readonly System.Version defaultMinVersion = new System.Version();
-        private static readonly System.Version defaultMaxVersion = new System.Version(int.MaxValue, int.MaxValue, int.MaxValue, int.MaxValue);
+        private static readonly VersionInfo actualKspVersion;
+
         private readonly string path;
 
-        private System.Version kspVersion;
-        private System.Version kspVersionMax;
-        private System.Version kspVersionMin;
+        private VersionInfo kspVersion;
+        private VersionInfo kspVersionMax;
+        private VersionInfo kspVersionMin;
 
         #endregion
 
@@ -45,7 +47,7 @@ namespace KSP_AVC
         {
             try
             {
-                actualKspVersion = new System.Version(Versioning.version_major, Versioning.version_minor, Versioning.Revision);
+                actualKspVersion = new VersionInfo(Versioning.version_major, Versioning.version_minor, Versioning.Revision);
             }
             catch (Exception ex)
             {
@@ -84,21 +86,21 @@ namespace KSP_AVC
 
         public string Download { get; private set; }
 
-        public System.Version Version { get; private set; }
+        public VersionInfo Version { get; private set; }
 
-        public System.Version KspVersion
+        public VersionInfo KspVersion
         {
-            get { return (this.kspVersion ?? actualKspVersion); }
+            get { return this.kspVersion ?? actualKspVersion; }
         }
 
-        public System.Version KspVersionMin
+        public VersionInfo KspVersionMin
         {
-            get { return (this.kspVersionMin ?? defaultMinVersion); }
+            get { return this.kspVersionMin ?? VersionInfo.Min; }
         }
 
-        public System.Version KspVersionMax
+        public VersionInfo KspVersionMax
         {
-            get { return (this.kspVersionMax ?? defaultMaxVersion); }
+            get { return this.kspVersionMax ?? VersionInfo.Max; }
         }
 
         public bool IsCompatibleKspVersion
@@ -116,12 +118,22 @@ namespace KSP_AVC
             get { return this.KspVersionMax >= actualKspVersion; }
         }
 
+        public bool IsCompactibleGitHubVersion
+        {
+            get
+            {
+                return this.GitHub == null || this.GitHub.Version == null || this.Version.CompareTo(this.GitHub.Version) == 0;
+            }
+        }
+
         public bool IsCompatible
         {
             get { return this.IsCompatibleKspVersion || ((this.kspVersionMin != null || this.kspVersionMax != null) && this.IsCompatibleKspVersionMin && this.IsCompatibleKspVersionMax); }
         }
 
-        public static System.Version ActualKspVersion
+        public GitHubInfo GitHub { get; private set; }
+
+        public static VersionInfo ActualKspVersion
         {
             get { return actualKspVersion; }
         }
@@ -149,27 +161,31 @@ namespace KSP_AVC
                             break;
 
                         case "URL":
-                            this.Url = this.FormatCompatibleUrl((string)data["URL"]);
+                            this.Url = FormatCompatibleUrl((string)data["URL"]);
                             break;
 
                         case "DOWNLOAD":
                             this.Download = (string)data["DOWNLOAD"];
                             break;
 
+                        case "GITHUB":
+                            this.GitHub = new GitHubInfo(data["GITHUB"], this);
+                            break;
+
                         case "VERSION":
-                            this.Version = this.GetVersion(data["VERSION"]);
+                            this.Version = GetVersion(data["VERSION"]);
                             break;
 
                         case "KSP_VERSION":
-                            this.kspVersion = this.GetVersion(data["KSP_VERSION"]);
+                            this.kspVersion = GetVersion(data["KSP_VERSION"]);
                             break;
 
                         case "KSP_VERSION_MIN":
-                            this.kspVersionMin = this.GetVersion(data["KSP_VERSION_MIN"]);
+                            this.kspVersionMin = GetVersion(data["KSP_VERSION_MIN"]);
                             break;
 
                         case "KSP_VERSION_MAX":
-                            this.kspVersionMax = this.GetVersion(data["KSP_VERSION_MAX"]);
+                            this.kspVersionMax = GetVersion(data["KSP_VERSION_MAX"]);
                             break;
                     }
                 }
@@ -180,44 +196,39 @@ namespace KSP_AVC
             }
         }
 
-        private System.Version GetVersion(object data)
+        private static VersionInfo GetVersion(object obj)
         {
             try
             {
-                if (data is Dictionary<string, object>)
+                if (obj is Dictionary<string, object>)
                 {
-                    var dataVersion = data as Dictionary<string, object>;
+                    var data = obj as Dictionary<string, object>;
 
-                    switch (dataVersion.Count)
+                    switch (data.Count)
                     {
                         case 2:
-                            return new System.Version((int)(long)dataVersion["MAJOR"], (int)(long)dataVersion["MINOR"]);
+                            return new VersionInfo((long)data["MAJOR"], (long)data["MINOR"]);
 
                         case 3:
-                            return (int)(long)dataVersion["PATCH"] == 0
-                                ? new System.Version((int)(long)dataVersion["MAJOR"], (int)(long)dataVersion["MINOR"])
-                                : new System.Version((int)(long)dataVersion["MAJOR"], (int)(long)dataVersion["MINOR"], (int)(long)dataVersion["PATCH"]);
+                            return new VersionInfo((long)data["MAJOR"], (long)data["MINOR"], (long)data["PATCH"]);
 
                         case 4:
-                            return (int)(long)dataVersion["BUILD"] == 0 ? (int)(long)dataVersion["PATCH"] == 0
-                                ? new System.Version((int)(long)dataVersion["MAJOR"], (int)(long)dataVersion["MINOR"])
-                                : new System.Version((int)(long)dataVersion["MAJOR"], (int)(long)dataVersion["MINOR"], (int)(long)dataVersion["PATCH"])
-                                : new System.Version((int)(long)dataVersion["MAJOR"], (int)(long)dataVersion["MINOR"], (int)(long)dataVersion["PATCH"], (int)(long)dataVersion["BUILD"]);
+                            return new VersionInfo((long)data["MAJOR"], (long)data["MINOR"], (long)data["PATCH"], (long)data["BUILD"]);
 
                         default:
-                            return null;
+                            return new VersionInfo();
                     }
                 }
-                return new System.Version((string)data);
+                return new VersionInfo((string)obj);
             }
             catch (Exception ex)
             {
                 Logger.Exception(ex);
-                return new System.Version();
+                return null;
             }
         }
 
-        private string FormatCompatibleUrl(string url)
+        private static string FormatCompatibleUrl(string url)
         {
             try
             {
@@ -245,13 +256,159 @@ namespace KSP_AVC
                    "\n\tNAME: " + (string.IsNullOrEmpty(this.Name) ? "NULL (required)" : this.Name) +
                    "\n\tURL: " + (string.IsNullOrEmpty(this.Url) ? "NULL" : this.Url) +
                    "\n\tDOWNLOAD: " + (string.IsNullOrEmpty(this.Download) ? "NULL" : this.Download) +
+                   "\n\tGITHUB: " + (this.GitHub != null ? this.GitHub.ToString() : "NULL") +
                    "\n\tVERSION: " + (this.Version != null ? this.Version.ToString() : "NULL (required)") +
                    "\n\tKSP_VERSION: " + this.KspVersion +
                    "\n\tKSP_VERSION_MIN: " + (this.kspVersionMin != null ? this.kspVersion.ToString() : "NULL") +
                    "\n\tKSP_VERSION_MAX: " + (this.kspVersionMax != null ? this.kspVersionMax.ToString() : "NULL") +
                    "\n\tCompatibleKspVersion: " + this.IsCompatibleKspVersion +
                    "\n\tCompatibleKspVersionMin: " + this.IsCompatibleKspVersionMin +
-                   "\n\tCompatibleKspVersionMax: " + this.IsCompatibleKspVersionMax;
+                   "\n\tCompatibleKspVersionMax: " + this.IsCompatibleKspVersionMax +
+                   "\n\tCompatibleGitHubVersion: " + this.IsCompactibleGitHubVersion;
+        }
+
+        #endregion
+
+        #region Nested type: GitHubInfo
+
+        public class GitHubInfo
+        {
+            #region Fields
+
+            private readonly AddonInfo addonInfo;
+
+            #endregion
+
+            #region Constructors
+
+            public GitHubInfo(object obj, AddonInfo addonInfo)
+            {
+                try
+                {
+                    this.addonInfo = addonInfo;
+
+                    var data = obj as Dictionary<string, object>;
+                    if (data == null)
+                    {
+                        this.ParseError = true;
+                        return;
+                    }
+
+                    foreach (var key in data.Keys)
+                    {
+                        switch (key)
+                        {
+                            case "USERNAME":
+                                this.Username = (string)data[key];
+                                break;
+
+                            case "REPOSITORY":
+                                this.Repository = (string)data[key];
+                                break;
+
+                            case "ALLOW_PRE_RELEASE":
+                                this.AllowPreRelease = (bool)data[key];
+                                break;
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Logger.Exception(ex);
+                }
+            }
+
+            #endregion
+
+            #region Properties
+
+            public bool ParseError { get; private set; }
+            public string Username { get; private set; }
+            public string Repository { get; private set; }
+            public string Tag { get; private set; }
+            public bool AllowPreRelease { get; private set; }
+            public VersionInfo Version { get; private set; }
+
+            #endregion
+
+            #region Private Methods
+
+            private void Parse(string json)
+            {
+                try
+                {
+                    var obj = Json.Deserialize(json) as List<object>;
+                    if (obj == null || obj.Count == 0)
+                    {
+                        this.ParseError = true;
+                        return;
+                    }
+
+                    foreach (Dictionary<string, object> data in obj)
+                    {
+                        if (!this.AllowPreRelease && (bool)data["prerelease"])
+                        {
+                            continue;
+                        }
+
+                        var tag = (string)data["tag_name"];
+                        var version = GetVersion(tag);
+
+                        if (version == null || version <= this.Version)
+                        {
+                            continue;
+                        }
+
+                        this.Version = version;
+                        this.Tag = tag;
+
+                        if (string.IsNullOrEmpty(this.addonInfo.Download))
+                        {
+                            this.addonInfo.Download = "https://github.com/" + this.Username + "/" + this.Repository + "/releases/tag/" + this.Tag;
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Logger.Exception(ex);
+                }
+            }
+
+            #endregion
+
+            #region Public Methods
+
+            public void FetchRemoteData()
+            {
+                try
+                {
+                    using (var www = new WWW("https://api.github.com/repos/" + this.Username + "/" + this.Repository + "/releases"))
+                    {
+                        while (!www.isDone) { }
+                        if (www.error == null)
+                        {
+                            this.Parse(www.text);
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Logger.Exception(ex);
+                }
+            }
+
+            #endregion
+
+            #region Debug
+
+            public override string ToString()
+            {
+                return this.Username + "/" + this.Repository +
+                       "\n\t\tLatestRelease: " + (this.Version != null ? this.Version.ToString() : "NULL") +
+                       "\n\t\tAllowPreRelease: " + this.AllowPreRelease;
+            }
+
+            #endregion
         }
 
         #endregion
