@@ -33,7 +33,6 @@ namespace KSP_AVC
     {
         #region Fields
 
-        private readonly Stopwatch stopwatch = new Stopwatch();
         private CheckGui checkGui;
         private FirstRunGui firstRunGui;
 
@@ -45,8 +44,6 @@ namespace KSP_AVC
         {
             try
             {
-                AssemblyLoader.ClearPlugins();
-                return;
                 DontDestroyOnLoad(this);
                 Logger.Log("Starter was created.");
             }
@@ -60,7 +57,6 @@ namespace KSP_AVC
         {
             try
             {
-                this.stopwatch.Start();
                 if (new System.Version(Settings.Instance.Version) < Assembly.GetExecutingAssembly().GetName().Version)
                 {
                     Settings.Instance.Version = Assembly.GetExecutingAssembly().GetName().Version.ToString();

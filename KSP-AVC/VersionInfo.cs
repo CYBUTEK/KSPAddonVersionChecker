@@ -89,29 +89,36 @@ namespace KSP_AVC
 
         public VersionInfo(string version)
         {
-            var sections = Regex.Replace(version, @"[^\d\.]", string.Empty).Split('.');
-
-            switch (sections.Length)
+            try
             {
-                case 1:
-                    this.SetVersion(long.Parse(sections[0]), 0, 0, 0);
-                    return;
+                var sections = Regex.Replace(version, @"[^\d\.]", string.Empty).Split('.');
 
-                case 2:
-                    this.SetVersion(long.Parse(sections[0]), long.Parse(sections[1]), 0, 0);
-                    return;
+                switch (sections.Length)
+                {
+                    case 1:
+                        this.SetVersion(long.Parse(sections[0]), 0, 0, 0);
+                        return;
 
-                case 3:
-                    this.SetVersion(long.Parse(sections[0]), long.Parse(sections[1]), long.Parse(sections[2]), 0);
-                    return;
+                    case 2:
+                        this.SetVersion(long.Parse(sections[0]), long.Parse(sections[1]), 0, 0);
+                        return;
 
-                case 4:
-                    this.SetVersion(long.Parse(sections[0]), long.Parse(sections[1]), long.Parse(sections[2]), long.Parse(sections[3]));
-                    return;
+                    case 3:
+                        this.SetVersion(long.Parse(sections[0]), long.Parse(sections[1]), long.Parse(sections[2]), 0);
+                        return;
 
-                default:
-                    this.SetVersion(0, 0, 0, 0);
-                    return;
+                    case 4:
+                        this.SetVersion(long.Parse(sections[0]), long.Parse(sections[1]), long.Parse(sections[2]), long.Parse(sections[3]));
+                        return;
+
+                    default:
+                        this.SetVersion(0, 0, 0, 0);
+                        return;
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.Exception(ex);
             }
         }
 
@@ -140,24 +147,39 @@ namespace KSP_AVC
 
         public void SetVersion(long major, long minor, long patch, long build)
         {
-            this.Major = major;
-            this.Minor = minor;
-            this.Patch = patch;
-            this.Build = build;
+            try
+            {
+                this.Major = major;
+                this.Minor = minor;
+                this.Patch = patch;
+                this.Build = build;
+            }
+            catch (Exception ex)
+            {
+                Logger.Exception(ex);
+            }
         }
 
         public override string ToString()
         {
-            if (this.Build > 0)
+            try
             {
-                return string.Format("{0}.{1}.{2}.{3}", this.Major, this.Minor, this.Patch, this.Build);
-            }
-            if (this.Patch > 0)
-            {
-                return string.Format("{0}.{1}.{2}", this.Major, this.Minor, this.Patch);
-            }
+                if (this.Build > 0)
+                {
+                    return string.Format("{0}.{1}.{2}.{3}", this.Major, this.Minor, this.Patch, this.Build);
+                }
+                if (this.Patch > 0)
+                {
+                    return string.Format("{0}.{1}.{2}", this.Major, this.Minor, this.Patch);
+                }
 
-            return this.Minor > 0 ? string.Format("{0}.{1}", this.Major, this.Minor) : this.Major.ToString(CultureInfo.InvariantCulture);
+                return this.Minor > 0 ? string.Format("{0}.{1}", this.Major, this.Minor) : this.Major.ToString(CultureInfo.InvariantCulture);
+            }
+            catch (Exception ex)
+            {
+                Logger.Exception(ex);
+                return ex.Message;
+            }
         }
 
         public override int GetHashCode()

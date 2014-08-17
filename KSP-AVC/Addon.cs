@@ -175,7 +175,7 @@ namespace KSP_AVC
                         this.IsRemoteReady = true;
                         this.IsProcessingComplete = true;
                         Logger.Log(this.localInfo);
-                        Logger.Log(this.remoteInfo);
+                        Logger.Log(this.remoteInfo + "\n\tUpdateAvailable: " + this.IsUpdateAvailable);
                     }
                     else
                     {
