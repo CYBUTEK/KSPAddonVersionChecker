@@ -33,6 +33,7 @@ namespace KSP_AVC
     {
         #region Fields
 
+        private static bool alreadyChecked;
         private CheckGui checkGui;
         private FirstRunGui firstRunGui;
 
@@ -44,6 +45,11 @@ namespace KSP_AVC
         {
             try
             {
+                if (alreadyChecked)
+                {
+                    Destroy(this);
+                }
+                alreadyChecked = true;
                 DontDestroyOnLoad(this);
                 Logger.Log("Starter was created.");
             }
