@@ -34,6 +34,7 @@ namespace KSP_AVC
         private readonly Dictionary<Addon, DropDownList> dropDownLists = new Dictionary<Addon, DropDownList>();
         private bool hasCentred;
         private Rect position = new Rect(Screen.width, Screen.height, 0, 0);
+        private ToolTipGui toolTipGui;
 
         #endregion
 
@@ -264,7 +265,15 @@ namespace KSP_AVC
 
             if (!String.IsNullOrEmpty(addon.RemoteInfo.Download))
             {
-                GUILayout.Button("Download", this.buttonStyle);
+                if (GUILayout.Button("Download", this.buttonStyle))
+                {
+                    Application.OpenURL(addon.RemoteInfo.Download);
+                    list.ShowList = false;
+                }
+                if (Event.current.type == EventType.repaint)
+                {
+                    list.ToolTip.Text = GUILayoutUtility.GetLastRect().Contains(Event.current.mousePosition) ? list.ToolTip.Text = addon.RemoteInfo.Download : String.Empty;
+                }
             }
         }
 

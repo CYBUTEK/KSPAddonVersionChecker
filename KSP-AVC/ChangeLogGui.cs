@@ -29,8 +29,7 @@ namespace KSP_AVC
     {
         #region Fields
 
-        private bool hasCentred;
-        private Rect position = new Rect(Screen.width, Screen.height, 500.0f, 500.0f);
+        private Rect position = new Rect(0, 0, Screen.width, Screen.height);
         private Vector2 scrollPosition;
 
         #endregion
@@ -111,11 +110,6 @@ namespace KSP_AVC
         {
             GUI.skin = null;
             this.position = GUILayout.Window(this.GetInstanceID(), this.position, this.Window, this.Name + " - Change Log", HighLogic.Skin.window);
-            if (!this.hasCentred && this.position.width > 0 && this.position.height > 0)
-            {
-                this.position.center = new Vector2(Screen.width * 0.5f, Screen.height * 0.5f);
-                this.hasCentred = true;
-            }
         }
 
         private void Window(int id)
@@ -128,12 +122,10 @@ namespace KSP_AVC
                 GUILayout.Label(this.Text, this.labelStyle);
                 GUILayout.EndScrollView();
 
-                if (GUILayout.Button("CLOSE", HighLogic.Skin.button))
+                if (GUILayout.Button("CLOSE", this.closeStyle))
                 {
                     Destroy(this);
                 }
-
-                GUI.DragWindow();
             }
             catch (Exception ex)
             {

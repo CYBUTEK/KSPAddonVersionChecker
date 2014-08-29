@@ -174,7 +174,7 @@ namespace MiniAVC
                     return string.Format("{0}.{1}.{2}", this.Major, this.Minor, this.Patch);
                 }
 
-                return this.Minor > 0 ? string.Format("{0}.{1}", this.Major, this.Minor) : this.Major.ToString(CultureInfo.InvariantCulture);
+                return string.Format("{0}.{1}", this.Major, this.Minor);
             }
             catch (Exception ex)
             {

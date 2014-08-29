@@ -40,6 +40,8 @@ namespace KSP_AVC
 
         public bool ShowList { get; set; }
 
+        public ToolTipGui ToolTip { get; set; }
+
         public Addon Addon { get; set; }
 
         public Action<DropDownList, Addon> DrawCallback { get; set; }
@@ -54,6 +56,7 @@ namespace KSP_AVC
             {
                 DontDestroyOnLoad(this);
                 this.InitialiseStyles();
+                this.ToolTip = this.gameObject.AddComponent<ToolTipGui>();
             }
             catch (Exception ex)
             {
@@ -185,6 +188,10 @@ namespace KSP_AVC
             {
                 if (!this.ShowList)
                 {
+                    if (!String.IsNullOrEmpty(this.ToolTip.Text))
+                    {
+                        this.ToolTip.Text = String.Empty;
+                    }
                     return;
                 }
                 this.listPosition = GUILayout.Window(this.GetInstanceID(), this.listPosition, this.Window, String.Empty, this.listStyle);
@@ -200,6 +207,7 @@ namespace KSP_AVC
             try
             {
                 GUI.BringWindowToFront(windowId);
+                GUI.BringWindowToFront(this.ToolTip.GetInstanceID());
                 this.DrawCallback(this, this.Addon);
             }
             catch (Exception ex)
@@ -222,6 +230,22 @@ namespace KSP_AVC
                 this.listPosition.x = this.togglePosition.x;
                 this.listPosition.y = this.togglePosition.y + this.togglePosition.height;
                 this.listPosition.width = this.togglePosition.width;
+            }
+            catch (Exception ex)
+            {
+                Logger.Exception(ex);
+            }
+        }
+
+        #endregion
+
+        #region Destruction
+
+        private void OnDestroy()
+        {
+            try
+            {
+                Destroy(this.ToolTip);
             }
             catch (Exception ex)
             {

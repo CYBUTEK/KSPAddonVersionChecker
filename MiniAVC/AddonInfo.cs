@@ -252,7 +252,10 @@ namespace MiniAVC
             {
                 if (url.Contains("github.com"))
                 {
-                    return url.Replace("github.com", "raw.githubusercontent.com").Replace("/tree/", "/");
+                    url = url.Replace("github.com", "raw.githubusercontent.com");
+                    url = url.Replace("/tree/", "/");
+                    url = url.Replace("/blob/", "/");
+                    return url;
                 }
 
                 return url;

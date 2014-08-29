@@ -19,7 +19,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Security.AccessControl;
 
 using UnityEngine;
 
@@ -38,7 +37,7 @@ namespace KSP_AVC
         private VersionInfo kspVersion;
         private VersionInfo kspVersionMax;
         private VersionInfo kspVersionMin;
-        
+
         #endregion
 
         #region Contructors
