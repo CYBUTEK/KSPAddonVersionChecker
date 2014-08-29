@@ -15,41 +15,29 @@
 //     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 // 
 
-#region Using Directives
-
 using System;
-using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 
 using UnityEngine;
-
-#endregion
 
 namespace KSP_AVC
 {
     [KSPAddon(KSPAddon.Startup.Instantly, false)]
     public class Starter : MonoBehaviour
     {
-        #region Fields
-
-        private static bool alreadyChecked;
-        private CheckGui checkGui;
+        private static bool hasAlreadyChecked;
+        private CheckGui checkerProgressGui;
         private FirstRunGui firstRunGui;
 
-        #endregion
-
-        #region Initialisation
-
-        private void Awake()
+        protected void Awake()
         {
             try
             {
-                if (alreadyChecked)
+                if (this.HasAlreadyChecked())
                 {
-                    Destroy(this);
+                    return;
                 }
-                alreadyChecked = true;
                 DontDestroyOnLoad(this);
                 Logger.Log("Starter was created.");
             }
@@ -59,22 +47,37 @@ namespace KSP_AVC
             }
         }
 
-        private void Start()
+        protected void OnDestroy()
+        {
+            try
+            {
+                if (this.firstRunGui != null)
+                {
+                    Destroy(this.firstRunGui);
+                }
+                if (this.checkerProgressGui != null)
+                {
+                    Destroy(this.checkerProgressGui);
+                }
+                Logger.Log("Starter was destroyed.");
+            }
+            catch (Exception ex)
+            {
+                Logger.Exception(ex);
+            }
+        }
+
+        protected void Start()
         {
             try
             {
                 if (new System.Version(Settings.Instance.Version) < Assembly.GetExecutingAssembly().GetName().Version)
                 {
-                    Settings.Instance.Version = Assembly.GetExecutingAssembly().GetName().Version.ToString();
-                    Settings.Save();
-                    this.firstRunGui = this.gameObject.AddComponent<FirstRunGui>();
-                    this.firstRunGui.HasBeenUpdated = true;
+                    this.ShowUpdatedWindow();
                 }
                 else if (Settings.Instance.FirstRun)
                 {
-                    Settings.Instance.FirstRun = false;
-                    Settings.Save();
-                    this.firstRunGui = this.gameObject.AddComponent<FirstRunGui>();
+                    this.ShowInstalledWindow();
                 }
             }
             catch (Exception ex)
@@ -83,11 +86,7 @@ namespace KSP_AVC
             }
         }
 
-        #endregion
-
-        #region Updating
-
-        private void Update()
+        protected void Update()
         {
             try
             {
@@ -95,21 +94,13 @@ namespace KSP_AVC
                 {
                     return;
                 }
-
-                if (AddonLibrary.Populated && AddonLibrary.Addons.All(a => a.IsProcessingComplete))
+                if (this.ShowIssuesWindow())
                 {
-                    if (AddonLibrary.Addons.Any(a => !a.HasError && (a.IsUpdateAvailable || !a.IsCompatible)))
-                    {
-                        this.gameObject.AddComponent<IssueGui>();
-                    }
-                    Destroy(this.checkGui);
-                    Destroy(this);
                     return;
                 }
-
-                if (this.checkGui == null)
+                if (this.checkerProgressGui == null)
                 {
-                    this.checkGui = this.gameObject.AddComponent<CheckGui>();
+                    this.checkerProgressGui = this.gameObject.AddComponent<CheckGui>();
                 }
             }
             catch (Exception ex)
@@ -118,15 +109,44 @@ namespace KSP_AVC
             }
         }
 
-        #endregion
-
-        #region Destruction
-
-        private void OnDestroy()
+        private bool HasAlreadyChecked()
         {
-            Logger.Log("Starter was destroyed.");
+            if (hasAlreadyChecked)
+            {
+                Destroy(this);
+                return true;
+            }
+            hasAlreadyChecked = true;
+            return false;
         }
 
-        #endregion
+        private void ShowInstalledWindow()
+        {
+            Settings.Instance.FirstRun = false;
+            Settings.Save();
+            this.firstRunGui = this.gameObject.AddComponent<FirstRunGui>();
+        }
+
+        private bool ShowIssuesWindow()
+        {
+            if (!AddonLibrary.Populated || !AddonLibrary.Addons.All(a => a.IsProcessingComplete))
+            {
+                return false;
+            }
+            if (AddonLibrary.Addons.Any(a => !a.HasError && (a.IsUpdateAvailable || !a.IsCompatible)))
+            {
+                this.gameObject.AddComponent<IssueGui>();
+            }
+            Destroy(this);
+            return true;
+        }
+
+        private void ShowUpdatedWindow()
+        {
+            Settings.Instance.Version = Assembly.GetExecutingAssembly().GetName().Version.ToString();
+            Settings.Save();
+            this.firstRunGui = this.gameObject.AddComponent<FirstRunGui>();
+            this.firstRunGui.HasBeenUpdated = true;
+        }
     }
 }
