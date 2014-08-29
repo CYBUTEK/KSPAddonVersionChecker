@@ -190,7 +190,7 @@ namespace KSP_AVC
             {
                 if (!this.ShowList)
                 {
-                    if (!String.IsNullOrEmpty(this.ToolTip.Text))
+                    if (this.ToolTip != null && !String.IsNullOrEmpty(this.ToolTip.Text))
                     {
                         this.ToolTip.Text = String.Empty;
                     }

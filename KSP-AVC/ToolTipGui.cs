@@ -106,7 +106,7 @@ namespace KSP_AVC
 
         private void Update()
         {
-            this.position.size = this.labelStyle.CalcSize(this.content);
+            this.position.size = this.labelStyle.CalcSize(this.content ?? GUIContent.none);
             this.position.x = Mathf.Clamp(Input.mousePosition.x + 20.0f, 0, Screen.width - this.position.width);
             this.position.y = Screen.height - Input.mousePosition.y + (this.position.x < Input.mousePosition.x + 20.0f ? 20.0f : 0);
         }
@@ -137,7 +137,7 @@ namespace KSP_AVC
             try
             {
                 GUI.BringWindowToFront(windowId);
-                GUILayout.Label(this.content, this.labelStyle);
+                GUILayout.Label(this.content ?? GUIContent.none, this.labelStyle);
             }
             catch (Exception ex)
             {

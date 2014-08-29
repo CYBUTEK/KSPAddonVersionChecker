@@ -25,7 +25,7 @@ using UnityEngine;
 
 namespace KSP_AVC
 {
-    [KSPAddon(KSPAddon.Startup.EveryScene, false)]
+    [KSPAddon(KSPAddon.Startup.Instantly, false)]
     public class AddonListGui : MonoBehaviour
     {
         #region Fields

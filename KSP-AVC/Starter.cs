@@ -104,6 +104,7 @@ namespace KSP_AVC
                     }
                     Destroy(this.checkGui);
                     Destroy(this);
+                    return;
                 }
 
                 if (this.checkGui == null)
