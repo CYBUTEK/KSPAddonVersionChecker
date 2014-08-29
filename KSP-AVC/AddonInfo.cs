@@ -37,7 +37,7 @@ namespace KSP_AVC
         private VersionInfo kspVersion;
         private VersionInfo kspVersionMax;
         private VersionInfo kspVersionMin;
-
+        
         #endregion
 
         #region Contructors
@@ -84,6 +84,10 @@ namespace KSP_AVC
         public string Url { get; private set; }
 
         public string Download { get; private set; }
+
+        public string ChangeLog { get; private set; }
+
+        public string ChangeLogUrl { get; private set; }
 
         public VersionInfo Version { get; private set; }
 
@@ -162,6 +166,14 @@ namespace KSP_AVC
 
                         case "DOWNLOAD":
                             this.Download = (string)data[key];
+                            break;
+
+                        case "CHANGE_LOG":
+                            this.ChangeLog = (string)data[key];
+                            break;
+
+                        case "CHANGE_LOG_URL":
+                            this.ChangeLogUrl = (string)data[key];
                             break;
 
                         case "GITHUB":
@@ -261,6 +273,49 @@ namespace KSP_AVC
             {
                 Logger.Exception(ex);
                 return url;
+            }
+        }
+
+        #endregion
+
+        #region Fetch Remote Data
+
+        public void FetchRemoteData()
+        {
+            try
+            {
+                if (this.GitHub != null)
+                {
+                    this.GitHub.FetchRemoteData();
+                }
+
+                if (this.ChangeLogUrl != null)
+                {
+                    this.FetchChangeLog();
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.Exception(ex);
+            }
+        }
+
+        private void FetchChangeLog()
+        {
+            try
+            {
+                using (var www = new WWW(this.ChangeLogUrl))
+                {
+                    while (!www.isDone) { }
+                    if (www.error == null)
+                    {
+                        this.ChangeLog = www.text;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.Exception(ex);
             }
         }
 

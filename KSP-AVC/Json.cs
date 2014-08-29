@@ -76,16 +76,16 @@ namespace KSP_AVC
     //
     //          var dict = Json.Deserialize(jsonString) as Dictionary<string,object>;
     //
-    //          Debug.Log("deserialized: " + dict.GetType());
-    //          Debug.Log("dict['array'][0]: " + ((List<object>) dict["array"])[0]);
-    //          Debug.Log("dict['string']: " + (string) dict["string"]);
-    //          Debug.Log("dict['float']: " + (double) dict["float"]); // floats come out as doubles
-    //          Debug.Log("dict['int']: " + (long) dict["int"]); // ints come out as longs
-    //          Debug.Log("dict['unicode']: " + (string) dict["unicode"]);
+    //          Debug.Text("deserialized: " + dict.GetType());
+    //          Debug.Text("dict['array'][0]: " + ((List<object>) dict["array"])[0]);
+    //          Debug.Text("dict['string']: " + (string) dict["string"]);
+    //          Debug.Text("dict['float']: " + (double) dict["float"]); // floats come out as doubles
+    //          Debug.Text("dict['int']: " + (long) dict["int"]); // ints come out as longs
+    //          Debug.Text("dict['unicode']: " + (string) dict["unicode"]);
     //
     //          var str = Json.Serialize(dict);
     //
-    //          Debug.Log("serialized: " + str);
+    //          Debug.Text("serialized: " + str);
     //      }
     //  }
 

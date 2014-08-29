@@ -86,7 +86,7 @@ namespace KSP_AVC
                 {
                     if (obj is IEnumerable)
                     {
-                        messages.Add(new[] {"Log " + DateTime.Now.TimeOfDay, obj.ToString()});
+                        messages.Add(new[] {"Text " + DateTime.Now.TimeOfDay, obj.ToString()});
                         foreach (var o in obj as IEnumerable)
                         {
                             messages.Add(new[] {"\t", o.ToString()});
@@ -94,7 +94,7 @@ namespace KSP_AVC
                     }
                     else
                     {
-                        messages.Add(new[] {"Log " + DateTime.Now.TimeOfDay, obj.ToString()});
+                        messages.Add(new[] {"Text " + DateTime.Now.TimeOfDay, obj.ToString()});
                     }
                 }
                 catch (Exception ex)
@@ -112,7 +112,7 @@ namespace KSP_AVC
                 {
                     if (obj is IEnumerable)
                     {
-                        messages.Add(new[] {"Log " + DateTime.Now.TimeOfDay, name});
+                        messages.Add(new[] {"Text " + DateTime.Now.TimeOfDay, name});
                         foreach (var o in obj as IEnumerable)
                         {
                             messages.Add(new[] {"\t", o.ToString()});
@@ -120,7 +120,7 @@ namespace KSP_AVC
                     }
                     else
                     {
-                        messages.Add(new[] {"Log " + DateTime.Now.TimeOfDay, obj.ToString()});
+                        messages.Add(new[] {"Text " + DateTime.Now.TimeOfDay, obj.ToString()});
                     }
                 }
                 catch (Exception ex)
@@ -134,7 +134,7 @@ namespace KSP_AVC
         {
             lock (messages)
             {
-                messages.Add(new[] {"Log " + DateTime.Now.TimeOfDay, message});
+                messages.Add(new[] {"Text " + DateTime.Now.TimeOfDay, message});
             }
         }
 

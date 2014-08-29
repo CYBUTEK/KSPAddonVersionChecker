@@ -2,7 +2,7 @@
 <html>
 <head>
 	<meta charset='UTF-8'>
-	<title>MiniAVC - ReadMe</title>
+	<title>MiniAVC - README</title>
 	<link href='http://fonts.googleapis.com/css?family=PT+Sans:400,700' rel='stylesheet' type='text/css'>
 	<style>
 		* {
@@ -47,6 +47,11 @@
 		li {
 			margin-top: 0.5em;
 			text-align: justify;
+		}
+
+		iframe {
+			width: 100%;
+			border: none;
 		}
 
 		header {
@@ -110,11 +115,6 @@
 		<header>MiniAVC Add-on Version Checker</header>
 
 		<section>
-			<h3>Current Version</h3>
-			<p>1.0.2.1</p>
-		</section>
-
-		<section>
 			<h3>Developer</h3>
 			<p>CYBUTEK</p>
 		</section>
@@ -143,39 +143,16 @@
 		</section>
 
 		<section>
-			<h3>Version File Example</h3>
+			<h3>Community Add-on Rule 5.5</h3>
 			<p>
-				{<br>
-				&nbsp;&nbsp;&nbsp;&nbsp;"NAME":"KSP-AVC",<br>
-				&nbsp;&nbsp;&nbsp;&nbsp;"URL":"http://ksp-avc.cybutek.net/version.php?id=2",<br>
-				&nbsp;&nbsp;&nbsp;&nbsp;"DOWNLOAD":"http://kerbal.curseforge.com/ksp-mods/220462-ksp-avc-add-on-version-checker",<br>
-				&nbsp;&nbsp;&nbsp;&nbsp;"GITHUB":{<br>
-				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"USERNAME":"CYBUTEK",<br>
-				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"REPOSITORY":"KerbalEngineer",<br>
-				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"ALLOW_PRE_RELEASE":false,<br>
-				&nbsp;&nbsp;&nbsp;&nbsp;},<br>
-				&nbsp;&nbsp;&nbsp;&nbsp;"VERSION":{<br>
-				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"MAJOR":1,<br>
-				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"MINOR":1,<br>
-				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"PATCH":0,<br>
-				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"BUILD":0<br>
-				&nbsp;&nbsp;&nbsp;&nbsp;},<br>
-				&nbsp;&nbsp;&nbsp;&nbsp;"KSP_VERSION":{<br>
-				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"MAJOR":0,<br>
-				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"MINOR":24,<br>
-				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"PATCH":2<br>
-				&nbsp;&nbsp;&nbsp;&nbsp;},<br>
-				&nbsp;&nbsp;&nbsp;&nbsp;"KSP_VERSION_MIN":{<br>
-				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"MAJOR":0,<br>
-				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"MINOR":24,<br>
-				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"PATCH":0<br>
-				&nbsp;&nbsp;&nbsp;&nbsp;}<br>
-				&nbsp;&nbsp;&nbsp;&nbsp;"KSP_VERSION_MAX":{<br>
-				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"MAJOR":0,<br>
-				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"MINOR":24,<br>
-				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"PATCH":2<br>
-				&nbsp;&nbsp;&nbsp;&nbsp;}<br>
-				}
+				The rule states that, "Add-ons that contact another network or computer system must tell users exactly what it's sending or receiving in a clear and obvious way in all locations it is offered for download."  This means that if you bundle MiniAVC with your add-on, you must clearly notify players before downloading that it contains MiniAVC and how it works.
+				
+				<div style='margin: 0.5em; padding: 0.5em 1em; border: 1px solid #999; background-color: white; font-family: monospace; text-align: justify;'><b><u>BB Code</u></b><br>
+					This mod includes version checking using [URL=http://forum.kerbalspaceprogram.com/threads/79745]MiniAVC[/URL]. If you opt-in, it will use the internet to check whether there is a new version available. Data is only read from the internet and no personal information is sent. For a more comprehensive version checking experience, please download the [URL=http://forum.kerbalspaceprogram.com/threads/79745]KSP-AVC Plugin[/URL]. 
+				</div>
+				<div style='margin: 0.5em; padding: 0.5em 1em; border: 1px solid #999; background-color: white; font-family: monospace; text-align: justify;'><b><u>HTML</u></b><br>
+					This mod includes version checking using &lt;a href="http://forum.kerbalspaceprogram.com/threads/79745"&gt;MiniAVC&lt;/a&gt;. If you opt-in, it will use the internet to check whether there is a new version available. Data is only read from the internet and no personal information is sent. For a more comprehensive version checking experience, please download the &lt;a href="http://forum.kerbalspaceprogram.com/threads/79745"&gt;KSP-AVC Plugin&lt;/a&gt;. 
+				</div>
 			</p>
 		</section>
 
@@ -231,55 +208,56 @@
 		</section>
 
 		<section>
+			<h3>Version File Example</h3>
+			<p>
+				{<br>
+				&nbsp;&nbsp;&nbsp;&nbsp;"NAME":"KSP-AVC",<br>
+				&nbsp;&nbsp;&nbsp;&nbsp;"URL":"http://ksp-avc.cybutek.net/version.php?id=2",<br>
+				&nbsp;&nbsp;&nbsp;&nbsp;"DOWNLOAD":"http://kerbal.curseforge.com/ksp-mods/220462-ksp-avc-add-on-version-checker",<br>
+				&nbsp;&nbsp;&nbsp;&nbsp;"GITHUB":<br>
+				&nbsp;&nbsp;&nbsp;&nbsp;{<br>
+				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"USERNAME":"YourGitHubUserName",<br>
+				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"REPOSITORY":"YourGitHubRepository",<br>
+				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"ALLOW_PRE_RELEASE":false,<br>
+				&nbsp;&nbsp;&nbsp;&nbsp;},<br>
+				&nbsp;&nbsp;&nbsp;&nbsp;"VERSION":<br>
+				&nbsp;&nbsp;&nbsp;&nbsp;{<br>
+				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"MAJOR":1,<br>
+				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"MINOR":1,<br>
+				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"PATCH":0,<br>
+				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"BUILD":0<br>
+				&nbsp;&nbsp;&nbsp;&nbsp;},<br>
+				&nbsp;&nbsp;&nbsp;&nbsp;"KSP_VERSION":<br>
+				&nbsp;&nbsp;&nbsp;&nbsp;{<br>
+				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"MAJOR":0,<br>
+				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"MINOR":24,<br>
+				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"PATCH":2<br>
+				&nbsp;&nbsp;&nbsp;&nbsp;},<br>
+				&nbsp;&nbsp;&nbsp;&nbsp;"KSP_VERSION_MIN":<br>
+				&nbsp;&nbsp;&nbsp;&nbsp;{<br>
+				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"MAJOR":0,<br>
+				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"MINOR":24,<br>
+				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"PATCH":0<br>
+				&nbsp;&nbsp;&nbsp;&nbsp;},<br>
+				&nbsp;&nbsp;&nbsp;&nbsp;"KSP_VERSION_MAX":<br>
+				&nbsp;&nbsp;&nbsp;&nbsp;{<br>
+				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"MAJOR":0,<br>
+				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"MINOR":24,<br>
+				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"PATCH":2<br>
+				&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+				}
+			</p>
+		</section>
+
+		<section>
 			<h3>Change Log</h3>
-			<ul class='nested_list'>
-				<li>1.0.2.1
-					<ul>
-						<li>Added: Some extra exception handling and cleaned up some of the code.</li>
-					</ul>
-				</li>
-				<li>1.0.2.0
-					<ul>
-						<li>Added: GitHub latest release checking.</li>
-						<li>Added: Version file reading is now case insensitive.</li>
-						<li>Fixed: Bug in version equality checking. (Now using a custom VersionInfo object).</li>
-					</ul>
-				</li>
-				<li>1.0.1.1
-					<ul>
-						<li>Fixed: Bug where it did not do the allow check.</li>
-					</ul>
-				</li>
-				<li>1.0.1.0
-					<ul>
-						<li>Added: Tooltip when hovering over the download button showing the destination URL.</li>
-						<li>Added: File not found handling.</li>
-					</ul>
-				</li>
-				<li>1.0.0.0
-					<ul>
-						<li>Initial release of MiniAVC based on the core KSP-AVC Plugin v1.1.1 system.</li>
-					</ul>
-				</li>
-			</ul>
+			<iframe src='CHANGES.txt' onload='this.style.height = this.contentWindow.document.body.scrollHeight + "px"'></iframe>
 		</section>
 
 		<section>
 			<h3>Software License</h3>
 			<p>
-				Copyright &copy; 2014 CYBUTEK
-				<br><br>
-				This program is free software: you can redistribute it and/or modify<br>
-				it under the terms of the GNU General Public License as published by<br>
-				the Free Software Foundation, either version 3 of the License, or<br>
-				(at your option) any later version.
-				<br><br>
-				This program is distributed in the hope that it will be useful,<br>
-				but WITHOUT ANY WARRANTY; without even the implied warranty of<br>
-				MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the<br>
-				GNU General Public License for more details.
-				<br><br>
-				Licensed under <a href='http://www.gnu.org/licenses/gpl-3.0.html' target='_blank'>GNU General Public License v3</a>
+				Licensed under the <a href='LICENSE.txt'>GNU General Public License v3</a>.
 			</p>
 		</section>
 
@@ -287,7 +265,7 @@
 	</div>
 
 	<footer id='footer'>
-		ReadMe Design by <a href='http://ksp.cybutek.net' target='_blank'><strong>CYBUTEK</strong></a> (GPLv3)
+		README design by <a href='http://ksp.cybutek.net' target='_blank'><strong>CYBUTEK</strong></a> (GPLv3)
 	</footer>
 </body>
 </html>

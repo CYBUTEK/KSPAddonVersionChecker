@@ -1,0 +1,50 @@
+1.1.4.0
+    Fixed: Bug where it would do a re-check when reloading the database.
+
+1.1.3.1
+    Fixed: Game breaking bug.
+
+1.1.3.0
+    Added: GitHub latest release checking.
+    Added: Version file reading is now case insensitive.
+    Fixed: Bug in version equality checking. (Now using a custom VersionInfo object).
+
+1.1.2.0
+    Added: Tooltip when hovering over the download button showing the destination URL.
+    Fixed: Certain situations would cause the root directory to be incorrect.
+    Fixed: File not found handling solving the lock whilst on the checking display.
+
+1.1.1.0
+    Added: Blanket exception handling and logging.
+    Added: Logger will flush on destruction and GC finaliser.
+    Added: Check to remove '/tree/' from github urls.
+    Changed: Remote checking back to WWW because WebRequest in Mono does not support TLS/SSL.
+    Changed: Version file search is now limited to just the GameData directory.
+    Fixed: Possible null refs caused by invalid remote urls.
+
+1.1.0.0
+    Complete re-write of the core code.
+    Added: Replaced LitJson with embeded MiniJson for compatibility and to reduce dependancies.
+    Added: Better utilisation of multi-threading.
+    Added: Check progress window which will show whilst processing.
+    Changed: Remote version file fetching now uses WebRequest instead of Unity's archaic WWW.
+    Fixed: Version formatting bug where it did not recognise build numbers in certain cases.
+
+1.0.4.0
+    Added: Url check to fix problems caused by non-raw github .version files.
+    Added: Logging system now also saves into the standard ksp log file.
+    Changed: Extended logging system now saves with the associated '.dll' file.
+
+1.0.3.0
+    Updated for KSP version 0.24.2.
+    Added: Extended logging system that saves to "KSP-AVC.log".
+    Added: First run checker which will show to indicate a successful install.
+    Changed: Window is now centred on the screen.
+
+1.0.2.0
+    Updated for KSP version 0.24.
+    Fixed a small bug with parsing KSP versions.
+
+1.0.1.0
+    Added minimum and maximum KSP version support.
+    Updates will only be shown if the remote version is compatible with the installed version of KSP.

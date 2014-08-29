@@ -2,7 +2,7 @@
 <html>
 <head>
 	<meta charset='UTF-8'>
-	<title>KSP-AVC Plugin - ReadMe</title>
+	<title>KSP-AVC Plugin - README</title>
 	<link href='http://fonts.googleapis.com/css?family=PT+Sans:400,700' rel='stylesheet' type='text/css'>
 	<style>
 		* {
@@ -47,6 +47,11 @@
 		li {
 			margin-top: 0.5em;
 			text-align: justify;
+		}
+
+		iframe {
+			width: 100%;
+			border: none;
 		}
 
 		header {
@@ -110,11 +115,6 @@
 		<header>KSP Add-on Version Checker</header>
 
 		<section>
-			<h3>Current Version</h3>
-			<p>1.1.4</p>
-		</section>
-
-		<section>
 			<h3>Developer</h3>
 			<p>CYBUTEK</p>
 		</section>
@@ -139,43 +139,6 @@
 			<ul>
 				<li>Copy the 'KSP-AVC' folder into the 'GameData' folder located within your Kerbal Space Program installation directory.</li>
 			</ul>
-		</section>
-
-		<section>
-			<h3>Version File Example</h3>
-			<p>
-				{<br>
-				&nbsp;&nbsp;&nbsp;&nbsp;"NAME":"KSP-AVC",<br>
-				&nbsp;&nbsp;&nbsp;&nbsp;"URL":"http://ksp-avc.cybutek.net/version.php?id=2",<br>
-				&nbsp;&nbsp;&nbsp;&nbsp;"DOWNLOAD":"http://kerbal.curseforge.com/ksp-mods/220462-ksp-avc-add-on-version-checker",<br>
-				&nbsp;&nbsp;&nbsp;&nbsp;"GITHUB":{<br>
-				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"USERNAME":"CYBUTEK",<br>
-				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"REPOSITORY":"KerbalEngineer",<br>
-				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"ALLOW_PRE_RELEASE":false,<br>
-				&nbsp;&nbsp;&nbsp;&nbsp;},<br>
-				&nbsp;&nbsp;&nbsp;&nbsp;"VERSION":{<br>
-				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"MAJOR":1,<br>
-				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"MINOR":1,<br>
-				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"PATCH":0,<br>
-				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"BUILD":0<br>
-				&nbsp;&nbsp;&nbsp;&nbsp;},<br>
-				&nbsp;&nbsp;&nbsp;&nbsp;"KSP_VERSION":{<br>
-				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"MAJOR":0,<br>
-				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"MINOR":24,<br>
-				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"PATCH":2<br>
-				&nbsp;&nbsp;&nbsp;&nbsp;},<br>
-				&nbsp;&nbsp;&nbsp;&nbsp;"KSP_VERSION_MIN":{<br>
-				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"MAJOR":0,<br>
-				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"MINOR":24,<br>
-				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"PATCH":0<br>
-				&nbsp;&nbsp;&nbsp;&nbsp;}<br>
-				&nbsp;&nbsp;&nbsp;&nbsp;"KSP_VERSION_MAX":{<br>
-				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"MAJOR":0,<br>
-				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"MINOR":24,<br>
-				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"PATCH":2<br>
-				&nbsp;&nbsp;&nbsp;&nbsp;}<br>
-				}
-			</p>
 		</section>
 
 		<section>
@@ -230,98 +193,56 @@
 		</section>
 
 		<section>
+			<h3>Version File Example</h3>
+			<p>
+				{<br>
+				&nbsp;&nbsp;&nbsp;&nbsp;"NAME":"KSP-AVC",<br>
+				&nbsp;&nbsp;&nbsp;&nbsp;"URL":"http://ksp-avc.cybutek.net/version.php?id=2",<br>
+				&nbsp;&nbsp;&nbsp;&nbsp;"DOWNLOAD":"http://kerbal.curseforge.com/ksp-mods/220462-ksp-avc-add-on-version-checker",<br>
+				&nbsp;&nbsp;&nbsp;&nbsp;"GITHUB":<br>
+				&nbsp;&nbsp;&nbsp;&nbsp;{<br>
+				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"USERNAME":"YourGitHubUserName",<br>
+				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"REPOSITORY":"YourGitHubRepository",<br>
+				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"ALLOW_PRE_RELEASE":false,<br>
+				&nbsp;&nbsp;&nbsp;&nbsp;},<br>
+				&nbsp;&nbsp;&nbsp;&nbsp;"VERSION":<br>
+				&nbsp;&nbsp;&nbsp;&nbsp;{<br>
+				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"MAJOR":1,<br>
+				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"MINOR":1,<br>
+				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"PATCH":0,<br>
+				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"BUILD":0<br>
+				&nbsp;&nbsp;&nbsp;&nbsp;},<br>
+				&nbsp;&nbsp;&nbsp;&nbsp;"KSP_VERSION":<br>
+				&nbsp;&nbsp;&nbsp;&nbsp;{<br>
+				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"MAJOR":0,<br>
+				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"MINOR":24,<br>
+				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"PATCH":2<br>
+				&nbsp;&nbsp;&nbsp;&nbsp;},<br>
+				&nbsp;&nbsp;&nbsp;&nbsp;"KSP_VERSION_MIN":<br>
+				&nbsp;&nbsp;&nbsp;&nbsp;{<br>
+				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"MAJOR":0,<br>
+				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"MINOR":24,<br>
+				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"PATCH":0<br>
+				&nbsp;&nbsp;&nbsp;&nbsp;},<br>
+				&nbsp;&nbsp;&nbsp;&nbsp;"KSP_VERSION_MAX":<br>
+				&nbsp;&nbsp;&nbsp;&nbsp;{<br>
+				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"MAJOR":0,<br>
+				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"MINOR":24,<br>
+				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"PATCH":2<br>
+				&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+				}
+			</p>
+		</section>
+
+		<section>
 			<h3>Change Log</h3>
-			<ul class='nested_list'>
-				<li>1.1.4
-					<ul>
-						<li>Fixed: Bug where it would do a re-check when reloading the database.</li>
-					</ul>
-				</li>
-				<li>1.1.3.1
-					<ul>
-						<li>Fixed: Game breaking bug.</li>
-					</ul>
-				</li>
-				<li>1.1.3
-					<ul>
-						<li>Added: GitHub latest release checking.</li>
-						<li>Added: Version file reading is now case insensitive.</li>
-						<li>Fixed: Bug in version equality checking. (Now using a custom VersionInfo object).</li>
-					</ul>
-				</li>
-				<li>1.1.2
-					<ul>
-						<li>Added: Tooltip when hovering over the download button showing the destination URL.</li>
-						<li>Fixed: Certain situations would cause the root directory to be incorrect.</li>
-						<li>Fixed: File not found handling solving the lock whilst on the checking display.</li>
-					</ul>
-				</li>
-				<li>1.1.1
-					<ul>
-						<li>Added: Blanket exception handling and logging.</li>
-						<li>Added: Logger will flush on destruction and GC finaliser.</li>
-						<li>Added: Check to remove '/tree/' from github urls.</li>
-						<li>Changed: Remote checking back to WWW because WebRequest in Mono does not support TLS/SSL.</li>
-						<li>Changed: Version file search is now limited to just the GameData directory.</li>
-						<li>Fixed: Possible null refs caused by invalid remote urls.</li>
-					</ul>
-				</li>
-				<li>1.1
-					<ul>
-						<li>Complete re-write of the core code.</li>
-						<li>Added: Replaced LitJson with embeded MiniJson for compatibility and to reduce dependancies.</li>
-						<li>Added: Better utilisation of multi-threading.</li>
-						<li>Added: Check progress window which will show whilst processing.</li>
-						<li>Changed: Remote version file fetching now uses WebRequest instead of Unity's archaic WWW.</li>
-						<li>Fixed: Version formatting bug where it did not recognise build numbers in certain cases.</li>
-					</ul>
-				</li>
-				<li>1.0.4
-					<ul>
-						<li>Added: Url check to fix problems caused by non-raw github .version files.</li>
-						<li>Added: Logging system now also saves into the standard ksp log file.</li>
-						<li>Changed: Extended logging system now saves with the associated '.dll' file.</li>
-					</ul>
-				</li>
-				<li>1.0.3
-					<ul>
-						<li>Updated for KSP version 0.24.2.</li>
-						<li>Added: Extended logging system that saves to "KSP-AVC.log".</li>
-						<li>Added: First run checker which will show to indicate a successful install.</li>
-						<li>Changed: Window is now centred on the screen.</li>
-					</ul>
-				</li>
-				<li>1.0.2
-					<ul>
-						<li>Updated for KSP version 0.24.</li>
-						<li>Fixed a small bug with parsing KSP versions.</li>
-					</ul>
-				</li>
-				<li>1.0.1
-					<ul>
-						<li>Added minimum and maximum KSP version support.</li>
-						<li>Updates will only be shown if the remote version is compatible with the installed version of KSP.</li>
-					</ul>
-				</li>
-			</ul>
+			<iframe src='CHANGES.txt' onload='this.style.height = this.contentWindow.document.body.scrollHeight + "px"'></iframe>
 		</section>
 
 		<section>
 			<h3>Software License</h3>
 			<p>
-				Copyright &copy; 2014 CYBUTEK
-				<br><br>
-				This program is free software: you can redistribute it and/or modify<br>
-				it under the terms of the GNU General Public License as published by<br>
-				the Free Software Foundation, either version 3 of the License, or<br>
-				(at your option) any later version.
-				<br><br>
-				This program is distributed in the hope that it will be useful,<br>
-				but WITHOUT ANY WARRANTY; without even the implied warranty of<br>
-				MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the<br>
-				GNU General Public License for more details.
-				<br><br>
-				Licensed under <a href='http://www.gnu.org/licenses/gpl-3.0.html' target='_blank'>GNU General Public License v3</a>
+				Licensed under the <a href='LICENSE.txt'>GNU General Public License v3</a>.
 			</p>
 		</section>
 
@@ -329,7 +250,7 @@
 	</div>
 
 	<footer id='footer'>
-		ReadMe Design by <a href='http://ksp.cybutek.net' target='_blank'><strong>CYBUTEK</strong></a> (GPLv3)
+		README design by <a href='http://ksp.cybutek.net' target='_blank'><strong>CYBUTEK</strong></a> (GPLv3)
 	</footer>
 </body>
 </html>

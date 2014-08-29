@@ -168,10 +168,7 @@ namespace KSP_AVC
                     if (www.error == null)
                     {
                         this.remoteInfo = new AddonInfo(this.localInfo.Url, www.text);
-                        if (this.remoteInfo.GitHub != null)
-                        {
-                            this.remoteInfo.GitHub.FetchRemoteData();
-                        }
+                        this.remoteInfo.FetchRemoteData();
                         this.IsRemoteReady = true;
                         this.IsProcessingComplete = true;
                         Logger.Log(this.localInfo);

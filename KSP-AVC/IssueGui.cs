@@ -18,6 +18,7 @@
 #region Using Directives
 
 using System;
+using System.Collections.Generic;
 using System.Linq;
 
 using UnityEngine;
@@ -30,9 +31,9 @@ namespace KSP_AVC
     {
         #region Fields
 
+        private readonly Dictionary<Addon, DropDownList> dropDownLists = new Dictionary<Addon, DropDownList>();
         private bool hasCentred;
         private Rect position = new Rect(Screen.width, Screen.height, 0, 0);
-        private ToolTipGui toolTipGui;
 
         #endregion
 
@@ -55,7 +56,6 @@ namespace KSP_AVC
         {
             try
             {
-                this.toolTipGui = this.gameObject.AddComponent<ToolTipGui>();
                 this.InitialiseStyles();
             }
             catch (Exception ex)
@@ -69,8 +69,7 @@ namespace KSP_AVC
         #region Styles
 
         private GUIStyle boxStyle;
-        private GUIStyle closeStyle;
-        private GUIStyle downloadButtonStyle;
+        private GUIStyle buttonStyle;
         private GUIStyle labelStyle;
         private GUIStyle messageStyle;
         private GUIStyle nameLabelStyle;
@@ -83,7 +82,7 @@ namespace KSP_AVC
             {
                 this.boxStyle = new GUIStyle(HighLogic.Skin.box)
                 {
-                    padding = new RectOffset(10, 10, 5, 5)
+                    padding = new RectOffset(10, 0, 5, 5)
                 };
 
                 this.nameTitleStyle = new GUIStyle(HighLogic.Skin.label)
@@ -92,7 +91,6 @@ namespace KSP_AVC
                     {
                         textColor = Color.white
                     },
-                    fixedWidth = 300.0f,
                     alignment = TextAnchor.MiddleLeft,
                     fontStyle = FontStyle.Bold
                 };
@@ -103,32 +101,18 @@ namespace KSP_AVC
                     {
                         textColor = Color.white
                     },
-                    fixedWidth = 100.0f,
                     alignment = TextAnchor.MiddleCenter,
                     fontStyle = FontStyle.Bold
                 };
 
                 this.nameLabelStyle = new GUIStyle(HighLogic.Skin.label)
                 {
-                    fixedWidth = 300.0f,
                     fixedHeight = 25.0f,
                     alignment = TextAnchor.MiddleLeft,
                 };
 
                 this.labelStyle = new GUIStyle(HighLogic.Skin.label)
                 {
-                    fixedWidth = 100.0f,
-                    fixedHeight = 25.0f,
-                    alignment = TextAnchor.MiddleCenter,
-                };
-
-                this.downloadButtonStyle = new GUIStyle(HighLogic.Skin.button)
-                {
-                    normal =
-                    {
-                        textColor = Color.white
-                    },
-                    fixedWidth = 100.0f,
                     fixedHeight = 25.0f,
                     alignment = TextAnchor.MiddleCenter,
                 };
@@ -138,12 +122,13 @@ namespace KSP_AVC
                     fixedWidth = this.nameLabelStyle.fixedWidth + (this.labelStyle.fixedWidth * 3)
                 };
 
-                this.closeStyle = new GUIStyle(HighLogic.Skin.button)
+                this.buttonStyle = new GUIStyle(HighLogic.Skin.button)
                 {
                     normal =
                     {
                         textColor = Color.white
                     },
+                    margin = new RectOffset(),
                     fixedHeight = 25.0f
                 };
             }
@@ -186,7 +171,7 @@ namespace KSP_AVC
                 {
                     this.DrawCompatibilityIssues();
                 }
-                if (GUILayout.Button("CLOSE", this.closeStyle))
+                if (GUILayout.Button("CLOSE", this.buttonStyle))
                 {
                     Destroy(this);
                 }
@@ -204,30 +189,33 @@ namespace KSP_AVC
             {
                 GUILayout.BeginVertical(this.boxStyle);
                 GUILayout.BeginHorizontal();
-                GUILayout.Label("ADD-ON NAME", this.nameTitleStyle);
-                GUILayout.Label("CURRENT", this.titleStyle);
-                GUILayout.Label("AVAILABLE", this.titleStyle);
-                GUILayout.Label("DOWNLOAD", this.titleStyle);
+                GUILayout.Label("ADD-ON NAME", this.nameTitleStyle, GUILayout.Width(250.0f));
+                GUILayout.Label("CURRENT", this.titleStyle, GUILayout.Width(100.0f));
+                GUILayout.Label("AVAILABLE", this.titleStyle, GUILayout.Width(100.0f));
+                GUILayout.FlexibleSpace();
                 GUILayout.EndHorizontal();
 
-                var toolTipText = string.Empty;
                 foreach (var addon in AddonLibrary.Addons.Where(a => !a.HasError && a.IsUpdateAvailable))
                 {
                     GUILayout.BeginHorizontal();
-                    GUILayout.Label(addon.Name, this.nameLabelStyle);
-                    GUILayout.Label(addon.LocalInfo.Version.ToString(), this.labelStyle);
-                    GUILayout.Label(addon.RemoteInfo.Version.ToString(), this.labelStyle);
+                    GUILayout.Label(addon.Name, this.nameLabelStyle, GUILayout.Width(250.0f));
+                    GUILayout.Label(addon.LocalInfo.Version.ToString(), this.labelStyle, GUILayout.Width(100.0f));
+                    GUILayout.Label(addon.RemoteInfo.Version.ToString(), this.labelStyle, GUILayout.Width(100.0f));
                     if (!string.IsNullOrEmpty(addon.RemoteInfo.Download))
                     {
-                        if (GUILayout.Button("DOWNLOAD", this.downloadButtonStyle))
+                        DropDownList dropDownList;
+                        if (this.dropDownLists.ContainsKey(addon))
                         {
-                            Application.OpenURL(addon.RemoteInfo.Download);
+                            dropDownList = this.dropDownLists[addon];
                         }
-
-                        if (GUILayoutUtility.GetLastRect().Contains(Event.current.mousePosition))
+                        else
                         {
-                            toolTipText = addon.RemoteInfo.Download;
+                            dropDownList = this.gameObject.AddComponent<DropDownList>();
+                            dropDownList.Addon = addon;
+                            dropDownList.DrawCallback = this.DrawDropDownList;
+                            this.dropDownLists.Add(addon, dropDownList);
                         }
+                        dropDownList.DrawButton("ACTION LIST", this.position, 125.0f);
                     }
                     else
                     {
@@ -235,7 +223,6 @@ namespace KSP_AVC
                     }
                     GUILayout.EndHorizontal();
                 }
-                this.toolTipGui.Text = toolTipText;
                 GUILayout.EndVertical();
             }
             catch (Exception ex)
@@ -262,13 +249,35 @@ namespace KSP_AVC
             }
         }
 
+        private void DrawDropDownList(DropDownList list, Addon addon)
+        {
+            if (!String.IsNullOrEmpty(addon.RemoteInfo.ChangeLog))
+            {
+                if (GUILayout.Button("Change Log", this.buttonStyle))
+                {
+                    var changeLogGui = this.gameObject.AddComponent<ChangeLogGui>();
+                    changeLogGui.Name = addon.RemoteInfo.Name;
+                    changeLogGui.Text = addon.RemoteInfo.ChangeLog;
+                    list.ShowList = false;
+                }
+            }
+
+            if (!String.IsNullOrEmpty(addon.RemoteInfo.Download))
+            {
+                GUILayout.Button("Download", this.buttonStyle);
+            }
+        }
+
         #endregion
 
-        #region Destroyed
+        #region Destruction
 
         private void OnDestroy()
         {
-            Destroy(this.toolTipGui);
+            foreach (var dropDownList in this.dropDownLists.Values)
+            {
+                Destroy(dropDownList);
+            }
             Logger.Log("IssueGui was destroyed.");
         }
 
