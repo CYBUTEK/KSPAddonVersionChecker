@@ -36,6 +36,7 @@
     <Compile Include="Addon.cs" />
     <Compile Include="AddonInfo.cs" />
     <Compile Include="AddonLibrary.cs" />
+    <Compile Include="AddonListGui.cs" />
     <Compile Include="ChangeLogGui.cs" />
     <Compile Include="CheckGui.cs" />
     <Compile Include="DropDownList.cs" />

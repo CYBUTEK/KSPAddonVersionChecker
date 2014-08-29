@@ -44,7 +44,9 @@ namespace KSP_AVC
 
         public Addon Addon { get; set; }
 
-        public Action<DropDownList, Addon> DrawCallback { get; set; }
+        public Action<DropDownList> DrawCallback { get; set; }
+
+        public Action<DropDownList, Addon> DrawAddonCallback { get; set; }
 
         #endregion
 
@@ -95,7 +97,7 @@ namespace KSP_AVC
                     {
                         background = background
                     },
-                    border = new RectOffset(5, 5, 5, 5),
+                    border = new RectOffset(5, 5, 0, 5),
                     padding = new RectOffset(3, 3, 3, 3)
                 };
 
@@ -166,14 +168,14 @@ namespace KSP_AVC
 
         #region Drawing
 
-        public void DrawButton(string label, Rect window, float width)
+        public void DrawButton(string label, Rect parent, float width)
         {
             try
             {
                 this.ShowList = GUILayout.Toggle(this.ShowList, label, this.toggleStyle, GUILayout.Width(width));
                 if (Event.current.type == EventType.repaint)
                 {
-                    this.SetPosition(GUILayoutUtility.GetLastRect(), window);
+                    this.SetPosition(GUILayoutUtility.GetLastRect(), parent);
                 }
             }
             catch (Exception ex)
@@ -208,7 +210,15 @@ namespace KSP_AVC
             {
                 GUI.BringWindowToFront(windowId);
                 GUI.BringWindowToFront(this.ToolTip.GetInstanceID());
-                this.DrawCallback(this, this.Addon);
+
+                if (this.DrawCallback != null)
+                {
+                    this.DrawCallback(this);
+                }
+                else if (this.DrawAddonCallback != null)
+                {
+                    this.DrawAddonCallback(this, this.Addon);
+                }
             }
             catch (Exception ex)
             {
@@ -220,13 +230,13 @@ namespace KSP_AVC
 
         #region Private Methods
 
-        private void SetPosition(Rect toggle, Rect window)
+        private void SetPosition(Rect toggle, Rect parent)
         {
             try
             {
                 this.togglePosition = toggle;
-                this.togglePosition.x += window.x;
-                this.togglePosition.y += window.y;
+                this.togglePosition.x += parent.x;
+                this.togglePosition.y += parent.y;
                 this.listPosition.x = this.togglePosition.x;
                 this.listPosition.y = this.togglePosition.y + this.togglePosition.height;
                 this.listPosition.width = this.togglePosition.width;
@@ -245,7 +255,10 @@ namespace KSP_AVC
         {
             try
             {
-                Destroy(this.ToolTip);
+                if (this.ToolTip != null)
+                {
+                    Destroy(this.ToolTip);
+                }
             }
             catch (Exception ex)
             {

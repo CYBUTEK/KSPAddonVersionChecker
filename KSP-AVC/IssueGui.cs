@@ -34,7 +34,6 @@ namespace KSP_AVC
         private readonly Dictionary<Addon, DropDownList> dropDownLists = new Dictionary<Addon, DropDownList>();
         private bool hasCentred;
         private Rect position = new Rect(Screen.width, Screen.height, 0, 0);
-        private ToolTipGui toolTipGui;
 
         #endregion
 
@@ -83,7 +82,7 @@ namespace KSP_AVC
             {
                 this.boxStyle = new GUIStyle(HighLogic.Skin.box)
                 {
-                    padding = new RectOffset(10, 0, 5, 5)
+                    padding = new RectOffset(10, 10, 5, 5)
                 };
 
                 this.nameTitleStyle = new GUIStyle(HighLogic.Skin.label)
@@ -128,9 +127,7 @@ namespace KSP_AVC
                     normal =
                     {
                         textColor = Color.white
-                    },
-                    margin = new RectOffset(),
-                    fixedHeight = 25.0f
+                    }
                 };
             }
             catch (Exception ex)
@@ -213,10 +210,10 @@ namespace KSP_AVC
                         {
                             dropDownList = this.gameObject.AddComponent<DropDownList>();
                             dropDownList.Addon = addon;
-                            dropDownList.DrawCallback = this.DrawDropDownList;
+                            dropDownList.DrawAddonCallback = this.DrawDropDownList;
                             this.dropDownLists.Add(addon, dropDownList);
                         }
-                        dropDownList.DrawButton("ACTION LIST", this.position, 125.0f);
+                        dropDownList.DrawButton("ACTIONS", this.position, 125.0f);
                     }
                     else
                     {

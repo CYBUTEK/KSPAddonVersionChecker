@@ -86,11 +86,15 @@ namespace KSP_AVC
                     {
                         textColor = Color.white
                     },
-                    fixedHeight = 25.0f,
                 };
 
                 this.labelStyle = new GUIStyle(HighLogic.Skin.label)
                 {
+                    normal =
+                    {
+                        textColor = Color.white
+                    },
+                    fontStyle = FontStyle.Bold,
                     stretchWidth = true,
                     stretchHeight = true,
                     wordWrap = true

@@ -1,6 +1,7 @@
 1.1.4.0
     Added: Drop down action menu support allowing for multiple actions per add-on.
     Added: Change log support, allowing the player to view the add-on's change log.
+    Added: Drop down list showing all KSP-AVC ready add-ons on loading and main menu.
     Changed: Versions will always have the minimum formatting of 'x.x'.
     Fixed: Issue with non-RAW GitHub version file hosting, extending the url formatter.
     Fixed: Bug where it would do a re-check when reloading the database.
