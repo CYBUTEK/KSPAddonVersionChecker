@@ -93,7 +93,7 @@ namespace KSP_AVC
                         background = background
                     },
                     border = new RectOffset(5, 5, 5, 5),
-                    padding = new RectOffset(3, 3 ,3, 3)
+                    padding = new RectOffset(3, 3, 3, 3)
                 };
 
                 this.toggleStyle = new GUIStyle
@@ -124,6 +124,7 @@ namespace KSP_AVC
                         textColor = Color.white
                     },
                     border = new RectOffset(5, 25, 5, 5),
+                    margin = new RectOffset(0, 0, 3, 3),
                     padding = new RectOffset(5, 30, 5, 5),
                     fixedHeight = 25.0f,
                     fontStyle = FontStyle.Bold,

@@ -19,6 +19,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Security.AccessControl;
 
 using UnityEngine;
 
@@ -264,7 +265,10 @@ namespace KSP_AVC
             {
                 if (url.Contains("github.com"))
                 {
-                    return url.Replace("github.com", "raw.githubusercontent.com").Replace("/tree/", "/");
+                    url = url.Replace("github.com", "raw.githubusercontent.com");
+                    url = url.Replace("/tree/", "/");
+                    url = url.Replace("/blob/", "/");
+                    return url;
                 }
 
                 return url;
