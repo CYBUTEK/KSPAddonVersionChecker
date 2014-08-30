@@ -98,12 +98,12 @@ namespace KSP_AVC
 
         public VersionInfo KspVersionMin
         {
-            get { return this.kspVersionMin ?? VersionInfo.Min; }
+            get { return this.kspVersionMin ?? VersionInfo.MinValue; }
         }
 
         public VersionInfo KspVersionMax
         {
-            get { return this.kspVersionMax ?? VersionInfo.Max; }
+            get { return this.kspVersionMax ?? VersionInfo.MaxValue; }
         }
 
         public bool IsCompatibleKspVersion
