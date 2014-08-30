@@ -38,19 +38,19 @@ namespace KSP_AVC
             switch (sections.Length)
             {
                 case 1:
-                    this.SetVersion(long.Parse(sections[0]));
+                    this.SetVersion(Int64.Parse(sections[0]));
                     return;
 
                 case 2:
-                    this.SetVersion(long.Parse(sections[0]), long.Parse(sections[1]));
+                    this.SetVersion(Int64.Parse(sections[0]), Int64.Parse(sections[1]));
                     return;
 
                 case 3:
-                    this.SetVersion(long.Parse(sections[0]), long.Parse(sections[1]), long.Parse(sections[2]));
+                    this.SetVersion(Int64.Parse(sections[0]), Int64.Parse(sections[1]), Int64.Parse(sections[2]));
                     return;
 
                 case 4:
-                    this.SetVersion(long.Parse(sections[0]), long.Parse(sections[1]), long.Parse(sections[2]), long.Parse(sections[3]));
+                    this.SetVersion(Int64.Parse(sections[0]), Int64.Parse(sections[1]), Int64.Parse(sections[2]), Int64.Parse(sections[3]));
                     return;
 
                 default:
@@ -61,7 +61,7 @@ namespace KSP_AVC
 
         public static VersionInfo MaxValue
         {
-            get { return new VersionInfo(long.MaxValue, long.MaxValue, long.MaxValue, long.MaxValue); }
+            get { return new VersionInfo(Int64.MaxValue, Int64.MaxValue, Int64.MaxValue, Int64.MaxValue); }
         }
 
         public static VersionInfo MinValue
@@ -94,7 +94,7 @@ namespace KSP_AVC
 
         public static implicit operator System.Version(VersionInfo version)
         {
-            return new System.Version((int)version.Major, (int)version.Minor, (int)version.Patch, (int)version.Build);
+            return new System.Version(Convert.ToInt32(version.Major), Convert.ToInt32(version.Minor), Convert.ToInt32(version.Patch), Convert.ToInt32(version.Build));
         }
 
         public static implicit operator VersionInfo(System.Version version)

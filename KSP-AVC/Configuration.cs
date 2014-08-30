@@ -15,14 +15,10 @@
 //     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 // 
 
-#region Using Directives
-
 using System;
 using System.IO;
 using System.Reflection;
 using System.Xml.Serialization;
-
-#endregion
 
 namespace KSP_AVC
 {

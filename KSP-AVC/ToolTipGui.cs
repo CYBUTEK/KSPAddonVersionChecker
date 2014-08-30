@@ -15,43 +15,25 @@
 //     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 // 
 
-#region Using Directives
-
 using System;
 
 using UnityEngine;
-
-#endregion
 
 namespace KSP_AVC
 {
     public class ToolTipGui : MonoBehaviour
     {
-        #region Fields
-
         private GUIContent content;
+        private GUIStyle labelStyle;
         private Rect position;
-        private string text = string.Empty;
-
-        #endregion
-
-        #region Properties
 
         public string Text
         {
-            get { return this.text; }
-            set
-            {
-                this.text = value;
-                this.content = new GUIContent(this.text);
-            }
+            get { return this.content.text; }
+            set { this.content = new GUIContent(value); }
         }
 
-        #endregion
-
-        #region Initialisation
-
-        private void Awake()
+        protected void Awake()
         {
             try
             {
@@ -64,7 +46,29 @@ namespace KSP_AVC
             }
         }
 
-        private void Start()
+        protected void OnDestroy()
+        {
+            Logger.Log("ToolTipGui was destroyed.");
+        }
+
+        protected void OnGUI()
+        {
+            try
+            {
+                if (this.content == null || String.IsNullOrEmpty(this.content.text))
+                {
+                    return;
+                }
+
+                GUILayout.Window(this.GetInstanceID(), this.position, this.Window, String.Empty, GUIStyle.none);
+            }
+            catch (Exception ex)
+            {
+                Logger.Exception(ex);
+            }
+        }
+
+        protected void Start()
         {
             try
             {
@@ -76,60 +80,33 @@ namespace KSP_AVC
             }
         }
 
-        #endregion
-
-        #region Styles
-
-        private GUIStyle labelStyle;
-
-        private void InitialiseStyles()
-        {
-            var background = new Texture2D(1, 1, TextureFormat.ARGB32, false);
-            background.SetPixel(1, 1, new Color(1.0f, 1.0f, 1.0f, 1.0f));
-            background.Apply();
-
-            this.labelStyle = new GUIStyle
-            {
-                padding = new RectOffset(4, 4, 2, 2),
-                normal =
-                {
-                    textColor = Color.black,
-                    background = background
-                },
-                fontSize = 11
-            };
-        }
-
-        #endregion
-
-        #region Updating
-
-        private void Update()
+        protected void Update()
         {
             this.position.size = this.labelStyle.CalcSize(this.content ?? GUIContent.none);
             this.position.x = Mathf.Clamp(Input.mousePosition.x + 20.0f, 0, Screen.width - this.position.width);
             this.position.y = Screen.height - Input.mousePosition.y + (this.position.x < Input.mousePosition.x + 20.0f ? 20.0f : 0);
         }
 
-        #endregion
-
-        #region Drawing
-
-        private void OnGUI()
+        private static Texture2D GetBackgroundTexture()
         {
-            try
-            {
-                if (string.IsNullOrEmpty(this.text))
-                {
-                    return;
-                }
+            var texture = new Texture2D(1, 1, TextureFormat.ARGB32, false);
+            texture.SetPixel(1, 1, new Color(1.0f, 1.0f, 1.0f, 1.0f));
+            texture.Apply();
+            return texture;
+        }
 
-                GUILayout.Window(this.GetInstanceID(), this.position, this.Window, string.Empty, GUIStyle.none);
-            }
-            catch (Exception ex)
+        private void InitialiseStyles()
+        {
+            this.labelStyle = new GUIStyle
             {
-                Logger.Exception(ex);
-            }
+                padding = new RectOffset(4, 4, 2, 2),
+                normal =
+                {
+                    textColor = Color.black,
+                    background = GetBackgroundTexture()
+                },
+                fontSize = 11
+            };
         }
 
         private void Window(int windowId)
@@ -144,16 +121,5 @@ namespace KSP_AVC
                 Logger.Exception(ex);
             }
         }
-
-        #endregion
-
-        #region Destruction
-
-        private void OnDestroy()
-        {
-            Logger.Log("ToolTipGui was destroyed.");
-        }
-
-        #endregion
     }
 }
