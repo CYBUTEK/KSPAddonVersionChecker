@@ -27,7 +27,7 @@ namespace KSP_AVC
     public class Starter : MonoBehaviour
     {
         private static bool hasAlreadyChecked;
-        private CheckGui checkerProgressGui;
+        private CheckerProgressGui checkerProgressGui;
         private FirstRunGui firstRunGui;
 
         protected void Awake()
@@ -100,7 +100,7 @@ namespace KSP_AVC
                 }
                 if (this.checkerProgressGui == null)
                 {
-                    this.checkerProgressGui = this.gameObject.AddComponent<CheckGui>();
+                    this.checkerProgressGui = this.gameObject.AddComponent<CheckerProgressGui>();
                 }
             }
             catch (Exception ex)
