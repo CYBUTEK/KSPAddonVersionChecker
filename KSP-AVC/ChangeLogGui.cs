@@ -15,41 +15,47 @@
 //     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 // 
 
-#region Using Directives
-
 using System;
 
 using UnityEngine;
-
-#endregion
 
 namespace KSP_AVC
 {
     public class ChangeLogGui : MonoBehaviour
     {
-        #region Fields
-
+        private GUIStyle closeStyle;
+        private GUIStyle labelStyle;
         private Rect position = new Rect(0, 0, Screen.width, Screen.height);
         private Vector2 scrollPosition;
-
-        #endregion
-
-        #region Properties
 
         public string Name { get; set; }
 
         public string Text { get; set; }
 
-        #endregion
-
-        #region Initialisation
-
-        private void Awake()
+        protected void Awake()
         {
             try
             {
                 DontDestroyOnLoad(this);
-                Logger.Log("ChangeLogGui was created.");
+            }
+            catch (Exception ex)
+            {
+                Logger.Exception(ex);
+            }
+            Logger.Log("ChangeLogGui was created.");
+        }
+
+        protected void OnDestroy()
+        {
+            Logger.Log("ChangeLogGui was destroyed.");
+        }
+
+        protected void OnGUI()
+        {
+            try
+            {
+                GUI.skin = null;
+                this.position = GUILayout.Window(this.GetInstanceID(), this.position, this.Window, this.Name + " - Change Log", HighLogic.Skin.window);
             }
             catch (Exception ex)
             {
@@ -57,7 +63,7 @@ namespace KSP_AVC
             }
         }
 
-        private void Start()
+        protected void Start()
         {
             try
             {
@@ -69,51 +75,27 @@ namespace KSP_AVC
             }
         }
 
-        #endregion
-
-        #region Styles
-
-        private GUIStyle closeStyle;
-        private GUIStyle labelStyle;
-
         private void InitialiseStyles()
         {
-            try
+            this.closeStyle = new GUIStyle(HighLogic.Skin.button)
             {
-                this.closeStyle = new GUIStyle(HighLogic.Skin.button)
+                normal =
                 {
-                    normal =
-                    {
-                        textColor = Color.white
-                    },
-                };
+                    textColor = Color.white
+                },
+            };
 
-                this.labelStyle = new GUIStyle(HighLogic.Skin.label)
-                {
-                    normal =
-                    {
-                        textColor = Color.white
-                    },
-                    fontStyle = FontStyle.Bold,
-                    stretchWidth = true,
-                    stretchHeight = true,
-                    wordWrap = true
-                };
-            }
-            catch (Exception ex)
+            this.labelStyle = new GUIStyle(HighLogic.Skin.label)
             {
-                Logger.Exception(ex);
-            }
-        }
-
-        #endregion
-
-        #region Drawing
-
-        private void OnGUI()
-        {
-            GUI.skin = null;
-            this.position = GUILayout.Window(this.GetInstanceID(), this.position, this.Window, this.Name + " - Change Log", HighLogic.Skin.window);
+                normal =
+                {
+                    textColor = Color.white
+                },
+                fontStyle = FontStyle.Bold,
+                stretchWidth = true,
+                stretchHeight = true,
+                wordWrap = true
+            };
         }
 
         private void Window(int id)
@@ -136,16 +118,5 @@ namespace KSP_AVC
                 Logger.Exception(ex);
             }
         }
-
-        #endregion
-
-        #region Destruction
-
-        private void OnDestroy()
-        {
-            Logger.Log("ChangeLogGui was destroyed.");
-        }
-
-        #endregion
     }
 }
