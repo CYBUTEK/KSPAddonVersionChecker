@@ -15,35 +15,26 @@
 //     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 // 
 
-#region Using Directives
-
 using System;
 using System.Reflection;
 
 using UnityEngine;
 
-#endregion
-
 namespace KSP_AVC
 {
     public class FirstRunGui : MonoBehaviour
     {
-        #region Fields
-
+        private readonly VersionInfo version = Assembly.GetExecutingAssembly().GetName().Version;
+        private GUIStyle buttonStyle;
         private bool hasCentred;
+        private string message;
         private Rect position = new Rect(Screen.width, Screen.height, 0, 0);
-
-        #endregion
-
-        #region Properties
+        private string title;
+        private GUIStyle titleStyle;
 
         public bool HasBeenUpdated { get; set; }
 
-        #endregion
-
-        #region Initialisation
-
-        private void Awake()
+        protected void Awake()
         {
             try
             {
@@ -56,11 +47,31 @@ namespace KSP_AVC
             }
         }
 
-        private void Start()
+        protected void OnDestroy()
+        {
+            Logger.Log("FirstRunGui was destroyed.");
+        }
+
+        protected void OnGUI()
+        {
+            try
+            {
+                this.position = GUILayout.Window(this.GetInstanceID(), this.position, this.Window, this.title, HighLogic.Skin.window);
+                this.CentreWindow();
+            }
+            catch (Exception ex)
+            {
+                Logger.Exception(ex);
+            }
+        }
+
+        protected void Start()
         {
             try
             {
                 this.InitialiseStyles();
+                this.title = "KSP-AVC Plugin - " + (this.HasBeenUpdated ? "Updated" : "Installed");
+                this.message = this.HasBeenUpdated ? "You have successfully updated KSP-AVC to v" + this.version : "You have successfully installed KSP-AVC v" + this.version;
             }
             catch (Exception ex)
             {
@@ -68,62 +79,37 @@ namespace KSP_AVC
             }
         }
 
-        #endregion
-
-        #region Styles
-
-        private GUIStyle buttonStyle;
-        private GUIStyle titleStyle;
+        private void CentreWindow()
+        {
+            if (this.hasCentred || this.position.width <= 0 || this.position.height <= 0)
+            {
+                return;
+            }
+            this.position.center = new Vector2(Screen.width * 0.5f, Screen.height * 0.5f);
+            this.hasCentred = true;
+        }
 
         private void InitialiseStyles()
         {
-            try
+            this.titleStyle = new GUIStyle(HighLogic.Skin.label)
             {
-                this.titleStyle = new GUIStyle(HighLogic.Skin.label)
+                normal =
                 {
-                    normal =
-                    {
-                        textColor = Color.white
-                    },
-                    fontSize = 13,
-                    fontStyle = FontStyle.Bold,
-                    alignment = TextAnchor.MiddleCenter,
-                    stretchWidth = true
-                };
+                    textColor = Color.white
+                },
+                fontSize = 13,
+                fontStyle = FontStyle.Bold,
+                alignment = TextAnchor.MiddleCenter,
+                stretchWidth = true
+            };
 
-                this.buttonStyle = new GUIStyle(HighLogic.Skin.button)
-                {
-                    normal =
-                    {
-                        textColor = Color.white
-                    }
-                };
-            }
-            catch (Exception ex)
+            this.buttonStyle = new GUIStyle(HighLogic.Skin.button)
             {
-                Logger.Exception(ex);
-            }
-        }
-
-        #endregion
-
-        #region Drawing
-
-        private void OnGUI()
-        {
-            try
-            {
-                this.position = GUILayout.Window(this.GetInstanceID(), this.position, this.Window, "KSP-AVC Plugin - " + (this.HasBeenUpdated ? "Updated" : "Installed"), HighLogic.Skin.window);
-                if (!this.hasCentred && this.position.width > 0 && this.position.height > 0)
+                normal =
                 {
-                    this.position.center = new Vector2(Screen.width * 0.5f, Screen.height * 0.5f);
-                    this.hasCentred = true;
+                    textColor = Color.white
                 }
-            }
-            catch (Exception ex)
-            {
-                Logger.Exception(ex);
-            }
+            };
         }
 
         private void Window(int id)
@@ -131,14 +117,7 @@ namespace KSP_AVC
             try
             {
                 GUILayout.BeginVertical(HighLogic.Skin.box);
-                if (this.HasBeenUpdated)
-                {
-                    GUILayout.Label("You have successfully updated KSP-AVC to v" + this.GetVersion(), this.titleStyle, GUILayout.Width(350.0f));
-                }
-                else
-                {
-                    GUILayout.Label("You have successfully installed KSP-AVC v" + this.GetVersion(), this.titleStyle, GUILayout.Width(350.0f));
-                }
+                GUILayout.Label(this.message, this.titleStyle, GUILayout.Width(350.0f));
                 GUILayout.EndVertical();
                 if (GUILayout.Button("CLOSE", this.buttonStyle))
                 {
@@ -151,36 +130,5 @@ namespace KSP_AVC
                 Logger.Exception(ex);
             }
         }
-
-        #endregion
-
-        #region Private Methods
-
-        private System.Version GetVersion()
-        {
-            try
-            {
-                var version = Assembly.GetExecutingAssembly().GetName().Version;
-                return version.Revision != 0 ? version
-                    : version.Build != 0 ? new System.Version(version.Major, version.Minor, version.Build)
-                        : new System.Version(version.Major, version.Minor);
-            }
-            catch (Exception ex)
-            {
-                Logger.Exception(ex);
-                return new System.Version();
-            }
-        }
-
-        #endregion
-
-        #region Destruction
-
-        private void OnDestroy()
-        {
-            Logger.Log("FirstRunGui was destroyed.");
-        }
-
-        #endregion
     }
 }

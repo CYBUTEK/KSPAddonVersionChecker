@@ -106,7 +106,6 @@ namespace KSP_AVC
                     return;
                 }
 
-                // Closes the list if the mouse cursor is not within the list or toggle bounds.
                 if (!this.listPosition.Contains(new Vector2(Input.mousePosition.x, Screen.height - Input.mousePosition.y)) && !this.togglePosition.Contains(new Vector2(Input.mousePosition.x, Screen.height - Input.mousePosition.y)))
                 {
                     this.ShowList = false;
