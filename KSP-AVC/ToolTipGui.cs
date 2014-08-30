@@ -38,12 +38,12 @@ namespace KSP_AVC
             try
             {
                 DontDestroyOnLoad(this);
-                Logger.Log("ToolTipGui was created.");
             }
             catch (Exception ex)
             {
                 Logger.Exception(ex);
             }
+            Logger.Log("ToolTipGui was created.");
         }
 
         protected void OnDestroy()

@@ -39,12 +39,13 @@ namespace KSP_AVC
             try
             {
                 DontDestroyOnLoad(this);
-                Logger.Log("FirstRunGui was created.");
+                
             }
             catch (Exception ex)
             {
                 Logger.Exception(ex);
             }
+            Logger.Log("FirstRunGui was created.");
         }
 
         protected void OnDestroy()
