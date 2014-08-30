@@ -42,6 +42,7 @@ namespace KSP_AVC
             {
                 Logger.Exception(ex);
             }
+            Logger.Log("AddonListGui was created.");
         }
 
         protected void OnDestroy()
@@ -57,6 +58,7 @@ namespace KSP_AVC
             {
                 Logger.Exception(ex);
             }
+            Logger.Log("AddonListGui was destroyed.");
         }
 
         protected void OnGUI()
