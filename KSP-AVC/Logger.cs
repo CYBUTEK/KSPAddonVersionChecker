@@ -15,8 +15,6 @@
 //     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 // 
 
-#region Using Directives
-
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -25,27 +23,14 @@ using System.Reflection;
 
 using UnityEngine;
 
-#endregion
-
 namespace KSP_AVC
 {
     [KSPAddon(KSPAddon.Startup.Instantly, false)]
     public class Logger : MonoBehaviour
     {
-        #region Constants
-
-        private static readonly string fileName;
         private static readonly AssemblyName assemblyName;
-
-        #endregion
-
-        #region Fields
-
+        private static readonly string fileName;
         private static readonly List<string[]> messages = new List<string[]>();
-
-        #endregion
-
-        #region Initialisation
 
         static Logger()
         {
@@ -61,20 +46,66 @@ namespace KSP_AVC
             Blank();
         }
 
-        private void Awake()
+        ~Logger()
         {
-            DontDestroyOnLoad(this);
+            Flush();
         }
-
-        #endregion
-
-        #region Printing
 
         public static void Blank()
         {
             lock (messages)
             {
                 messages.Add(new string[] {});
+            }
+        }
+
+        public static void Error(string message)
+        {
+            lock (messages)
+            {
+                messages.Add(new[] {"Error " + DateTime.Now.TimeOfDay, message});
+            }
+        }
+
+        public static void Exception(Exception ex)
+        {
+            lock (messages)
+            {
+                messages.Add(new[] {"Exception " + DateTime.Now.TimeOfDay, ex.ToString()});
+                Blank();
+            }
+        }
+
+        public static void Exception(Exception ex, string location)
+        {
+            lock (messages)
+            {
+                messages.Add(new[] {"Exception " + DateTime.Now.TimeOfDay, location + " // " + ex});
+                Blank();
+            }
+        }
+
+        public static void Flush()
+        {
+            lock (messages)
+            {
+                if (messages.Count == 0)
+                {
+                    return;
+                }
+
+                using (var file = File.AppendText(fileName))
+                {
+                    foreach (var message in messages)
+                    {
+                        file.WriteLine(message.Length > 0 ? message.Length > 1 ? "[" + message[0] + "]: " + message[1] : message[0] : string.Empty);
+                        if (message.Length > 0)
+                        {
+                            print(message.Length > 1 ? assemblyName.Name + " -> " + message[1] : assemblyName.Name + " -> " + message[0]);
+                        }
+                    }
+                }
+                messages.Clear();
             }
         }
 
@@ -146,79 +177,19 @@ namespace KSP_AVC
             }
         }
 
-        public static void Error(string message)
+        protected void Awake()
         {
-            lock (messages)
-            {
-                messages.Add(new[] {"Error " + DateTime.Now.TimeOfDay, message});
-            }
+            DontDestroyOnLoad(this);
         }
 
-        public static void Exception(Exception ex)
-        {
-            lock (messages)
-            {
-                messages.Add(new[] {"Exception " + DateTime.Now.TimeOfDay, ex.Message});
-                messages.Add(new[] {string.Empty, ex.StackTrace});
-                Blank();
-            }
-        }
-
-        public static void Exception(Exception ex, string location)
-        {
-            lock (messages)
-            {
-                messages.Add(new[] {"Exception " + DateTime.Now.TimeOfDay, location + " // " + ex.Message});
-                messages.Add(new[] {string.Empty, ex.StackTrace});
-                Blank();
-            }
-        }
-
-        #endregion
-
-        #region Flushing
-
-        public static void Flush()
-        {
-            lock (messages)
-            {
-                if (messages.Count > 0)
-                {
-                    using (var file = File.AppendText(fileName))
-                    {
-                        foreach (var message in messages)
-                        {
-                            file.WriteLine(message.Length > 0 ? message.Length > 1 ? "[" + message[0] + "]: " + message[1] : message[0] : string.Empty);
-                            if (message.Length > 0)
-                            {
-                                print(message.Length > 1 ? assemblyName.Name + " -> " + message[1] : assemblyName.Name + " -> " + message[0]);
-                            }
-                        }
-                    }
-                    messages.Clear();
-                }
-            }
-        }
-
-        private void LateUpdate()
+        protected void LateUpdate()
         {
             Flush();
         }
 
-        #endregion
-
-        #region Destruction
-
-        private void OnDestroy()
+        protected void OnDestroy()
         {
             Flush();
         }
-
-        ~Logger()
-        {
-            Flush();
-        }
-
-        #endregion
     }
 }

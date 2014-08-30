@@ -15,44 +15,40 @@
 //     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 // 
 
-#region Using Directives
-
 using System;
 using System.IO;
 using System.Reflection;
 
 using UnityEngine;
 
-#endregion
-
 namespace KSP_AVC
 {
     public class DropDownList : MonoBehaviour
     {
-        #region Fields
-
+        private readonly string textureDirectory = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "Textures");
         private Rect listPosition;
+        private GUIStyle listStyle;
         private Rect togglePosition;
+        private GUIStyle toggleStyle;
 
-        #endregion
+        public Addon Addon { get; set; }
 
-        #region Properties
-
+        public Action<DropDownList, Addon> DrawAddonCallback { get; set; }
+        public Action<DropDownList> DrawCallback { get; set; }
         public bool ShowList { get; set; }
 
         public ToolTipGui ToolTip { get; set; }
 
-        public Addon Addon { get; set; }
+        public void DrawButton(string label, Rect parent, float width)
+        {
+            this.ShowList = GUILayout.Toggle(this.ShowList, label, this.toggleStyle, GUILayout.Width(width));
+            if (Event.current.type == EventType.repaint)
+            {
+                this.SetPosition(GUILayoutUtility.GetLastRect(), parent);
+            }
+        }
 
-        public Action<DropDownList> DrawCallback { get; set; }
-
-        public Action<DropDownList, Addon> DrawAddonCallback { get; set; }
-
-        #endregion
-
-        #region Initialisation
-
-        private void Awake()
+        protected void Awake()
         {
             try
             {
@@ -66,96 +62,13 @@ namespace KSP_AVC
             }
         }
 
-        #endregion
-
-        #region Styles
-
-        private GUIStyle listStyle;
-        private GUIStyle toggleStyle;
-
-        private void InitialiseStyles()
+        protected void OnDestroy()
         {
             try
             {
-                var texturesDirectory = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "Textures");
-                var normal = new Texture2D(35, 25, TextureFormat.ARGB32, false);
-                var hover = new Texture2D(35, 25, TextureFormat.ARGB32, false);
-                var active = new Texture2D(35, 25, TextureFormat.ARGB32, false);
-                var onNormal = new Texture2D(35, 25, TextureFormat.ARGB32, false);
-                var onHover = new Texture2D(35, 25, TextureFormat.ARGB32, false);
-                var background = new Texture2D(35, 25, TextureFormat.ARGB32, false);
-                normal.LoadImage(File.ReadAllBytes(Path.Combine(texturesDirectory, "DropDownNormal.png")));
-                hover.LoadImage(File.ReadAllBytes(Path.Combine(texturesDirectory, "DropDownHover.png")));
-                active.LoadImage(File.ReadAllBytes(Path.Combine(texturesDirectory, "DropDownActive.png")));
-                onNormal.LoadImage(File.ReadAllBytes(Path.Combine(texturesDirectory, "DropDownOnNormal.png")));
-                onHover.LoadImage(File.ReadAllBytes(Path.Combine(texturesDirectory, "DropDownOnHover.png")));
-                background.LoadImage(File.ReadAllBytes(Path.Combine(texturesDirectory, "DropDownBackground.png")));
-
-                this.listStyle = new GUIStyle
+                if (this.ToolTip != null)
                 {
-                    normal =
-                    {
-                        background = background
-                    },
-                    border = new RectOffset(5, 5, 0, 5),
-                    padding = new RectOffset(3, 3, 3, 3)
-                };
-
-                this.toggleStyle = new GUIStyle
-                {
-                    normal =
-                    {
-                        background = normal,
-                        textColor = Color.white
-                    },
-                    hover =
-                    {
-                        background = hover,
-                        textColor = Color.white
-                    },
-                    active =
-                    {
-                        background = active,
-                        textColor = Color.white
-                    },
-                    onNormal =
-                    {
-                        background = onNormal,
-                        textColor = Color.white
-                    },
-                    onHover =
-                    {
-                        background = onHover,
-                        textColor = Color.white
-                    },
-                    border = new RectOffset(5, 25, 5, 5),
-                    margin = new RectOffset(0, 0, 3, 3),
-                    padding = new RectOffset(5, 30, 5, 5),
-                    fixedHeight = 25.0f,
-                    fontStyle = FontStyle.Bold,
-                    alignment = TextAnchor.MiddleCenter
-                };
-            }
-            catch (Exception ex)
-            {
-                Logger.Exception(ex);
-            }
-        }
-
-        #endregion
-
-        #region Updating
-
-        private void Update()
-        {
-            try
-            {
-                if (Input.GetMouseButtonDown(0) || Input.GetMouseButtonDown(1) || Input.GetMouseButtonDown(2))
-                {
-                    if (!this.listPosition.Contains(new Vector2(Input.mousePosition.x, Screen.height - Input.mousePosition.y)) && !this.togglePosition.Contains(new Vector2(Input.mousePosition.x, Screen.height - Input.mousePosition.y)))
-                    {
-                        this.ShowList = false;
-                    }
+                    Destroy(this.ToolTip);
                 }
             }
             catch (Exception ex)
@@ -164,27 +77,7 @@ namespace KSP_AVC
             }
         }
 
-        #endregion
-
-        #region Drawing
-
-        public void DrawButton(string label, Rect parent, float width)
-        {
-            try
-            {
-                this.ShowList = GUILayout.Toggle(this.ShowList, label, this.toggleStyle, GUILayout.Width(width));
-                if (Event.current.type == EventType.repaint)
-                {
-                    this.SetPosition(GUILayoutUtility.GetLastRect(), parent);
-                }
-            }
-            catch (Exception ex)
-            {
-                Logger.Exception(ex);
-            }
-        }
-
-        private void OnGUI()
+        protected void OnGUI()
         {
             try
             {
@@ -202,6 +95,100 @@ namespace KSP_AVC
             {
                 Logger.Exception(ex);
             }
+        }
+
+        protected void Update()
+        {
+            try
+            {
+                if (!Input.GetMouseButtonDown(0) && !Input.GetMouseButtonDown(1) && !Input.GetMouseButtonDown(2))
+                {
+                    return;
+                }
+
+                // Closes the list if the mouse cursor is not within the list or toggle bounds.
+                if (!this.listPosition.Contains(new Vector2(Input.mousePosition.x, Screen.height - Input.mousePosition.y)) && !this.togglePosition.Contains(new Vector2(Input.mousePosition.x, Screen.height - Input.mousePosition.y)))
+                {
+                    this.ShowList = false;
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.Exception(ex);
+            }
+        }
+
+        private Texture2D GetTexture(string file, int width, int height)
+        {
+            try
+            {
+                var texture = new Texture2D(width, height, TextureFormat.ARGB32, false);
+                texture.LoadImage(File.ReadAllBytes(Path.Combine(this.textureDirectory, file)));
+                return texture;
+            }
+            catch (Exception ex)
+            {
+                Logger.Exception(ex);
+                return null;
+            }
+        }
+
+        private void InitialiseStyles()
+        {
+            this.listStyle = new GUIStyle
+            {
+                normal =
+                {
+                    background = this.GetTexture("DropDownBackground.png", 35, 25)
+                },
+                border = new RectOffset(5, 5, 0, 5),
+                padding = new RectOffset(3, 3, 3, 3)
+            };
+
+            this.toggleStyle = new GUIStyle
+            {
+                normal =
+                {
+                    background = this.GetTexture("DropDownNormal.png", 35, 25),
+                    textColor = Color.white
+                },
+                hover =
+                {
+                    background = this.GetTexture("DropDownHover.png", 35, 25),
+                    textColor = Color.white
+                },
+                active =
+                {
+                    background = this.GetTexture("DropDownActive.png", 35, 25),
+                    textColor = Color.white
+                },
+                onNormal =
+                {
+                    background = this.GetTexture("DropDownOnNormal.png", 35, 25),
+                    textColor = Color.white
+                },
+                onHover =
+                {
+                    background = this.GetTexture("DropDownOnHover.png", 35, 25),
+                    textColor = Color.white
+                },
+                border = new RectOffset(5, 25, 5, 5),
+                margin = new RectOffset(0, 0, 3, 3),
+                padding = new RectOffset(5, 30, 5, 5),
+                fixedHeight = 25.0f,
+                fontStyle = FontStyle.Bold,
+                alignment = TextAnchor.MiddleCenter
+            };
+        }
+
+        private void SetPosition(Rect toggle, Rect parent)
+        {
+            this.togglePosition = toggle;
+            this.togglePosition.x += parent.x;
+            this.togglePosition.y += parent.y;
+            this.listPosition.x = this.togglePosition.x;
+            this.listPosition.y = this.togglePosition.y + this.togglePosition.height;
+            this.listPosition.width = this.togglePosition.width;
         }
 
         private void Window(int windowId)
@@ -225,47 +212,5 @@ namespace KSP_AVC
                 Logger.Exception(ex);
             }
         }
-
-        #endregion
-
-        #region Private Methods
-
-        private void SetPosition(Rect toggle, Rect parent)
-        {
-            try
-            {
-                this.togglePosition = toggle;
-                this.togglePosition.x += parent.x;
-                this.togglePosition.y += parent.y;
-                this.listPosition.x = this.togglePosition.x;
-                this.listPosition.y = this.togglePosition.y + this.togglePosition.height;
-                this.listPosition.width = this.togglePosition.width;
-            }
-            catch (Exception ex)
-            {
-                Logger.Exception(ex);
-            }
-        }
-
-        #endregion
-
-        #region Destruction
-
-        private void OnDestroy()
-        {
-            try
-            {
-                if (this.ToolTip != null)
-                {
-                    Destroy(this.ToolTip);
-                }
-            }
-            catch (Exception ex)
-            {
-                Logger.Exception(ex);
-            }
-        }
-
-        #endregion
     }
 }

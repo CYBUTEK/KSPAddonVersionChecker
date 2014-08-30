@@ -29,7 +29,7 @@ namespace KSP_AVC
 
         public string Text
         {
-            get { return this.content.text; }
+            get { return (this.content ?? GUIContent.none).text; }
             set { this.content = new GUIContent(value); }
         }
 
