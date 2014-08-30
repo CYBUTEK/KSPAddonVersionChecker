@@ -71,11 +71,11 @@ namespace KSP_AVC
         {
             try
             {
-                if (new System.Version(Settings.Instance.Version) < Assembly.GetExecutingAssembly().GetName().Version)
+                if (new System.Version(Configuration.GetVersion()) < Assembly.GetExecutingAssembly().GetName().Version)
                 {
                     this.ShowUpdatedWindow();
                 }
-                else if (Settings.Instance.FirstRun)
+                else if (Configuration.GetFirstRun())
                 {
                     this.ShowInstalledWindow();
                 }
@@ -122,8 +122,7 @@ namespace KSP_AVC
 
         private void ShowInstalledWindow()
         {
-            Settings.Instance.FirstRun = false;
-            Settings.Save();
+            Configuration.SetFirstRun(false);
             this.firstRunGui = this.gameObject.AddComponent<FirstRunGui>();
         }
 
@@ -143,8 +142,7 @@ namespace KSP_AVC
 
         private void ShowUpdatedWindow()
         {
-            Settings.Instance.Version = Assembly.GetExecutingAssembly().GetName().Version.ToString();
-            Settings.Save();
+            Configuration.SetVersion(Assembly.GetExecutingAssembly().GetName().Version.ToString());
             this.firstRunGui = this.gameObject.AddComponent<FirstRunGui>();
             this.firstRunGui.HasBeenUpdated = true;
         }
