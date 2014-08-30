@@ -15,136 +15,104 @@
 //     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 // 
 
-#region Using Directives
-
 using System;
 using System.IO;
 using System.Threading;
 
 using UnityEngine;
 
-#endregion
-
 namespace KSP_AVC
 {
     public class Addon
     {
-        #region Fields
-
-        private AddonInfo localInfo;
-        private AddonInfo remoteInfo;
-
-        #endregion
-
-        #region Contructors
-
         public Addon(string path)
         {
-            try
-            {
-                this.RunProcessLocalInfo(path);
-            }
-            catch (Exception ex)
-            {
-                Logger.Exception(ex);
-            }
-        }
-
-        #endregion
-
-        #region Properties
-
-        public AddonInfo LocalInfo
-        {
-            get { return this.localInfo; }
-        }
-
-        public AddonInfo RemoteInfo
-        {
-            get { return this.remoteInfo; }
+            this.RunProcessLocalInfo(path);
         }
 
         public bool HasError { get; private set; }
-
-        public bool IsLocalReady { get; private set; }
-
-        public bool IsRemoteReady { get; private set; }
-
-        public bool IsProcessingComplete { get; private set; }
-
-        public bool IsUpdateAvailable
-        {
-            get { return this.IsProcessingComplete && this.LocalInfo.Version != null && this.RemoteInfo.Version != null && this.RemoteInfo.Version > this.LocalInfo.Version && this.RemoteInfo.IsCompatibleKspVersion && this.RemoteInfo.IsCompatibleGitHubVersion; }
-        }
 
         public bool IsCompatible
         {
             get { return this.IsLocalReady && this.LocalInfo.IsCompatible; }
         }
 
+        public bool IsLocalReady { get; private set; }
+
+        public bool IsProcessingComplete { get; private set; }
+
+        public bool IsRemoteReady { get; private set; }
+
+        public bool IsUpdateAvailable
+        {
+            get { return this.IsProcessingComplete && this.LocalInfo.Version != null && this.RemoteInfo.Version != null && this.RemoteInfo.Version > this.LocalInfo.Version && this.RemoteInfo.IsCompatibleKspVersion && this.RemoteInfo.IsCompatibleGitHubVersion; }
+        }
+
+        public AddonInfo LocalInfo { get; private set; }
+
         public string Name
         {
             get { return this.LocalInfo.Name; }
         }
 
-        #endregion
-
-        #region Public Methods
+        public AddonInfo RemoteInfo { get; private set; }
 
         public void RunProcessLocalInfo(string path)
         {
-            try
-            {
-                ThreadPool.QueueUserWorkItem(this.ProcessLocalInfo, path);
-            }
-            catch (Exception ex)
-            {
-                Logger.Exception(ex);
-            }
+            ThreadPool.QueueUserWorkItem(this.ProcessLocalInfo, path);
         }
 
         public void RunProcessRemoteInfo()
         {
-            try
+            ThreadPool.QueueUserWorkItem(this.ProcessRemoteInfo);
+        }
+
+        private void FetchLocalInfo(string path)
+        {
+            using (var stream = new StreamReader(File.OpenRead(path)))
             {
-                ThreadPool.QueueUserWorkItem(this.ProcessRemoteInfo);
-            }
-            catch (Exception ex)
-            {
-                Logger.Exception(ex);
+                this.LocalInfo = new AddonInfo(path, stream.ReadToEnd());
+                this.IsLocalReady = true;
+                this.RunProcessRemoteInfo();
             }
         }
 
-        #endregion
+        private void FetchRemoteInfo()
+        {
+            using (var www = new WWW(this.LocalInfo.Url))
+            {
+                while (!www.isDone) { }
 
-        #region Private Methods
+                if (www.error != null)
+                {
+                    this.SetLocalOnly();
+                    return;
+                }
+
+                this.RemoteInfo = new AddonInfo(this.LocalInfo.Url, www.text);
+                this.RemoteInfo.FetchRemoteData();
+                this.SetRemoteReady();
+                Logger.Log(this.RemoteInfo + "\n\tUpdateAvailable: " + this.IsUpdateAvailable);
+            }
+        }
 
         private void ProcessLocalInfo(object state)
         {
             try
             {
                 var path = (string)state;
-                if (File.Exists(path))
-                {
-                    using (var stream = new StreamReader(File.OpenRead(path)))
-                    {
-                        this.localInfo = new AddonInfo(path, stream.ReadToEnd());
-                        this.IsLocalReady = true;
-                        this.RunProcessRemoteInfo();
-                    }
-                }
-                else
+                if (!File.Exists(path))
                 {
                     Logger.Log("File Not Found: " + path);
-                    this.HasError = true;
-                    this.IsProcessingComplete = true;
+                    this.SetHasError();
+                    return;
                 }
+                this.FetchLocalInfo(path);
             }
             catch (Exception ex)
             {
                 Logger.Exception(ex);
-                this.HasError = true;
-                this.IsProcessingComplete = true;
+                this.SetHasError();
             }
         }
 
@@ -152,48 +120,40 @@ namespace KSP_AVC
         {
             try
             {
-                if (string.IsNullOrEmpty(this.localInfo.Url))
+                if (string.IsNullOrEmpty(this.LocalInfo.Url))
                 {
-                    this.remoteInfo = this.localInfo;
-                    this.IsRemoteReady = true;
-                    this.IsProcessingComplete = true;
-                    Logger.Log(this.localInfo);
+                    this.SetLocalOnly();
                     Logger.Blank();
                     return;
                 }
 
-                using (var www = new WWW(this.localInfo.Url))
-                {
-                    while (!www.isDone) { }
-                    if (www.error == null)
-                    {
-                        this.remoteInfo = new AddonInfo(this.localInfo.Url, www.text);
-                        this.remoteInfo.FetchRemoteData();
-                        this.IsRemoteReady = true;
-                        this.IsProcessingComplete = true;
-                        Logger.Log(this.localInfo);
-                        Logger.Log(this.remoteInfo + "\n\tUpdateAvailable: " + this.IsUpdateAvailable);
-                    }
-                    else
-                    {
-                        this.remoteInfo = this.localInfo;
-                        this.IsRemoteReady = true;
-                        this.IsProcessingComplete = true;
-                        Logger.Log(this.localInfo);
-                    }
-                }
+                this.FetchRemoteInfo();
                 Logger.Blank();
             }
             catch (Exception ex)
             {
                 Logger.Exception(ex);
-                this.remoteInfo = this.localInfo;
-                this.IsRemoteReady = true;
-                this.IsProcessingComplete = true;
-                Logger.Log(this.localInfo);
+                this.SetLocalOnly();
             }
         }
 
-        #endregion
+        private void SetHasError()
+        {
+            this.HasError = true;
+            this.IsProcessingComplete = true;
+        }
+
+        private void SetLocalOnly()
+        {
+            this.RemoteInfo = this.LocalInfo;
+            this.SetRemoteReady();
+        }
+
+        private void SetRemoteReady()
+        {
+            this.IsRemoteReady = true;
+            this.IsProcessingComplete = true;
+            Logger.Log(this.LocalInfo);
+        }
     }
 }

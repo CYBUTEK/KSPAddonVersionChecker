@@ -126,201 +126,148 @@ namespace KSP_AVC
 
         public void FetchRemoteData()
         {
-            try
+            if (this.GitHub != null)
             {
-                if (this.GitHub != null)
-                {
-                    this.GitHub.FetchRemoteData();
-                }
-
-                if (this.ChangeLogUrl != null)
-                {
-                    this.FetchChangeLog();
-                }
+                this.GitHub.FetchRemoteData();
             }
-            catch (Exception ex)
+
+            if (this.ChangeLogUrl != null)
             {
-                Logger.Exception(ex);
+                this.FetchChangeLog();
             }
         }
 
         public override string ToString()
         {
-            try
-            {
-                return this.path +
-                       "\n\tNAME: " + (string.IsNullOrEmpty(this.Name) ? "NULL (required)" : this.Name) +
-                       "\n\tURL: " + (string.IsNullOrEmpty(this.Url) ? "NULL" : this.Url) +
-                       "\n\tDOWNLOAD: " + (string.IsNullOrEmpty(this.Download) ? "NULL" : this.Download) +
-                       "\n\tGITHUB: " + (this.GitHub != null ? this.GitHub.ToString() : "NULL") +
-                       "\n\tVERSION: " + (this.Version != null ? this.Version.ToString() : "NULL (required)") +
-                       "\n\tKSP_VERSION: " + this.KspVersion +
-                       "\n\tKSP_VERSION_MIN: " + (this.kspVersionMin != null ? this.kspVersion.ToString() : "NULL") +
-                       "\n\tKSP_VERSION_MAX: " + (this.kspVersionMax != null ? this.kspVersionMax.ToString() : "NULL") +
-                       "\n\tCompatibleKspVersion: " + this.IsCompatibleKspVersion +
-                       "\n\tCompatibleKspVersionMin: " + this.IsCompatibleKspVersionMin +
-                       "\n\tCompatibleKspVersionMax: " + this.IsCompatibleKspVersionMax +
-                       "\n\tCompatibleGitHubVersion: " + this.IsCompatibleGitHubVersion;
-            }
-            catch (Exception ex)
-            {
-                Logger.Exception(ex);
-                return ex.Message;
-            }
+            return this.path +
+                   "\n\tNAME: " + (string.IsNullOrEmpty(this.Name) ? "NULL (required)" : this.Name) +
+                   "\n\tURL: " + (string.IsNullOrEmpty(this.Url) ? "NULL" : this.Url) +
+                   "\n\tDOWNLOAD: " + (string.IsNullOrEmpty(this.Download) ? "NULL" : this.Download) +
+                   "\n\tGITHUB: " + (this.GitHub != null ? this.GitHub.ToString() : "NULL") +
+                   "\n\tVERSION: " + (this.Version != null ? this.Version.ToString() : "NULL (required)") +
+                   "\n\tKSP_VERSION: " + this.KspVersion +
+                   "\n\tKSP_VERSION_MIN: " + (this.kspVersionMin != null ? this.kspVersion.ToString() : "NULL") +
+                   "\n\tKSP_VERSION_MAX: " + (this.kspVersionMax != null ? this.kspVersionMax.ToString() : "NULL") +
+                   "\n\tCompatibleKspVersion: " + this.IsCompatibleKspVersion +
+                   "\n\tCompatibleKspVersionMin: " + this.IsCompatibleKspVersionMin +
+                   "\n\tCompatibleKspVersionMax: " + this.IsCompatibleKspVersionMax +
+                   "\n\tCompatibleGitHubVersion: " + this.IsCompatibleGitHubVersion;
         }
 
         private static string FormatCompatibleUrl(string url)
         {
-            try
+            if (!url.Contains("github.com"))
             {
-                if (!url.Contains("github.com"))
-                {
-                    return url;
-                }
-                url = url.Replace("github.com", "raw.githubusercontent.com");
-                url = url.Replace("/tree/", "/");
-                url = url.Replace("/blob/", "/");
                 return url;
             }
-            catch (Exception ex)
-            {
-                Logger.Exception(ex);
-                return url;
-            }
+            url = url.Replace("github.com", "raw.githubusercontent.com");
+            url = url.Replace("/tree/", "/");
+            url = url.Replace("/blob/", "/");
+            return url;
         }
 
         private static VersionInfo GetVersion(object obj)
         {
-            try
+            if (obj is Dictionary<string, object>)
             {
-                if (obj is Dictionary<string, object>)
-                {
-                    return ParseVersion(obj as Dictionary<string, object>);
-                }
-                return new VersionInfo((string)obj);
+                return ParseVersion(obj as Dictionary<string, object>);
             }
-            catch (Exception ex)
-            {
-                Logger.Exception(ex);
-                return new VersionInfo();
-            }
+            return new VersionInfo((string)obj);
         }
 
         private static VersionInfo ParseVersion(Dictionary<string, object> data)
         {
-            try
-            {
-                var version = new VersionInfo();
+            var version = new VersionInfo();
 
-                foreach (var key in data.Keys)
+            foreach (var key in data.Keys)
+            {
+                switch (key.ToUpper())
                 {
-                    switch (key.ToUpper())
-                    {
-                        case "MAJOR":
-                            version.Major = (long)data[key];
-                            break;
+                    case "MAJOR":
+                        version.Major = (long)data[key];
+                        break;
 
-                        case "MINOR":
-                            version.Minor = (long)data[key];
-                            break;
+                    case "MINOR":
+                        version.Minor = (long)data[key];
+                        break;
 
-                        case "PATCH":
-                            version.Patch = (long)data[key];
-                            break;
+                    case "PATCH":
+                        version.Patch = (long)data[key];
+                        break;
 
-                        case "BUILD":
-                            version.Build = (long)data[key];
-                            break;
-                    }
+                    case "BUILD":
+                        version.Build = (long)data[key];
+                        break;
                 }
+            }
 
-                return version;
-            }
-            catch (Exception ex)
-            {
-                Logger.Exception(ex);
-                return new VersionInfo();
-            }
+            return version;
         }
 
         private void FetchChangeLog()
         {
-            try
+            using (var www = new WWW(this.ChangeLogUrl))
             {
-                using (var www = new WWW(this.ChangeLogUrl))
+                while (!www.isDone) { }
+                if (www.error == null)
                 {
-                    while (!www.isDone) { }
-                    if (www.error == null)
-                    {
-                        this.ChangeLog = www.text;
-                    }
+                    this.ChangeLog = www.text;
                 }
-            }
-            catch (Exception ex)
-            {
-                Logger.Exception(ex);
             }
         }
 
         private void Parse(string json)
         {
-            try
+            var data = Json.Deserialize(json) as Dictionary<string, object>;
+            if (data == null)
             {
-                var data = Json.Deserialize(json) as Dictionary<string, object>;
-                if (data == null)
-                {
-                    this.ParseError = true;
-                    return;
-                }
-                foreach (var key in data.Keys)
-                {
-                    switch (key.ToUpper())
-                    {
-                        case "NAME":
-                            this.Name = (string)data[key];
-                            break;
-
-                        case "URL":
-                            this.Url = FormatCompatibleUrl((string)data[key]);
-                            break;
-
-                        case "DOWNLOAD":
-                            this.Download = (string)data[key];
-                            break;
-
-                        case "CHANGE_LOG":
-                            this.ChangeLog = (string)data[key];
-                            break;
-
-                        case "CHANGE_LOG_URL":
-                            this.ChangeLogUrl = (string)data[key];
-                            break;
-
-                        case "GITHUB":
-                            this.GitHub = new GitHubInfo(data[key], this);
-                            break;
-
-                        case "VERSION":
-                            this.Version = GetVersion(data[key]);
-                            break;
-
-                        case "KSP_VERSION":
-                            this.kspVersion = GetVersion(data[key]);
-                            break;
-
-                        case "KSP_VERSION_MIN":
-                            this.kspVersionMin = GetVersion(data[key]);
-                            break;
-
-                        case "KSP_VERSION_MAX":
-                            this.kspVersionMax = GetVersion(data[key]);
-                            break;
-                    }
-                }
+                this.ParseError = true;
+                return;
             }
-            catch (Exception ex)
+            foreach (var key in data.Keys)
             {
-                Logger.Exception(ex);
+                switch (key.ToUpper())
+                {
+                    case "NAME":
+                        this.Name = (string)data[key];
+                        break;
+
+                    case "URL":
+                        this.Url = FormatCompatibleUrl((string)data[key]);
+                        break;
+
+                    case "DOWNLOAD":
+                        this.Download = (string)data[key];
+                        break;
+
+                    case "CHANGE_LOG":
+                        this.ChangeLog = (string)data[key];
+                        break;
+
+                    case "CHANGE_LOG_URL":
+                        this.ChangeLogUrl = (string)data[key];
+                        break;
+
+                    case "GITHUB":
+                        this.GitHub = new GitHubInfo(data[key], this);
+                        break;
+
+                    case "VERSION":
+                        this.Version = GetVersion(data[key]);
+                        break;
+
+                    case "KSP_VERSION":
+                        this.kspVersion = GetVersion(data[key]);
+                        break;
+
+                    case "KSP_VERSION_MIN":
+                        this.kspVersionMin = GetVersion(data[key]);
+                        break;
+
+                    case "KSP_VERSION_MAX":
+                        this.kspVersionMax = GetVersion(data[key]);
+                        break;
+                }
             }
         }
 
@@ -330,15 +277,8 @@ namespace KSP_AVC
 
             public GitHubInfo(object obj, AddonInfo addonInfo)
             {
-                try
-                {
-                    this.addonInfo = addonInfo;
-                    this.ParseJson(obj);
-                }
-                catch (Exception ex)
-                {
-                    Logger.Exception(ex);
-                }
+                this.addonInfo = addonInfo;
+                this.ParseJson(obj);
             }
 
             public bool AllowPreRelease { get; private set; }
@@ -355,20 +295,13 @@ namespace KSP_AVC
 
             public void FetchRemoteData()
             {
-                try
+                using (var www = new WWW("https://api.github.com/repos/" + this.Username + "/" + this.Repository + "/releases"))
                 {
-                    using (var www = new WWW("https://api.github.com/repos/" + this.Username + "/" + this.Repository + "/releases"))
+                    while (!www.isDone) { }
+                    if (www.error == null)
                     {
-                        while (!www.isDone) { }
-                        if (www.error == null)
-                        {
-                            this.ParseGitHubJson(www.text);
-                        }
+                        this.ParseGitHubJson(www.text);
                     }
-                }
-                catch (Exception ex)
-                {
-                    Logger.Exception(ex);
                 }
             }
 
@@ -381,42 +314,35 @@ namespace KSP_AVC
 
             private void ParseGitHubJson(string json)
             {
-                try
+                var obj = Json.Deserialize(json) as List<object>;
+                if (obj == null || obj.Count == 0)
                 {
-                    var obj = Json.Deserialize(json) as List<object>;
-                    if (obj == null || obj.Count == 0)
-                    {
-                        this.ParseError = true;
-                        return;
-                    }
-
-                    foreach (Dictionary<string, object> data in obj)
-                    {
-                        if (!this.AllowPreRelease && (bool)data["prerelease"])
-                        {
-                            continue;
-                        }
-
-                        var tag = (string)data["tag_name"];
-                        var version = GetVersion(tag);
-
-                        if (version == null || version <= this.Version)
-                        {
-                            continue;
-                        }
-
-                        this.Version = version;
-                        this.Tag = tag;
-
-                        if (string.IsNullOrEmpty(this.addonInfo.Download))
-                        {
-                            this.addonInfo.Download = "https://github.com/" + this.Username + "/" + this.Repository + "/releases/tag/" + this.Tag;
-                        }
-                    }
+                    this.ParseError = true;
+                    return;
                 }
-                catch (Exception ex)
+
+                foreach (Dictionary<string, object> data in obj)
                 {
-                    Logger.Exception(ex);
+                    if (!this.AllowPreRelease && (bool)data["prerelease"])
+                    {
+                        continue;
+                    }
+
+                    var tag = (string)data["tag_name"];
+                    var version = GetVersion(tag);
+
+                    if (version == null || version <= this.Version)
+                    {
+                        continue;
+                    }
+
+                    this.Version = version;
+                    this.Tag = tag;
+
+                    if (string.IsNullOrEmpty(this.addonInfo.Download))
+                    {
+                        this.addonInfo.Download = "https://github.com/" + this.Username + "/" + this.Repository + "/releases/tag/" + this.Tag;
+                    }
                 }
             }
 
