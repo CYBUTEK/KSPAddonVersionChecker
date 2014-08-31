@@ -19,6 +19,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Threading;
 
 using UnityEngine;
 
@@ -411,7 +412,10 @@ namespace MiniAVC
                 {
                     using (var www = new WWW("https://api.github.com/repos/" + this.Username + "/" + this.Repository + "/releases"))
                     {
-                        while (!www.isDone) { }
+                        while (!www.isDone)
+                        {
+                            Thread.Sleep(100);
+                        }
                         if (www.error == null)
                         {
                             this.Parse(www.text);
