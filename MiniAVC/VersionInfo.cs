@@ -18,7 +18,6 @@
 #region Using Directives
 
 using System;
-using System.Globalization;
 using System.Text.RegularExpressions;
 
 #endregion
@@ -27,7 +26,110 @@ namespace MiniAVC
 {
     public class VersionInfo : IComparable
     {
-        #region IComparable Members
+        #region Constructors
+
+        public VersionInfo(long major = 0, long minor = 0, long patch = 0, long build = 0)
+        {
+            this.SetVersion(major, minor, patch, build);
+        }
+
+        public VersionInfo(string version)
+        {
+            var sections = Regex.Replace(version, @"[^\d\.]", String.Empty).Split('.');
+
+            switch (sections.Length)
+            {
+                case 1:
+                    this.SetVersion(Int64.Parse(sections[0]));
+                    return;
+
+                case 2:
+                    this.SetVersion(Int64.Parse(sections[0]), Int64.Parse(sections[1]));
+                    return;
+
+                case 3:
+                    this.SetVersion(Int64.Parse(sections[0]), Int64.Parse(sections[1]), Int64.Parse(sections[2]));
+                    return;
+
+                case 4:
+                    this.SetVersion(Int64.Parse(sections[0]), Int64.Parse(sections[1]), Int64.Parse(sections[2]), Int64.Parse(sections[3]));
+                    return;
+
+                default:
+                    this.SetVersion();
+                    return;
+            }
+        }
+
+        #endregion
+
+        #region Properties
+
+        public static VersionInfo MaxValue
+        {
+            get { return new VersionInfo(Int64.MaxValue, Int64.MaxValue, Int64.MaxValue, Int64.MaxValue); }
+        }
+
+        public static VersionInfo MinValue
+        {
+            get { return new VersionInfo(); }
+        }
+
+        public long Build { get; set; }
+
+        public long Major { get; set; }
+
+        public long Minor { get; set; }
+
+        public long Patch { get; set; }
+
+        #endregion
+
+        #region Operators
+
+        public static bool operator ==(VersionInfo v1, VersionInfo v2)
+        {
+            return Equals(v1, v2);
+        }
+
+        public static bool operator >(VersionInfo v1, VersionInfo v2)
+        {
+            return v1.CompareTo(v2) > 0;
+        }
+
+        public static bool operator >=(VersionInfo v1, VersionInfo v2)
+        {
+            return v1.CompareTo(v2) >= 0;
+        }
+
+        public static implicit operator System.Version(VersionInfo version)
+        {
+            return new System.Version(Convert.ToInt32(version.Major), Convert.ToInt32(version.Minor), Convert.ToInt32(version.Patch), Convert.ToInt32(version.Build));
+        }
+
+        public static implicit operator VersionInfo(System.Version version)
+        {
+            return new VersionInfo(version.Major, version.Minor, version.Build, version.Revision);
+        }
+
+        public static bool operator !=(VersionInfo v1, VersionInfo v2)
+        {
+            return !Equals(v1, v2);
+        }
+
+        public static bool operator <(VersionInfo v1, VersionInfo v2)
+        {
+            return v1.CompareTo(v2) < 0;
+        }
+
+        public static bool operator <=(VersionInfo v1, VersionInfo v2)
+        {
+            return v1.CompareTo(v2) <= 0;
+        }
+
+        #endregion
+
+        #region Methods: public
 
         public int CompareTo(object obj)
         {
@@ -58,129 +160,17 @@ namespace MiniAVC
             return patch != 0 ? patch : this.Build.CompareTo(other.Build);
         }
 
-        #endregion
-
-        #region Constructors
-
-        public VersionInfo()
+        public override bool Equals(object obj)
         {
-            this.SetVersion(0, 0, 0, 0);
-        }
-
-        public VersionInfo(long major)
-        {
-            this.SetVersion(major, 0, 0, 0);
-        }
-
-        public VersionInfo(long major, long minor)
-        {
-            this.SetVersion(major, minor, 0, 0);
-        }
-
-        public VersionInfo(long major, long minor, long patch)
-        {
-            this.SetVersion(major, minor, patch, 0);
-        }
-
-        public VersionInfo(long major, long minor, long patch, long build)
-        {
-            this.SetVersion(major, minor, patch, build);
-        }
-
-        public VersionInfo(string version)
-        {
-            try
+            if (ReferenceEquals(null, obj))
             {
-                var sections = Regex.Replace(version, @"[^\d\.]", string.Empty).Split('.');
-
-                switch (sections.Length)
-                {
-                    case 1:
-                        this.SetVersion(long.Parse(sections[0]), 0, 0, 0);
-                        return;
-
-                    case 2:
-                        this.SetVersion(long.Parse(sections[0]), long.Parse(sections[1]), 0, 0);
-                        return;
-
-                    case 3:
-                        this.SetVersion(long.Parse(sections[0]), long.Parse(sections[1]), long.Parse(sections[2]), 0);
-                        return;
-
-                    case 4:
-                        this.SetVersion(long.Parse(sections[0]), long.Parse(sections[1]), long.Parse(sections[2]), long.Parse(sections[3]));
-                        return;
-
-                    default:
-                        this.SetVersion(0, 0, 0, 0);
-                        return;
-                }
+                return false;
             }
-            catch (Exception ex)
+            if (ReferenceEquals(this, obj))
             {
-                Logger.Exception(ex);
+                return true;
             }
-
-        }
-
-        #endregion
-
-        #region Properties
-
-        public long Major { get; set; }
-        public long Minor { get; set; }
-        public long Patch { get; set; }
-        public long Build { get; set; }
-
-        public static VersionInfo Min
-        {
-            get { return new VersionInfo(); }
-        }
-
-        public static VersionInfo Max
-        {
-            get { return new VersionInfo(long.MaxValue, long.MaxValue, long.MaxValue, long.MaxValue); }
-        }
-
-        #endregion
-
-        #region Public Methods
-
-        public void SetVersion(long major, long minor, long patch, long build)
-        {
-            try
-            {
-                this.Major = major;
-                this.Minor = minor;
-                this.Patch = patch;
-                this.Build = build;
-            }
-            catch (Exception ex)
-            {
-                Logger.Exception(ex);
-            }
-        }
-
-        public override string ToString()
-        {
-            try
-            {
-                if (this.Build > 0)
-                {
-                    return string.Format("{0}.{1}.{2}.{3}", this.Major, this.Minor, this.Patch, this.Build);
-                }
-                if (this.Patch > 0)
-                {
-                    return string.Format("{0}.{1}.{2}", this.Major, this.Minor, this.Patch);
-                }
-
-                return string.Format("{0}.{1}", this.Major, this.Minor);
-            }
-            catch (Exception ex)
-            {
-                Logger.Exception(ex);
-                return ex.Message;
-            }
+            return obj.GetType() == this.GetType() && this.Equals((VersionInfo)obj);
         }
 
         public override int GetHashCode()
@@ -195,66 +185,30 @@ namespace MiniAVC
             }
         }
 
-        protected bool Equals(VersionInfo other)
+        public void SetVersion(long major = 0, long minor = 0, long patch = 0, long build = 0)
         {
-            return this.Major == other.Major && this.Minor == other.Minor && this.Patch == other.Patch && this.Build == other.Build;
+            this.Major = major;
+            this.Minor = minor;
+            this.Patch = patch;
+            this.Build = build;
         }
 
-        public override bool Equals(object obj)
+        public override string ToString()
         {
-            if (ReferenceEquals(null, obj))
+            if (this.Build > 0)
             {
-                return false;
+                return String.Format("{0}.{1}.{2}.{3}", this.Major, this.Minor, this.Patch, this.Build);
             }
-            if (ReferenceEquals(this, obj))
-            {
-                return true;
-            }
-            return obj.GetType() == this.GetType() && this.Equals((VersionInfo)obj);
+            return this.Patch > 0 ? String.Format("{0}.{1}.{2}", this.Major, this.Minor, this.Patch) : String.Format("{0}.{1}", this.Major, this.Minor);
         }
 
         #endregion
 
-        #region Operators
+        #region Methods: protected
 
-        public static implicit operator System.Version(VersionInfo version)
+        protected bool Equals(VersionInfo other)
         {
-            return new System.Version((int)version.Major, (int)version.Minor, (int)version.Patch, (int)version.Build);
-        }
-
-        public static implicit operator VersionInfo(System.Version version)
-        {
-            return new VersionInfo(version.Major, version.Minor, version.Build, version.Revision);
-        }
-
-        public static bool operator ==(VersionInfo v1, VersionInfo v2)
-        {
-            return Equals(v1, v2);
-        }
-
-        public static bool operator !=(VersionInfo v1, VersionInfo v2)
-        {
-            return !Equals(v1, v2);
-        }
-
-        public static bool operator >(VersionInfo v1, VersionInfo v2)
-        {
-            return v1.CompareTo(v2) > 0;
-        }
-
-        public static bool operator >=(VersionInfo v1, VersionInfo v2)
-        {
-            return v1.CompareTo(v2) >= 0;
-        }
-
-        public static bool operator <(VersionInfo v1, VersionInfo v2)
-        {
-            return v1.CompareTo(v2) < 0;
-        }
-
-        public static bool operator <=(VersionInfo v1, VersionInfo v2)
-        {
-            return v1.CompareTo(v2) <= 0;
+            return this.Major.Equals(other.Major) && this.Minor.Equals(other.Minor) && this.Patch.Equals(other.Patch) && this.Build.Equals(other.Build);
         }
 
         #endregion

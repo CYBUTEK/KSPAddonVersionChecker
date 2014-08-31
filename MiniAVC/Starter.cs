@@ -38,14 +38,12 @@ namespace MiniAVC
 
         #endregion
 
-        #region Initialisation
+        #region Methods: protected
 
-        private void Awake()
+        protected void Awake()
         {
             try
             {
-                Logger.Log("Starter was created.");
-
                 // Only allow one instance to run.
                 if (alreadyRunning)
                 {
@@ -59,19 +57,22 @@ namespace MiniAVC
                 {
                     Logger.Log("KSP-AVC was detected...  Unloading MiniAVC!");
                     Destroy(this);
+                    return;
                 }
             }
             catch (Exception ex)
             {
                 Logger.Exception(ex);
             }
+            Logger.Log("Starter was created.");
         }
 
-        #endregion
+        protected void OnDestroy()
+        {
+            Logger.Log("Starter was destroyed.");
+        }
 
-        #region Updating
-
-        private void Update()
+        protected void Update()
         {
             try
             {
@@ -89,29 +90,13 @@ namespace MiniAVC
                 }
 
                 // Create and show first run gui if required.
-                foreach (var settings in AddonLibrary.Settings.Where(s => s.FirstRun))
+                if (this.CreateFirstRunGui())
                 {
-                    this.shownFirstRunGui = this.gameObject.AddComponent<FirstRunGui>();
-                    this.shownFirstRunGui.Settings = settings;
-                    this.shownFirstRunGui.Addons = AddonLibrary.Addons.Where(a => a.Settings == settings).ToList();
                     return;
                 }
 
                 // Create and show issue gui if required.
-                var removeAddons = new List<Addon>();
-                foreach (var addon in AddonLibrary.Addons.Where(a => a.IsProcessingComplete))
-                {
-                    if (!addon.HasError && (addon.IsUpdateAvailable || !addon.IsCompatible))
-                    {
-                        this.shownIssueGui = this.gameObject.AddComponent<IssueGui>();
-                        this.shownIssueGui.Addon = addon;
-                        this.shownIssueGui.enabled = true;
-                        removeAddons.Add(addon);
-                        break;
-                    }
-                    removeAddons.Add(addon);
-                }
-                AddonLibrary.Addons.RemoveAll(removeAddons.Contains);
+                this.CreateIssueGui();
             }
             catch (Exception ex)
             {
@@ -121,11 +106,36 @@ namespace MiniAVC
 
         #endregion
 
-        #region Destruction
+        #region Methods: private
 
-        private void OnDestroy()
+        private bool CreateFirstRunGui()
         {
-            Logger.Log("Starter was destroyed.");
+            foreach (var settings in AddonLibrary.Settings.Where(s => s.FirstRun))
+            {
+                this.shownFirstRunGui = this.gameObject.AddComponent<FirstRunGui>();
+                this.shownFirstRunGui.Settings = settings;
+                this.shownFirstRunGui.Addons = AddonLibrary.Addons.Where(a => a.Settings == settings).ToList();
+                return true;
+            }
+            return false;
+        }
+
+        private void CreateIssueGui()
+        {
+            var removeAddons = new List<Addon>();
+            foreach (var addon in AddonLibrary.Addons.Where(a => a.IsProcessingComplete))
+            {
+                if (!addon.HasError && (addon.IsUpdateAvailable || !addon.IsCompatible))
+                {
+                    this.shownIssueGui = this.gameObject.AddComponent<IssueGui>();
+                    this.shownIssueGui.Addon = addon;
+                    this.shownIssueGui.enabled = true;
+                    removeAddons.Add(addon);
+                    break;
+                }
+                removeAddons.Add(addon);
+            }
+            AddonLibrary.Addons.RemoveAll(removeAddons.Contains);
         }
 
         #endregion

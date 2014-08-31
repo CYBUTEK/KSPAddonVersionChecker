@@ -29,8 +29,11 @@ namespace MiniAVC
     {
         #region Fields
 
+        private GUIStyle buttonStyle;
         private bool hasCentred;
+        private GUIStyle labelStyle;
         private Rect position = new Rect(Screen.width, Screen.height, 0, 0);
+        private GUIStyle titleStyle;
         private ToolTipGui toolTipGui;
 
         #endregion
@@ -41,14 +44,32 @@ namespace MiniAVC
 
         #endregion
 
-        #region Initialisation
+        #region Methods: protected
 
-        private void Awake()
+        protected void Awake()
         {
             try
             {
                 DontDestroyOnLoad(this);
-                Logger.Log("IssueGui was created.");
+            }
+            catch (Exception ex)
+            {
+                Logger.Exception(ex);
+            }
+            Logger.Log("IssueGui was created.");
+        }
+
+        protected void OnDestroy()
+        {
+            Logger.Log("IssueGui was destroyed.");
+        }
+
+        protected void OnGUI()
+        {
+            try
+            {
+                this.position = GUILayout.Window(this.GetInstanceID(), this.position, this.Window, this.Addon.Name, HighLogic.Skin.window);
+                this.CentreWindow();
             }
             catch (Exception ex)
             {
@@ -56,11 +77,10 @@ namespace MiniAVC
             }
         }
 
-        private void Start()
+        protected void Start()
         {
             try
             {
-                this.toolTipGui = this.gameObject.AddComponent<ToolTipGui>();
                 this.InitialiseStyles();
             }
             catch (Exception ex)
@@ -71,100 +91,102 @@ namespace MiniAVC
 
         #endregion
 
-        #region Styles
+        #region Methods: private
 
-        private GUIStyle buttonStyle;
-        private GUIStyle labelStyle;
-        private GUIStyle titleStyle;
+        private void CentreWindow()
+        {
+            if (this.hasCentred || !(this.position.width > 0) || !(this.position.height > 0))
+            {
+                return;
+            }
+            this.position.center = new Vector2(Screen.width * 0.5f, Screen.height * 0.5f);
+            this.hasCentred = true;
+        }
+
+        private void DrawDownloadButton()
+        {
+            if (String.IsNullOrEmpty(this.Addon.RemoteInfo.Download))
+            {
+                return;
+            }
+
+            if (GUILayout.Button("DOWNLOAD", this.buttonStyle))
+            {
+                Application.OpenURL(this.Addon.RemoteInfo.Download);
+            }
+
+            if (this.toolTipGui == null)
+            {
+                this.toolTipGui = this.gameObject.AddComponent<ToolTipGui>();
+            }
+            this.toolTipGui.Text = GUILayoutUtility.GetLastRect().Contains(Event.current.mousePosition) ? this.Addon.RemoteInfo.Download : String.Empty;
+        }
+
+        private void DrawNotCompatible()
+        {
+            if (this.Addon.IsCompatible)
+            {
+                return;
+            }
+
+            GUILayout.BeginVertical(HighLogic.Skin.box);
+            GUILayout.Label("Unsupported KSP version... Please use " + this.Addon.LocalInfo.KspVersion, this.titleStyle, GUILayout.Width(300.0f));
+            GUILayout.EndVertical();
+        }
+
+        private void DrawUpdateAvailable()
+        {
+            if (!this.Addon.IsUpdateAvailable)
+            {
+                return;
+            }
+
+            GUILayout.BeginVertical(HighLogic.Skin.box);
+            GUILayout.Label("AN UPDATE IS AVAILABLE", this.titleStyle);
+            GUILayout.BeginHorizontal();
+            GUILayout.Label("Installed: " + this.Addon.LocalInfo.Version, this.labelStyle, GUILayout.Width(150.0f));
+            GUILayout.Label("Available: " + this.Addon.RemoteInfo.Version, this.labelStyle, GUILayout.Width(150.0f));
+            GUILayout.EndHorizontal();
+            this.DrawDownloadButton();
+            GUILayout.EndVertical();
+        }
 
         private void InitialiseStyles()
         {
-            try
+            this.titleStyle = new GUIStyle(HighLogic.Skin.label)
             {
-                this.titleStyle = new GUIStyle(HighLogic.Skin.label)
+                normal =
                 {
-                    normal =
-                    {
-                        textColor = Color.white
-                    },
-                    fontSize = 13,
-                    fontStyle = FontStyle.Bold,
-                    alignment = TextAnchor.MiddleCenter,
-                    stretchWidth = true
-                };
+                    textColor = Color.white
+                },
+                fontSize = 13,
+                fontStyle = FontStyle.Bold,
+                alignment = TextAnchor.MiddleCenter,
+                stretchWidth = true
+            };
 
-                this.labelStyle = new GUIStyle(HighLogic.Skin.label)
-                {
-                    fontSize = 13,
-                    alignment = TextAnchor.MiddleCenter,
-                    stretchWidth = true
-                };
-
-                this.buttonStyle = new GUIStyle(HighLogic.Skin.button)
-                {
-                    normal =
-                    {
-                        textColor = Color.white
-                    }
-                };
-            }
-            catch (Exception ex)
+            this.labelStyle = new GUIStyle(HighLogic.Skin.label)
             {
-                Logger.Exception(ex);
-            }
-        }
+                fontSize = 13,
+                alignment = TextAnchor.MiddleCenter,
+                stretchWidth = true
+            };
 
-        #endregion
-
-        #region Drawing
-
-        private void OnGUI()
-        {
-            try
+            this.buttonStyle = new GUIStyle(HighLogic.Skin.button)
             {
-                this.position = GUILayout.Window(this.GetInstanceID(), this.position, this.Window, this.Addon.Name, HighLogic.Skin.window);
-                if (!this.hasCentred && this.position.width > 0 && this.position.height > 0)
+                normal =
                 {
-                    this.position.center = new Vector2(Screen.width * 0.5f, Screen.height * 0.5f);
-                    this.hasCentred = true;
+                    textColor = Color.white
                 }
-            }
-            catch (Exception ex)
-            {
-                Logger.Exception(ex);
-            }
+            };
         }
 
         private void Window(int id)
         {
             try
             {
-                if (this.Addon.IsUpdateAvailable)
-                {
-                    GUILayout.BeginVertical(HighLogic.Skin.box);
-                    GUILayout.Label("AN UPDATE IS AVAILABLE", this.titleStyle);
-                    GUILayout.BeginHorizontal();
-                    GUILayout.Label("Installed: " + this.Addon.LocalInfo.Version, this.labelStyle, GUILayout.Width(150.0f));
-                    GUILayout.Label("Available: " + this.Addon.RemoteInfo.Version, this.labelStyle, GUILayout.Width(150.0f));
-                    GUILayout.EndHorizontal();
-
-                    if (!string.IsNullOrEmpty(this.Addon.RemoteInfo.Download))
-                    {
-                        if (GUILayout.Button("DOWNLOAD", this.buttonStyle))
-                        {
-                            Application.OpenURL(this.Addon.RemoteInfo.Download);
-                        }
-                        this.toolTipGui.Text = GUILayoutUtility.GetLastRect().Contains(Event.current.mousePosition) ? this.Addon.RemoteInfo.Download : string.Empty;
-                    }
-                    GUILayout.EndVertical();
-                }
-
-                if (!this.Addon.IsCompatible)
-                {
-                    GUILayout.BeginVertical(HighLogic.Skin.box);
-                    GUILayout.Label("Unsupported KSP version... Please use " + this.Addon.LocalInfo.KspVersion, this.titleStyle, GUILayout.Width(300.0f));
-                    GUILayout.EndVertical();
-                }
+                this.DrawUpdateAvailable();
+                this.DrawNotCompatible();
 
                 if (GUILayout.Button("CLOSE", this.buttonStyle))
                 {
@@ -177,15 +199,6 @@ namespace MiniAVC
             {
                 Logger.Exception(ex);
             }
-        }
-
-        #endregion
-
-        #region Destruction
-
-        private void OnDestroy()
-        {
-            Logger.Log("IssueGui was destroyed.");
         }
 
         #endregion

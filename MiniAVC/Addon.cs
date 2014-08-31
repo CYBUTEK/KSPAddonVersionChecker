@@ -32,99 +32,98 @@ namespace MiniAVC
         #region Fields
 
         private readonly AddonSettings settings;
-        private AddonInfo localInfo;
-        private AddonInfo remoteInfo;
 
         #endregion
 
-        #region Contructors
+        #region Constructors
 
         public Addon(string path, AddonSettings settings)
         {
-            try
-            {
-                this.settings = settings;
-                this.RunProcessLocalInfo(path);
-            }
-            catch (Exception ex)
-            {
-                Logger.Exception(ex);
-            }
+            this.settings = settings;
+            this.RunProcessLocalInfo(path);
         }
 
         #endregion
 
         #region Properties
 
-        public AddonSettings Settings
-        {
-            get { return this.settings; }
-        }
-
-        public AddonInfo LocalInfo
-        {
-            get { return this.localInfo; }
-        }
-
-        public AddonInfo RemoteInfo
-        {
-            get { return this.remoteInfo; }
-        }
-
         public bool HasError { get; private set; }
-
-        public bool IsLocalReady { get; private set; }
-
-        public bool IsRemoteReady { get; private set; }
-
-        public bool IsProcessingComplete { get; private set; }
-
-        public bool IsUpdateAvailable
-        {
-            get { return this.IsProcessingComplete && this.LocalInfo.Version != null && this.RemoteInfo.Version != null && this.RemoteInfo.Version > this.LocalInfo.Version && this.RemoteInfo.IsCompatibleKspVersion && this.RemoteInfo.IsCompatibleGitHubVersion; }
-        }
 
         public bool IsCompatible
         {
             get { return this.IsLocalReady && this.LocalInfo.IsCompatible; }
         }
 
+        public bool IsLocalReady { get; private set; }
+
+        public bool IsProcessingComplete { get; private set; }
+
+        public bool IsRemoteReady { get; private set; }
+
+        public bool IsUpdateAvailable
+        {
+            get { return this.IsProcessingComplete && this.LocalInfo.Version != null && this.RemoteInfo.Version != null && this.RemoteInfo.Version > this.LocalInfo.Version && this.RemoteInfo.IsCompatibleKspVersion && this.RemoteInfo.IsCompatibleGitHubVersion; }
+        }
+
+        public AddonInfo LocalInfo { get; private set; }
+
         public string Name
         {
             get { return this.LocalInfo.Name; }
         }
 
+        public AddonInfo RemoteInfo { get; private set; }
+
+        public AddonSettings Settings
+        {
+            get { return this.settings; }
+        }
+
         #endregion
 
-        #region Public Methods
+        #region Methods: public
 
         public void RunProcessLocalInfo(string file)
         {
-            try
-            {
-                ThreadPool.QueueUserWorkItem(this.ProcessLocalInfo, file);
-            }
-            catch (Exception ex)
-            {
-                Logger.Exception(ex);
-            }
+            ThreadPool.QueueUserWorkItem(this.ProcessLocalInfo, file);
         }
 
         public void RunProcessRemoteInfo()
         {
-            try
-            {
-                ThreadPool.QueueUserWorkItem(this.ProcessRemoteInfo);
-            }
-            catch (Exception ex)
-            {
-                Logger.Exception(ex);
-            }
+            ThreadPool.QueueUserWorkItem(this.ProcessRemoteInfo);
         }
 
         #endregion
 
-        #region Private Methods
+        #region Methods: private
+
+        private void FetchLocalInfo(string path)
+        {
+            using (var stream = new StreamReader(File.OpenRead(path)))
+            {
+                this.LocalInfo = new AddonInfo(path, stream.ReadToEnd());
+                this.IsLocalReady = true;
+            }
+        }
+
+        private void FetchRemoteInfo()
+        {
+            using (var www = new WWW(this.LocalInfo.Url))
+            {
+                while (!www.isDone)
+                {
+                    Thread.Sleep(100);
+                }
+                if (www.error == null)
+                {
+                    this.SetRemoteInfo(www);
+                }
+                else
+                {
+                    this.SetLocalInfoOnly();
+                }
+            }
+        }
 
         private void ProcessLocalInfo(object state)
         {
@@ -133,28 +132,19 @@ namespace MiniAVC
                 var path = (string)state;
                 if (File.Exists(path))
                 {
-                    using (var stream = new StreamReader(File.OpenRead(path)))
-                    {
-                        this.localInfo = new AddonInfo(path, stream.ReadToEnd());
-                        this.IsLocalReady = true;
-                    }
-                    if (!this.settings.FirstRun || string.IsNullOrEmpty(this.localInfo.Url))
-                    {
-                        this.RunProcessRemoteInfo();
-                    }
+                    this.FetchLocalInfo(path);
+                    this.RunProcessRemoteInfo();
                 }
                 else
                 {
                     Logger.Log("File Not Found: " + path);
-                    this.HasError = true;
-                    this.IsProcessingComplete = true;
+                    this.SetHasError();
                 }
             }
             catch (Exception ex)
             {
                 Logger.Exception(ex);
-                this.HasError = true;
-                this.IsProcessingComplete = true;
+                this.SetHasError();
             }
         }
 
@@ -162,52 +152,53 @@ namespace MiniAVC
         {
             try
             {
-                if (!this.settings.AllowCheck || string.IsNullOrEmpty(this.localInfo.Url))
+                if (this.settings.FirstRun)
                 {
-                    this.remoteInfo = this.localInfo;
-                    this.IsRemoteReady = true;
-                    this.IsProcessingComplete = true;
-                    Logger.Log(this.localInfo);
-                    Logger.Blank();
                     return;
                 }
 
-                using (var www = new WWW(this.localInfo.Url))
+                if (!this.settings.AllowCheck || string.IsNullOrEmpty(this.LocalInfo.Url))
                 {
-                    while (!www.isDone)
-                    {
-                        Thread.Sleep(100);
-                    }
-                    if (www.error == null)
-                    {
-                        this.remoteInfo = new AddonInfo(this.localInfo.Url, www.text);
-                        if (this.remoteInfo.GitHub != null)
-                        {
-                            this.remoteInfo.GitHub.FetchVersion();
-                        }
-                        this.IsRemoteReady = true;
-                        this.IsProcessingComplete = true;
-                        Logger.Log(this.localInfo);
-                        Logger.Log(this.remoteInfo + "\n\tUpdateAvailable: " + this.IsUpdateAvailable);
-                    }
-                    else
-                    {
-                        this.remoteInfo = this.localInfo;
-                        this.IsRemoteReady = true;
-                        this.IsProcessingComplete = true;
-                        Logger.Log(this.localInfo);
-                    }
+                    this.SetLocalInfoOnly();
+                    return;
                 }
-                Logger.Blank();
+
+                this.FetchRemoteInfo();
             }
             catch (Exception ex)
             {
                 Logger.Exception(ex);
-                this.remoteInfo = this.localInfo;
-                this.IsRemoteReady = true;
-                this.IsProcessingComplete = true;
-                Logger.Log(this.localInfo);
+                this.SetLocalInfoOnly();
             }
+        }
+
+        private void SetHasError()
+        {
+            this.HasError = true;
+            this.IsProcessingComplete = true;
+        }
+
+        private void SetLocalInfoOnly()
+        {
+            this.RemoteInfo = this.LocalInfo;
+            this.IsRemoteReady = true;
+            this.IsProcessingComplete = true;
+            Logger.Log(this.LocalInfo);
+            Logger.Blank();
+        }
+
+        private void SetRemoteInfo(WWW www)
+        {
+            this.RemoteInfo = new AddonInfo(this.LocalInfo.Url, www.text);
+            if (this.RemoteInfo.GitHub != null)
+            {
+                this.RemoteInfo.GitHub.FetchVersion();
+            }
+            this.IsRemoteReady = true;
+            this.IsProcessingComplete = true;
+            Logger.Log(this.LocalInfo);
+            Logger.Log(this.RemoteInfo + "\n\tUpdateAvailable: " + this.IsUpdateAvailable);
+            Logger.Blank();
         }
 
         #endregion

@@ -154,9 +154,9 @@ namespace KSP_AVC
         public override string ToString()
         {
             return this.path +
-                   "\n\tNAME: " + (string.IsNullOrEmpty(this.Name) ? "NULL (required)" : this.Name) +
-                   "\n\tURL: " + (string.IsNullOrEmpty(this.Url) ? "NULL" : this.Url) +
-                   "\n\tDOWNLOAD: " + (string.IsNullOrEmpty(this.Download) ? "NULL" : this.Download) +
+                   "\n\tNAME: " + (String.IsNullOrEmpty(this.Name) ? "NULL (required)" : this.Name) +
+                   "\n\tURL: " + (String.IsNullOrEmpty(this.Url) ? "NULL" : this.Url) +
+                   "\n\tDOWNLOAD: " + (String.IsNullOrEmpty(this.Download) ? "NULL" : this.Download) +
                    "\n\tGITHUB: " + (this.GitHub != null ? this.GitHub.ToString() : "NULL") +
                    "\n\tVERSION: " + (this.Version != null ? this.Version.ToString() : "NULL (required)") +
                    "\n\tKSP_VERSION: " + this.KspVersion +

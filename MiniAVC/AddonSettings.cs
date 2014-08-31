@@ -17,9 +17,7 @@
 
 #region Using Directives
 
-using System;
 using System.IO;
-using System.IO.IsolatedStorage;
 using System.Xml.Serialization;
 
 #endregion
@@ -28,7 +26,13 @@ namespace MiniAVC
 {
     public class AddonSettings
     {
-        #region Initialisation
+        #region Fields
+
+        private bool firstRun = true;
+
+        #endregion
+
+        #region Constructors
 
         public AddonSettings() { }
 
@@ -41,7 +45,10 @@ namespace MiniAVC
 
         #region Properties
 
-        private bool firstRun = true;
+        public bool AllowCheck { get; set; }
+
+        [XmlIgnore]
+        public string FileName { get; set; }
 
         public bool FirstRun
         {
@@ -49,52 +56,35 @@ namespace MiniAVC
             set { this.firstRun = value; }
         }
 
-        public bool AllowCheck { get; set; }
-
-        [XmlIgnore]
-        public string FileName { get; set; }
-
         #endregion
 
-        #region Save / Load
-
-        public void Save()
-        {
-            try
-            {
-                using (var stream = new FileStream(this.FileName, FileMode.Create))
-                {
-                    new XmlSerializer(typeof(AddonSettings)).Serialize(stream, this);
-                    stream.Close();
-                }
-            }
-            catch (Exception ex)
-            {
-                Logger.Exception(ex);
-            }
-        }
+        #region Methods: public
 
         public static AddonSettings Load(string rootPath)
         {
-            var fileName = Path.Combine(rootPath, "MiniAVC.xml");
-            try
+            var filePath = Path.Combine(rootPath, "MiniAVC.xml");
+
+            if (!File.Exists(filePath))
             {
-                AddonSettings settings;
-                using (var stream = new FileStream(fileName, FileMode.Open))
-                {
-                    settings = new XmlSerializer(typeof(AddonSettings)).Deserialize(stream) as AddonSettings;
-                    settings.FileName = fileName;
-                    stream.Close();
-                }
-                return settings;
+                return new AddonSettings(filePath);
             }
-            catch (Exception ex)
+
+            AddonSettings settings;
+            using (var stream = new FileStream(filePath, FileMode.Open))
             {
-                if (!(ex is IsolatedStorageException))
-                {
-                    Logger.Exception(ex);
-                }
-                return new AddonSettings(fileName);
+                settings = new XmlSerializer(typeof(AddonSettings)).Deserialize(stream) as AddonSettings;
+                settings.FileName = filePath;
+                stream.Close();
+            }
+            return settings;
+        }
+
+        public void Save()
+        {
+            using (var stream = new FileStream(this.FileName, FileMode.Create))
+            {
+                new XmlSerializer(typeof(AddonSettings)).Serialize(stream, this);
+                stream.Close();
             }
         }
 

@@ -30,8 +30,8 @@ namespace MiniAVC
         #region Fields
 
         private GUIContent content;
+        private GUIStyle labelStyle;
         private Rect position;
-        private string text = string.Empty;
 
         #endregion
 
@@ -39,24 +39,42 @@ namespace MiniAVC
 
         public string Text
         {
-            get { return this.text; }
-            set
-            {
-                this.text = value;
-                this.content = new GUIContent(this.text);
-            }
+            get { return (this.content ?? GUIContent.none).text; }
+            set { this.content = new GUIContent(value); }
         }
 
         #endregion
 
-        #region Initialisation
+        #region Methods: protected
 
-        private void Awake()
+        protected void Awake()
         {
             try
             {
                 DontDestroyOnLoad(this);
-                Logger.Log("ToolTipGui was created.");
+            }
+            catch (Exception ex)
+            {
+                Logger.Exception(ex);
+            }
+            Logger.Log("ToolTipGui was created.");
+        }
+
+        protected void OnDestroy()
+        {
+            Logger.Log("ToolTipGui was destroyed.");
+        }
+
+        protected void OnGUI()
+        {
+            try
+            {
+                if (this.content == null || String.IsNullOrEmpty(this.content.text))
+                {
+                    return;
+                }
+
+                GUILayout.Window(this.GetInstanceID(), this.position, this.Window, String.Empty, GUIStyle.none);
             }
             catch (Exception ex)
             {
@@ -64,7 +82,7 @@ namespace MiniAVC
             }
         }
 
-        private void Start()
+        protected void Start()
         {
             try
             {
@@ -76,35 +94,7 @@ namespace MiniAVC
             }
         }
 
-        #endregion
-
-        #region Styles
-
-        private GUIStyle labelStyle;
-
-        private void InitialiseStyles()
-        {
-            var background = new Texture2D(1, 1, TextureFormat.ARGB32, false);
-            background.SetPixel(1, 1, new Color(1.0f, 1.0f, 1.0f, 1.0f));
-            background.Apply();
-
-            this.labelStyle = new GUIStyle
-            {
-                padding = new RectOffset(4, 4, 2, 2),
-                normal =
-                {
-                    textColor = Color.black,
-                    background = background
-                },
-                fontSize = 11
-            };
-        }
-
-        #endregion
-
-        #region Updating
-
-        private void Update()
+        protected void Update()
         {
             this.position.size = this.labelStyle.CalcSize(this.content);
             this.position.x = Mathf.Clamp(Input.mousePosition.x + 20.0f, 0, Screen.width - this.position.width);
@@ -113,23 +103,28 @@ namespace MiniAVC
 
         #endregion
 
-        #region Drawing
+        #region Methods: private
 
-        private void OnGUI()
+        private static Texture2D GetBackgroundTexture()
         {
-            try
-            {
-                if (string.IsNullOrEmpty(this.text))
-                {
-                    return;
-                }
+            var background = new Texture2D(1, 1, TextureFormat.ARGB32, false);
+            background.SetPixel(1, 1, new Color(1.0f, 1.0f, 1.0f, 1.0f));
+            background.Apply();
+            return background;
+        }
 
-                GUILayout.Window(this.GetInstanceID(), this.position, this.Window, string.Empty, GUIStyle.none);
-            }
-            catch (Exception ex)
+        private void InitialiseStyles()
+        {
+            this.labelStyle = new GUIStyle
             {
-                Logger.Exception(ex);
-            }
+                padding = new RectOffset(4, 4, 2, 2),
+                normal =
+                {
+                    textColor = Color.black,
+                    background = GetBackgroundTexture()
+                },
+                fontSize = 11
+            };
         }
 
         private void Window(int windowId)
@@ -137,21 +132,12 @@ namespace MiniAVC
             try
             {
                 GUI.BringWindowToFront(windowId);
-                GUILayout.Label(this.content, this.labelStyle);
+                GUILayout.Label(this.content ?? GUIContent.none, this.labelStyle);
             }
             catch (Exception ex)
             {
                 Logger.Exception(ex);
             }
-        }
-
-        #endregion
-
-        #region Destruction
-
-        private void OnDestroy()
-        {
-            Logger.Log("ToolTipGui was destroyed.");
         }
 
         #endregion

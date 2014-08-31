@@ -97,6 +97,8 @@ namespace MiniAVC
     /// </summary>
     public static class Json
     {
+        #region Methods: public
+
         /// <summary>
         ///     Parses the string json into a value
         /// </summary>
@@ -123,47 +125,58 @@ namespace MiniAVC
             return Serializer.Serialize(obj);
         }
 
-        #region Nested type: Parser
+        #endregion
+
+        #region Nested Type: Parser
 
         private sealed class Parser : IDisposable
         {
+            #region Constants
+
             private const string WORD_BREAK = "{}[],:\"";
 
+            #endregion
+
+            #region Fields
+
             private StringReader json;
+
+            #endregion
+
+            #region Constructors
 
             private Parser(string jsonString)
             {
                 this.json = new StringReader(jsonString);
             }
 
-            private char PeekChar
+            #endregion
+
+            #region Enums
+
+            private enum TOKEN
             {
-                get { return Convert.ToChar(this.json.Peek()); }
-            }
+                NONE,
+                CURLY_OPEN,
+                CURLY_CLOSE,
+                SQUARED_OPEN,
+                SQUARED_CLOSE,
+                COLON,
+                COMMA,
+                STRING,
+                NUMBER,
+                TRUE,
+                FALSE,
+                NULL
+            };
+
+            #endregion
+
+            #region Properties
 
             private char NextChar
             {
                 get { return Convert.ToChar(this.json.Read()); }
-            }
-
-            private string NextWord
-            {
-                get
-                {
-                    StringBuilder word = new StringBuilder();
-
-                    while (!IsWordBreak(this.PeekChar))
-                    {
-                        word.Append(this.NextChar);
-
-                        if (this.json.Peek() == -1)
-                        {
-                            break;
-                        }
-                    }
-
-                    return word.ToString();
-                }
             }
 
             private TOKEN NextToken
@@ -224,15 +237,34 @@ namespace MiniAVC
                 }
             }
 
-            #region IDisposable Members
-
-            public void Dispose()
+            private string NextWord
             {
-                this.json.Dispose();
-                this.json = null;
+                get
+                {
+                    var word = new StringBuilder();
+
+                    while (!IsWordBreak(this.PeekChar))
+                    {
+                        word.Append(this.NextChar);
+
+                        if (this.json.Peek() == -1)
+                        {
+                            break;
+                        }
+                    }
+
+                    return word.ToString();
+                }
+            }
+
+            private char PeekChar
+            {
+                get { return Convert.ToChar(this.json.Peek()); }
             }
 
             #endregion
+
+            #region Methods: public
 
             public static bool IsWordBreak(char c)
             {
@@ -247,50 +279,32 @@ namespace MiniAVC
                 }
             }
 
-            private Dictionary<string, object> ParseObject()
+            public void Dispose()
             {
-                Dictionary<string, object> table = new Dictionary<string, object>();
+                this.json.Dispose();
+                this.json = null;
+            }
 
-                // ditch opening brace
-                this.json.Read();
+            #endregion
 
-                // {
-                while (true)
+            #region Methods: private
+
+            private void EatWhitespace()
+            {
+                while (Char.IsWhiteSpace(this.PeekChar))
                 {
-                    switch (this.NextToken)
+                    this.json.Read();
+
+                    if (this.json.Peek() == -1)
                     {
-                        case TOKEN.NONE:
-                            return null;
-                        case TOKEN.COMMA:
-                            continue;
-                        case TOKEN.CURLY_CLOSE:
-                            return table;
-                        default:
-                            // name
-                            string name = this.ParseString();
-                            if (name == null)
-                            {
-                                return null;
-                            }
-
-                            // :
-                            if (this.NextToken != TOKEN.COLON)
-                            {
-                                return null;
-                            }
-                            // ditch the colon
-                            this.json.Read();
-
-                            // value
-                            table[name] = this.ParseValue();
-                            break;
+                        break;
                     }
                 }
             }
 
             private List<object> ParseArray()
             {
-                List<object> array = new List<object>();
+                var array = new List<object>();
 
                 // ditch opening bracket
                 this.json.Read();
@@ -299,7 +313,7 @@ namespace MiniAVC
                 var parsing = true;
                 while (parsing)
                 {
-                    TOKEN nextToken = this.NextToken;
+                    var nextToken = this.NextToken;
 
                     switch (nextToken)
                     {
@@ -311,7 +325,7 @@ namespace MiniAVC
                             parsing = false;
                             break;
                         default:
-                            object value = this.ParseByToken(nextToken);
+                            var value = this.ParseByToken(nextToken);
 
                             array.Add(value);
                             break;
@@ -319,12 +333,6 @@ namespace MiniAVC
                 }
 
                 return array;
-            }
-
-            private object ParseValue()
-            {
-                TOKEN nextToken = this.NextToken;
-                return this.ParseByToken(nextToken);
             }
 
             private object ParseByToken(TOKEN token)
@@ -350,15 +358,72 @@ namespace MiniAVC
                 }
             }
 
+            private object ParseNumber()
+            {
+                var number = this.NextWord;
+
+                if (number.IndexOf('.') == -1)
+                {
+                    long parsedInt;
+                    Int64.TryParse(number, out parsedInt);
+                    return parsedInt;
+                }
+
+                double parsedDouble;
+                Double.TryParse(number, out parsedDouble);
+                return parsedDouble;
+            }
+
+            private Dictionary<string, object> ParseObject()
+            {
+                var table = new Dictionary<string, object>();
+
+                // ditch opening brace
+                this.json.Read();
+
+                // {
+                while (true)
+                {
+                    switch (this.NextToken)
+                    {
+                        case TOKEN.NONE:
+                            return null;
+                        case TOKEN.COMMA:
+                            continue;
+                        case TOKEN.CURLY_CLOSE:
+                            return table;
+                        default:
+                            // name
+                            var name = this.ParseString();
+                            if (name == null)
+                            {
+                                return null;
+                            }
+
+                            // :
+                            if (this.NextToken != TOKEN.COLON)
+                            {
+                                return null;
+                            }
+                            // ditch the colon
+                            this.json.Read();
+
+                            // value
+                            table[name] = this.ParseValue();
+                            break;
+                    }
+                }
+            }
+
             private string ParseString()
             {
-                StringBuilder s = new StringBuilder();
+                var s = new StringBuilder();
                 char c;
 
                 // ditch opening quote
                 this.json.Read();
 
-                bool parsing = true;
+                var parsing = true;
                 while (parsing)
                 {
                     if (this.json.Peek() == -1)
@@ -406,7 +471,7 @@ namespace MiniAVC
                                 case 'u':
                                     var hex = new char[4];
 
-                                    for (int i = 0; i < 4; i++)
+                                    for (var i = 0; i < 4; i++)
                                     {
                                         hex[i] = this.NextChar;
                                     }
@@ -424,68 +489,37 @@ namespace MiniAVC
                 return s.ToString();
             }
 
-            private object ParseNumber()
+            private object ParseValue()
             {
-                string number = this.NextWord;
-
-                if (number.IndexOf('.') == -1)
-                {
-                    long parsedInt;
-                    Int64.TryParse(number, out parsedInt);
-                    return parsedInt;
-                }
-
-                double parsedDouble;
-                Double.TryParse(number, out parsedDouble);
-                return parsedDouble;
+                var nextToken = this.NextToken;
+                return this.ParseByToken(nextToken);
             }
-
-            private void EatWhitespace()
-            {
-                while (Char.IsWhiteSpace(this.PeekChar))
-                {
-                    this.json.Read();
-
-                    if (this.json.Peek() == -1)
-                    {
-                        break;
-                    }
-                }
-            }
-
-            #region Nested type: TOKEN
-
-            private enum TOKEN
-            {
-                NONE,
-                CURLY_OPEN,
-                CURLY_CLOSE,
-                SQUARED_OPEN,
-                SQUARED_CLOSE,
-                COLON,
-                COMMA,
-                STRING,
-                NUMBER,
-                TRUE,
-                FALSE,
-                NULL
-            };
 
             #endregion
         }
 
         #endregion
 
-        #region Nested type: Serializer
+        #region Nested Type: Serializer
 
         private sealed class Serializer
         {
+            #region Fields
+
             private readonly StringBuilder builder;
+
+            #endregion
+
+            #region Constructors
 
             private Serializer()
             {
                 this.builder = new StringBuilder();
             }
+
+            #endregion
+
+            #region Methods: public
 
             public static string Serialize(object obj)
             {
@@ -494,6 +528,134 @@ namespace MiniAVC
                 instance.SerializeValue(obj);
 
                 return instance.builder.ToString();
+            }
+
+            #endregion
+
+            #region Methods: private
+
+            private void SerializeArray(IList anArray)
+            {
+                this.builder.Append('[');
+
+                var first = true;
+
+                foreach (var obj in anArray)
+                {
+                    if (!first)
+                    {
+                        this.builder.Append(',');
+                    }
+
+                    this.SerializeValue(obj);
+
+                    first = false;
+                }
+
+                this.builder.Append(']');
+            }
+
+            private void SerializeObject(IDictionary obj)
+            {
+                var first = true;
+
+                this.builder.Append('{');
+
+                foreach (var e in obj.Keys)
+                {
+                    if (!first)
+                    {
+                        this.builder.Append(',');
+                    }
+
+                    this.SerializeString(e.ToString());
+                    this.builder.Append(':');
+
+                    this.SerializeValue(obj[e]);
+
+                    first = false;
+                }
+
+                this.builder.Append('}');
+            }
+
+            private void SerializeOther(object value)
+            {
+                // NOTE: decimals lose precision during serialization.
+                // They always have, I'm just letting you know.
+                // Previously floats and doubles lost precision too.
+                if (value is float)
+                {
+                    this.builder.Append(((float)value).ToString("R"));
+                }
+                else if (value is int
+                         || value is uint
+                         || value is long
+                         || value is sbyte
+                         || value is byte
+                         || value is short
+                         || value is ushort
+                         || value is ulong)
+                {
+                    this.builder.Append(value);
+                }
+                else if (value is double
+                         || value is decimal)
+                {
+                    this.builder.Append(Convert.ToDouble(value).ToString("R"));
+                }
+                else
+                {
+                    this.SerializeString(value.ToString());
+                }
+            }
+
+            private void SerializeString(string str)
+            {
+                this.builder.Append('\"');
+
+                var charArray = str.ToCharArray();
+                foreach (var c in charArray)
+                {
+                    switch (c)
+                    {
+                        case '"':
+                            this.builder.Append("\\\"");
+                            break;
+                        case '\\':
+                            this.builder.Append("\\\\");
+                            break;
+                        case '\b':
+                            this.builder.Append("\\b");
+                            break;
+                        case '\f':
+                            this.builder.Append("\\f");
+                            break;
+                        case '\n':
+                            this.builder.Append("\\n");
+                            break;
+                        case '\r':
+                            this.builder.Append("\\r");
+                            break;
+                        case '\t':
+                            this.builder.Append("\\t");
+                            break;
+                        default:
+                            var codepoint = Convert.ToInt32(c);
+                            if ((codepoint >= 32) && (codepoint <= 126))
+                            {
+                                this.builder.Append(c);
+                            }
+                            else
+                            {
+                                this.builder.Append("\\u");
+                                this.builder.Append(codepoint.ToString("x4"));
+                            }
+                            break;
+                    }
+                }
+
+                this.builder.Append('\"');
             }
 
             private void SerializeValue(object value)
@@ -532,129 +694,7 @@ namespace MiniAVC
                 }
             }
 
-            private void SerializeObject(IDictionary obj)
-            {
-                bool first = true;
-
-                this.builder.Append('{');
-
-                foreach (object e in obj.Keys)
-                {
-                    if (!first)
-                    {
-                        this.builder.Append(',');
-                    }
-
-                    this.SerializeString(e.ToString());
-                    this.builder.Append(':');
-
-                    this.SerializeValue(obj[e]);
-
-                    first = false;
-                }
-
-                this.builder.Append('}');
-            }
-
-            private void SerializeArray(IList anArray)
-            {
-                this.builder.Append('[');
-
-                bool first = true;
-
-                foreach (object obj in anArray)
-                {
-                    if (!first)
-                    {
-                        this.builder.Append(',');
-                    }
-
-                    this.SerializeValue(obj);
-
-                    first = false;
-                }
-
-                this.builder.Append(']');
-            }
-
-            private void SerializeString(string str)
-            {
-                this.builder.Append('\"');
-
-                char[] charArray = str.ToCharArray();
-                foreach (var c in charArray)
-                {
-                    switch (c)
-                    {
-                        case '"':
-                            this.builder.Append("\\\"");
-                            break;
-                        case '\\':
-                            this.builder.Append("\\\\");
-                            break;
-                        case '\b':
-                            this.builder.Append("\\b");
-                            break;
-                        case '\f':
-                            this.builder.Append("\\f");
-                            break;
-                        case '\n':
-                            this.builder.Append("\\n");
-                            break;
-                        case '\r':
-                            this.builder.Append("\\r");
-                            break;
-                        case '\t':
-                            this.builder.Append("\\t");
-                            break;
-                        default:
-                            int codepoint = Convert.ToInt32(c);
-                            if ((codepoint >= 32) && (codepoint <= 126))
-                            {
-                                this.builder.Append(c);
-                            }
-                            else
-                            {
-                                this.builder.Append("\\u");
-                                this.builder.Append(codepoint.ToString("x4"));
-                            }
-                            break;
-                    }
-                }
-
-                this.builder.Append('\"');
-            }
-
-            private void SerializeOther(object value)
-            {
-                // NOTE: decimals lose precision during serialization.
-                // They always have, I'm just letting you know.
-                // Previously floats and doubles lost precision too.
-                if (value is float)
-                {
-                    this.builder.Append(((float)value).ToString("R"));
-                }
-                else if (value is int
-                         || value is uint
-                         || value is long
-                         || value is sbyte
-                         || value is byte
-                         || value is short
-                         || value is ushort
-                         || value is ulong)
-                {
-                    this.builder.Append(value);
-                }
-                else if (value is double
-                         || value is decimal)
-                {
-                    this.builder.Append(Convert.ToDouble(value).ToString("R"));
-                }
-                else
-                {
-                    this.SerializeString(value.ToString());
-                }
-            }
+            #endregion
         }
 
         #endregion

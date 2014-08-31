@@ -33,14 +33,7 @@ namespace MiniAVC
 
         static AddonLibrary()
         {
-            try
-            {
-                ThreadPool.QueueUserWorkItem(ProcessAddonPopulation);
-            }
-            catch (Exception ex)
-            {
-                Logger.Exception(ex);
-            }
+            ThreadPool.QueueUserWorkItem(ProcessAddonPopulation);
         }
 
         #endregion
@@ -49,13 +42,13 @@ namespace MiniAVC
 
         public static List<Addon> Addons { get; private set; }
 
-        public static List<AddonSettings> Settings { get; private set; }
-
         public static bool Populated { get; private set; }
+
+        public static List<AddonSettings> Settings { get; private set; }
 
         #endregion
 
-        #region Private Methods
+        #region Methods: private
 
         private static void ProcessAddonPopulation(object state)
         {

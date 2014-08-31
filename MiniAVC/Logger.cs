@@ -32,20 +32,16 @@ namespace MiniAVC
     [KSPAddon(KSPAddon.Startup.Instantly, false)]
     public class Logger : MonoBehaviour
     {
-        #region Constants
-
-        private static readonly string fileName;
-        private static readonly AssemblyName assemblyName;
-
-        #endregion
-
         #region Fields
+
+        private static readonly AssemblyName assemblyName;
+        private static readonly string fileName;
 
         private static readonly List<string[]> messages = new List<string[]>();
 
         #endregion
 
-        #region Initialisation
+        #region Constructors
 
         static Logger()
         {
@@ -58,20 +54,74 @@ namespace MiniAVC
             Blank();
         }
 
-        private void Awake()
+        #endregion
+
+        #region Destructors
+
+        ~Logger()
         {
-            DontDestroyOnLoad(this);
+            Flush();
         }
 
         #endregion
 
-        #region Printing
+        #region Methods: public
 
         public static void Blank()
         {
             lock (messages)
             {
                 messages.Add(new string[] {});
+            }
+        }
+
+        public static void Error(string message)
+        {
+            lock (messages)
+            {
+                messages.Add(new[] {"Error " + DateTime.Now.TimeOfDay, message});
+            }
+        }
+
+        public static void Exception(Exception ex)
+        {
+            lock (messages)
+            {
+                messages.Add(new[] {"Exception " + DateTime.Now.TimeOfDay, ex.ToString()});
+                Blank();
+            }
+        }
+
+        public static void Exception(Exception ex, string location)
+        {
+            lock (messages)
+            {
+                messages.Add(new[] {"Exception " + DateTime.Now.TimeOfDay, location + " // " + ex});
+                Blank();
+            }
+        }
+
+        public static void Flush()
+        {
+            lock (messages)
+            {
+                if (messages.Count == 0)
+                {
+                    return;
+                }
+
+                using (var file = File.AppendText(fileName))
+                {
+                    foreach (var message in messages)
+                    {
+                        file.WriteLine(message.Length > 0 ? message.Length > 1 ? "[" + message[0] + "]: " + message[1] : message[0] : string.Empty);
+                        if (message.Length > 0)
+                        {
+                            print(message.Length > 1 ? assemblyName.Name + " -> " + message[1] : assemblyName.Name + " -> " + message[0]);
+                        }
+                    }
+                }
+                messages.Clear();
             }
         }
 
@@ -143,75 +193,21 @@ namespace MiniAVC
             }
         }
 
-        public static void Error(string message)
-        {
-            lock (messages)
-            {
-                messages.Add(new[] {"Error " + DateTime.Now.TimeOfDay, message});
-            }
-        }
-
-        public static void Exception(Exception ex)
-        {
-            lock (messages)
-            {
-                messages.Add(new[] {"Exception " + DateTime.Now.TimeOfDay, ex.Message});
-                messages.Add(new[] {string.Empty, ex.StackTrace});
-                Blank();
-            }
-        }
-
-        public static void Exception(Exception ex, string location)
-        {
-            lock (messages)
-            {
-                messages.Add(new[] {"Exception " + DateTime.Now.TimeOfDay, location + " // " + ex.Message});
-                messages.Add(new[] {string.Empty, ex.StackTrace});
-                Blank();
-            }
-        }
-
         #endregion
 
-        #region Flushing
+        #region Methods: protected
 
-        public static void Flush()
+        protected void Awake()
         {
-            lock (messages)
-            {
-                if (messages.Count > 0)
-                {
-                    using (var file = File.AppendText(fileName))
-                    {
-                        foreach (var message in messages)
-                        {
-                            file.WriteLine(message.Length > 0 ? message.Length > 1 ? "[" + message[0] + "]: " + message[1] : message[0] : string.Empty);
-                            if (message.Length > 0)
-                            {
-                                print(message.Length > 1 ? assemblyName.Name + " -> " + message[1] : assemblyName.Name + " -> " + message[0]);
-                            }
-                        }
-                    }
-                    messages.Clear();
-                }
-            }
+            DontDestroyOnLoad(this);
         }
 
-        private void LateUpdate()
+        protected void LateUpdate()
         {
             Flush();
         }
 
-        #endregion
-
-        #region Destruction
-
-        private void OnDestroy()
-        {
-            Flush();
-        }
-
-        ~Logger()
+        protected void OnDestroy()
         {
             Flush();
         }

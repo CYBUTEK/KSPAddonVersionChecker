@@ -30,8 +30,11 @@ namespace MiniAVC
     {
         #region Fields
 
+        private GUIStyle buttonStyle;
         private bool hasCentred;
+        private GUIStyle labelStyle;
         private Rect position = new Rect(Screen.width, Screen.height, 0, 0);
+        private GUIStyle titleStyle;
 
         #endregion
 
@@ -43,14 +46,32 @@ namespace MiniAVC
 
         #endregion
 
-        #region Initialisation
+        #region Methods: protected
 
-        private void Awake()
+        protected void Awake()
         {
             try
             {
                 DontDestroyOnLoad(this);
-                Logger.Log("FirstRunGui was created.");
+            }
+            catch (Exception ex)
+            {
+                Logger.Exception(ex);
+            }
+            Logger.Log("FirstRunGui was created.");
+        }
+
+        protected void OnDestroy()
+        {
+            Logger.Log("FirstRunGui was destroyed.");
+        }
+
+        protected void OnGUI()
+        {
+            try
+            {
+                this.position = GUILayout.Window(this.GetInstanceID(), this.position, this.Window, "MiniAVC", HighLogic.Skin.window);
+                this.CentreWindow();
             }
             catch (Exception ex)
             {
@@ -58,7 +79,7 @@ namespace MiniAVC
             }
         }
 
-        private void Start()
+        protected void Start()
         {
             try
             {
@@ -72,67 +93,90 @@ namespace MiniAVC
 
         #endregion
 
-        #region Styles
+        #region Methods: private
 
-        private GUIStyle buttonStyle;
-        private GUIStyle labelStyle;
-        private GUIStyle titleStyle;
-
-        private void InitialiseStyles()
+        private void CentreWindow()
         {
-            try
+            if (this.hasCentred || !(this.position.width > 0) || !(this.position.height > 0))
             {
-                this.titleStyle = new GUIStyle(HighLogic.Skin.label)
-                {
-                    normal =
-                    {
-                        textColor = Color.white
-                    },
-                    fontSize = 13,
-                    fontStyle = FontStyle.Bold,
-                    alignment = TextAnchor.MiddleCenter,
-                    stretchWidth = true
-                };
-                this.labelStyle = new GUIStyle(HighLogic.Skin.label)
-                {
-                    fontSize = 13,
-                    alignment = TextAnchor.MiddleCenter,
-                    stretchWidth = true
-                };
-
-                this.buttonStyle = new GUIStyle(HighLogic.Skin.button)
-                {
-                    normal =
-                    {
-                        textColor = Color.white
-                    }
-                };
+                return;
             }
-            catch (Exception ex)
+            this.position.center = new Vector2(Screen.width * 0.5f, Screen.height * 0.5f);
+            this.hasCentred = true;
+        }
+
+        private void DrawAddonList()
+        {
+            GUILayout.Label("Allow these add-ons to check for updates?", this.titleStyle, GUILayout.Width(300.0f));
+            foreach (var addon in this.Addons)
             {
-                Logger.Exception(ex);
+                GUILayout.Label(addon.Name, this.labelStyle);
             }
         }
 
-        #endregion
-
-        #region Drawing
-
-        private void OnGUI()
+        private void DrawButtonNo()
         {
-            try
+            if (!GUILayout.Button("NO", this.buttonStyle))
             {
-                this.position = GUILayout.Window(this.GetInstanceID(), this.position, this.Window, "MiniAVC", HighLogic.Skin.window);
-                if (!this.hasCentred && this.position.width > 0 && this.position.height > 0)
+                return;
+            }
+
+            this.Settings.FirstRun = false;
+            this.Settings.AllowCheck = false;
+            this.Settings.Save();
+            foreach (var addon in this.Addons)
+            {
+                Logger.Log("Remote checking has been disabled for: " + addon.Name);
+                addon.RunProcessRemoteInfo();
+            }
+            Destroy(this);
+        }
+
+        private void DrawButtonYes()
+        {
+            if (!GUILayout.Button("YES", this.buttonStyle, GUILayout.Width(200.0f)))
+            {
+                return;
+            }
+
+            this.Settings.FirstRun = false;
+            this.Settings.AllowCheck = true;
+            this.Settings.Save();
+            foreach (var addon in this.Addons)
+            {
+                Logger.Log("Remote checking has been enabled for: " + addon.Name);
+                addon.RunProcessRemoteInfo();
+            }
+            Destroy(this);
+        }
+
+        private void InitialiseStyles()
+        {
+            this.titleStyle = new GUIStyle(HighLogic.Skin.label)
+            {
+                normal =
                 {
-                    this.position.center = new Vector2(Screen.width * 0.5f, Screen.height * 0.5f);
-                    this.hasCentred = true;
-                }
-            }
-            catch (Exception ex)
+                    textColor = Color.white
+                },
+                fontSize = 13,
+                fontStyle = FontStyle.Bold,
+                alignment = TextAnchor.MiddleCenter,
+                stretchWidth = true
+            };
+            this.labelStyle = new GUIStyle(HighLogic.Skin.label)
             {
-                Logger.Exception(ex);
-            }
+                fontSize = 13,
+                alignment = TextAnchor.MiddleCenter,
+                stretchWidth = true
+            };
+
+            this.buttonStyle = new GUIStyle(HighLogic.Skin.button)
+            {
+                normal =
+                {
+                    textColor = Color.white
+                }
+            };
         }
 
         private void Window(int id)
@@ -140,37 +184,11 @@ namespace MiniAVC
             try
             {
                 GUILayout.BeginVertical(HighLogic.Skin.box);
-                GUILayout.Label("Allow these add-ons to check for updates?", this.titleStyle, GUILayout.Width(300.0f));
-                foreach (var addon in this.Addons)
-                {
-                    GUILayout.Label(addon.Name, this.labelStyle);
-                }
+                this.DrawAddonList();
                 GUILayout.EndVertical();
                 GUILayout.BeginHorizontal();
-                if (GUILayout.Button("YES", this.buttonStyle, GUILayout.Width(200.0f)))
-                {
-                    this.Settings.FirstRun = false;
-                    this.Settings.AllowCheck = true;
-                    this.Settings.Save();
-                    foreach (var addon in this.Addons)
-                    {
-                        Logger.Log("Remote checking has been enabled for: " + addon.Name);
-                        addon.RunProcessRemoteInfo();
-                    }
-                    Destroy(this);
-                }
-                if (GUILayout.Button("NO", this.buttonStyle))
-                {
-                    this.Settings.FirstRun = false;
-                    this.Settings.AllowCheck = false;
-                    this.Settings.Save();
-                    foreach (var addon in this.Addons)
-                    {
-                        Logger.Log("Remote checking has been disabled for: " + addon.Name);
-                        addon.RunProcessRemoteInfo();
-                    }
-                    Destroy(this);
-                }
+                this.DrawButtonYes();
+                this.DrawButtonNo();
                 GUILayout.EndHorizontal();
                 GUI.DragWindow();
             }
@@ -178,15 +196,6 @@ namespace MiniAVC
             {
                 Logger.Exception(ex);
             }
-        }
-
-        #endregion
-
-        #region Destruction
-
-        private void OnDestroy()
-        {
-            Logger.Log("FirstRunGui was destroyed.");
         }
 
         #endregion

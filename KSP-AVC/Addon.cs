@@ -94,6 +94,25 @@ namespace KSP_AVC
             }
         }
 
+        private void FetchRemoteInfo()
+        {
+            using (var www = new WWW(this.LocalInfo.Url))
+            {
+                while (!www.isDone)
+                {
+                    Thread.Sleep(100);
+                }
+                if (www.error == null)
+                {
+                    this.SetRemoteInfo(www);
+                }
+                else
+                {
+                    this.SetLocalInfoOnly();
+                }
+            }
+        }
+
         private void ProcessLocalInfo(object state)
         {
             try
@@ -127,22 +146,7 @@ namespace KSP_AVC
                     return;
                 }
 
-                using (var www = new WWW(this.LocalInfo.Url))
-                {
-                    while (!www.isDone)
-                    {
-                        Thread.Sleep(100);
-                    }
-                    if (www.error == null)
-                    {
-                        this.SetRemoteInfo(www);
-                    }
-                    else
-                    {
-                        this.SetLocalInfoOnly();
-                    }
-                }
-                Logger.Blank();
+                this.FetchRemoteInfo();
             }
             catch (Exception ex)
             {
@@ -174,6 +178,7 @@ namespace KSP_AVC
             this.IsProcessingComplete = true;
             Logger.Log(this.LocalInfo);
             Logger.Log(this.RemoteInfo + "\n\tUpdateAvailable: " + this.IsUpdateAvailable);
+            Logger.Blank();
         }
 
         #endregion

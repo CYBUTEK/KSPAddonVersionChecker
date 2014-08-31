@@ -1,3 +1,7 @@
+1.0.2.3
+    Changed: Done a lot of under the hood refactoring.
+    Fixed: Bug which would freeze the computer when checking many add-ons.
+
 1.0.2.2
 	Changed: Versions will always have the minimum formatting of 'x.x'.
 	Fixed: Issue with non-RAW GitHub version file hosting, extending the url formatter.
