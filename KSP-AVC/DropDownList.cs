@@ -26,6 +26,7 @@ namespace KSP_AVC
     public class DropDownList : MonoBehaviour
     {
         private readonly string textureDirectory = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "Textures");
+
         private Rect listPosition;
         private GUIStyle listStyle;
         private Rect togglePosition;
@@ -34,7 +35,9 @@ namespace KSP_AVC
         public Addon Addon { get; set; }
 
         public Action<DropDownList, Addon> DrawAddonCallback { get; set; }
+
         public Action<DropDownList> DrawCallback { get; set; }
+
         public bool ShowList { get; set; }
 
         public ToolTipGui ToolTip { get; set; }
