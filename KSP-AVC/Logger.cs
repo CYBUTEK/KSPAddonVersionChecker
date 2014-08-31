@@ -15,6 +15,8 @@
 //     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 // 
 
+#region Using Directives
+
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -23,14 +25,22 @@ using System.Reflection;
 
 using UnityEngine;
 
+#endregion
+
 namespace KSP_AVC
 {
     [KSPAddon(KSPAddon.Startup.Instantly, false)]
     public class Logger : MonoBehaviour
     {
+        #region Fields
+
         private static readonly AssemblyName assemblyName;
         private static readonly string fileName;
         private static readonly List<string[]> messages = new List<string[]>();
+
+        #endregion
+
+        #region Constructors
 
         static Logger()
         {
@@ -46,10 +56,18 @@ namespace KSP_AVC
             Blank();
         }
 
+        #endregion
+
+        #region Destructors
+
         ~Logger()
         {
             Flush();
         }
+
+        #endregion
+
+        #region Methods: public
 
         public static void Blank()
         {
@@ -177,6 +195,10 @@ namespace KSP_AVC
             }
         }
 
+        #endregion
+
+        #region Methods: protected
+
         protected void Awake()
         {
             DontDestroyOnLoad(this);
@@ -191,5 +213,7 @@ namespace KSP_AVC
         {
             Flush();
         }
+
+        #endregion
     }
 }

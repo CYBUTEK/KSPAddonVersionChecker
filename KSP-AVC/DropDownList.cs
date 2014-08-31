@@ -15,22 +15,32 @@
 //     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 // 
 
+#region Using Directives
+
 using System;
 using System.IO;
 using System.Reflection;
 
 using UnityEngine;
 
+#endregion
+
 namespace KSP_AVC
 {
     public class DropDownList : MonoBehaviour
     {
+        #region Fields
+
         private readonly string textureDirectory = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "Textures");
 
         private Rect listPosition;
         private GUIStyle listStyle;
         private Rect togglePosition;
         private GUIStyle toggleStyle;
+
+        #endregion
+
+        #region Properties
 
         public Addon Addon { get; set; }
 
@@ -42,6 +52,10 @@ namespace KSP_AVC
 
         public ToolTipGui ToolTip { get; set; }
 
+        #endregion
+
+        #region Methods: public
+
         public void DrawButton(string label, Rect parent, float width)
         {
             this.ShowList = GUILayout.Toggle(this.ShowList, label, this.toggleStyle, GUILayout.Width(width));
@@ -50,6 +64,10 @@ namespace KSP_AVC
                 this.SetPosition(GUILayoutUtility.GetLastRect(), parent);
             }
         }
+
+        #endregion
+
+        #region Methods: protected
 
         protected void Awake()
         {
@@ -109,7 +127,6 @@ namespace KSP_AVC
                     return;
                 }
 
-                // Closes the list if the mouse cursor is not within the list or toggle bounds.
                 if (!this.listPosition.Contains(new Vector2(Input.mousePosition.x, Screen.height - Input.mousePosition.y)) && !this.togglePosition.Contains(new Vector2(Input.mousePosition.x, Screen.height - Input.mousePosition.y)))
                 {
                     this.ShowList = false;
@@ -120,6 +137,10 @@ namespace KSP_AVC
                 Logger.Exception(ex);
             }
         }
+
+        #endregion
+
+        #region Methods: private
 
         private Texture2D GetTexture(string file, int width, int height)
         {
@@ -215,5 +236,7 @@ namespace KSP_AVC
                 Logger.Exception(ex);
             }
         }
+
+        #endregion
     }
 }

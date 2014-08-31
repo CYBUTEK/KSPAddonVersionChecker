@@ -32,12 +32,20 @@ namespace KSP_AVC
         #region Fields
 
         private readonly Dictionary<Addon, DropDownList> dropDownLists = new Dictionary<Addon, DropDownList>();
+
+        private GUIStyle boxStyle;
+        private GUIStyle buttonStyle;
         private bool hasCentred;
+        private GUIStyle labelStyle;
+        private GUIStyle messageStyle;
+        private GUIStyle nameLabelStyle;
+        private GUIStyle nameTitleStyle;
         private Rect position = new Rect(Screen.width, Screen.height, 0, 0);
+        private GUIStyle titleStyle;
 
         #endregion
 
-        #region Initialisation
+        #region Methods: private
 
         private void Awake()
         {
@@ -52,11 +60,17 @@ namespace KSP_AVC
             }
         }
 
-        private void Start()
+        private void DrawCompatibilityIssues()
         {
             try
             {
-                this.InitialiseStyles();
+                GUILayout.BeginVertical(this.boxStyle);
+                GUILayout.Label("COMPATIBILITY ISSUES", this.nameTitleStyle);
+                foreach (var addon in AddonLibrary.Addons.Where(a => !a.HasError && !a.IsCompatible))
+                {
+                    GUILayout.Label("The currently installed version of " + addon.Name + " was built to run on KSP " + addon.LocalInfo.KspVersion, this.messageStyle);
+                }
+                GUILayout.EndVertical();
             }
             catch (Exception ex)
             {
@@ -64,17 +78,80 @@ namespace KSP_AVC
             }
         }
 
-        #endregion
+        private void DrawDropDownList(DropDownList list, Addon addon)
+        {
+            if (!String.IsNullOrEmpty(addon.RemoteInfo.ChangeLog))
+            {
+                if (GUILayout.Button("Change Log", this.buttonStyle))
+                {
+                    var changeLogGui = this.gameObject.AddComponent<ChangeLogGui>();
+                    changeLogGui.Name = addon.RemoteInfo.Name;
+                    changeLogGui.Text = addon.RemoteInfo.ChangeLog;
+                    list.ShowList = false;
+                }
+            }
 
-        #region Styles
+            if (!String.IsNullOrEmpty(addon.RemoteInfo.Download))
+            {
+                if (GUILayout.Button("Download", this.buttonStyle))
+                {
+                    Application.OpenURL(addon.RemoteInfo.Download);
+                    list.ShowList = false;
+                }
+                if (Event.current.type == EventType.repaint)
+                {
+                    list.ToolTip.Text = GUILayoutUtility.GetLastRect().Contains(Event.current.mousePosition) ? list.ToolTip.Text = addon.RemoteInfo.Download : String.Empty;
+                }
+            }
+        }
 
-        private GUIStyle boxStyle;
-        private GUIStyle buttonStyle;
-        private GUIStyle labelStyle;
-        private GUIStyle messageStyle;
-        private GUIStyle nameLabelStyle;
-        private GUIStyle nameTitleStyle;
-        private GUIStyle titleStyle;
+        private void DrawUpdateIssues()
+        {
+            try
+            {
+                GUILayout.BeginVertical(this.boxStyle);
+                GUILayout.BeginHorizontal();
+                GUILayout.Label("ADD-ON NAME", this.nameTitleStyle, GUILayout.Width(250.0f));
+                GUILayout.Label("CURRENT", this.titleStyle, GUILayout.Width(100.0f));
+                GUILayout.Label("AVAILABLE", this.titleStyle, GUILayout.Width(100.0f));
+                GUILayout.FlexibleSpace();
+                GUILayout.EndHorizontal();
+
+                foreach (var addon in AddonLibrary.Addons.Where(a => !a.HasError && a.IsUpdateAvailable))
+                {
+                    GUILayout.BeginHorizontal();
+                    GUILayout.Label(addon.Name, this.nameLabelStyle, GUILayout.Width(250.0f));
+                    GUILayout.Label(addon.LocalInfo.Version.ToString(), this.labelStyle, GUILayout.Width(100.0f));
+                    GUILayout.Label(addon.RemoteInfo.Version.ToString(), this.labelStyle, GUILayout.Width(100.0f));
+                    if (!string.IsNullOrEmpty(addon.RemoteInfo.Download))
+                    {
+                        DropDownList dropDownList;
+                        if (this.dropDownLists.ContainsKey(addon))
+                        {
+                            dropDownList = this.dropDownLists[addon];
+                        }
+                        else
+                        {
+                            dropDownList = this.gameObject.AddComponent<DropDownList>();
+                            dropDownList.Addon = addon;
+                            dropDownList.DrawAddonCallback = this.DrawDropDownList;
+                            this.dropDownLists.Add(addon, dropDownList);
+                        }
+                        dropDownList.DrawButton("ACTIONS", this.position, 125.0f);
+                    }
+                    else
+                    {
+                        GUILayout.Label("-----", this.labelStyle);
+                    }
+                    GUILayout.EndHorizontal();
+                }
+                GUILayout.EndVertical();
+            }
+            catch (Exception ex)
+            {
+                Logger.Exception(ex);
+            }
+        }
 
         private void InitialiseStyles()
         {
@@ -136,9 +213,14 @@ namespace KSP_AVC
             }
         }
 
-        #endregion
-
-        #region Drawing
+        private void OnDestroy()
+        {
+            foreach (var dropDownList in this.dropDownLists.Values)
+            {
+                Destroy(dropDownList);
+            }
+            Logger.Log("IssueGui was destroyed.");
+        }
 
         private void OnGUI()
         {
@@ -150,6 +232,18 @@ namespace KSP_AVC
                     this.position.center = new Vector2(Screen.width * 0.5f, Screen.height * 0.5f);
                     this.hasCentred = true;
                 }
+            }
+            catch (Exception ex)
+            {
+                Logger.Exception(ex);
+            }
+        }
+
+        private void Start()
+        {
+            try
+            {
+                this.InitialiseStyles();
             }
             catch (Exception ex)
             {
@@ -179,112 +273,6 @@ namespace KSP_AVC
             {
                 Logger.Exception(ex);
             }
-        }
-
-        private void DrawUpdateIssues()
-        {
-            try
-            {
-                GUILayout.BeginVertical(this.boxStyle);
-                GUILayout.BeginHorizontal();
-                GUILayout.Label("ADD-ON NAME", this.nameTitleStyle, GUILayout.Width(250.0f));
-                GUILayout.Label("CURRENT", this.titleStyle, GUILayout.Width(100.0f));
-                GUILayout.Label("AVAILABLE", this.titleStyle, GUILayout.Width(100.0f));
-                GUILayout.FlexibleSpace();
-                GUILayout.EndHorizontal();
-
-                foreach (var addon in AddonLibrary.Addons.Where(a => !a.HasError && a.IsUpdateAvailable))
-                {
-                    GUILayout.BeginHorizontal();
-                    GUILayout.Label(addon.Name, this.nameLabelStyle, GUILayout.Width(250.0f));
-                    GUILayout.Label(addon.LocalInfo.Version.ToString(), this.labelStyle, GUILayout.Width(100.0f));
-                    GUILayout.Label(addon.RemoteInfo.Version.ToString(), this.labelStyle, GUILayout.Width(100.0f));
-                    if (!string.IsNullOrEmpty(addon.RemoteInfo.Download))
-                    {
-                        DropDownList dropDownList;
-                        if (this.dropDownLists.ContainsKey(addon))
-                        {
-                            dropDownList = this.dropDownLists[addon];
-                        }
-                        else
-                        {
-                            dropDownList = this.gameObject.AddComponent<DropDownList>();
-                            dropDownList.Addon = addon;
-                            dropDownList.DrawAddonCallback = this.DrawDropDownList;
-                            this.dropDownLists.Add(addon, dropDownList);
-                        }
-                        dropDownList.DrawButton("ACTIONS", this.position, 125.0f);
-                    }
-                    else
-                    {
-                        GUILayout.Label("-----", this.labelStyle);
-                    }
-                    GUILayout.EndHorizontal();
-                }
-                GUILayout.EndVertical();
-            }
-            catch (Exception ex)
-            {
-                Logger.Exception(ex);
-            }
-        }
-
-        private void DrawCompatibilityIssues()
-        {
-            try
-            {
-                GUILayout.BeginVertical(this.boxStyle);
-                GUILayout.Label("COMPATIBILITY ISSUES", this.nameTitleStyle);
-                foreach (var addon in AddonLibrary.Addons.Where(a => !a.HasError && !a.IsCompatible))
-                {
-                    GUILayout.Label("The currently installed version of " + addon.Name + " was built to run on KSP " + addon.LocalInfo.KspVersion, this.messageStyle);
-                }
-                GUILayout.EndVertical();
-            }
-            catch (Exception ex)
-            {
-                Logger.Exception(ex);
-            }
-        }
-
-        private void DrawDropDownList(DropDownList list, Addon addon)
-        {
-            if (!String.IsNullOrEmpty(addon.RemoteInfo.ChangeLog))
-            {
-                if (GUILayout.Button("Change Log", this.buttonStyle))
-                {
-                    var changeLogGui = this.gameObject.AddComponent<ChangeLogGui>();
-                    changeLogGui.Name = addon.RemoteInfo.Name;
-                    changeLogGui.Text = addon.RemoteInfo.ChangeLog;
-                    list.ShowList = false;
-                }
-            }
-
-            if (!String.IsNullOrEmpty(addon.RemoteInfo.Download))
-            {
-                if (GUILayout.Button("Download", this.buttonStyle))
-                {
-                    Application.OpenURL(addon.RemoteInfo.Download);
-                    list.ShowList = false;
-                }
-                if (Event.current.type == EventType.repaint)
-                {
-                    list.ToolTip.Text = GUILayoutUtility.GetLastRect().Contains(Event.current.mousePosition) ? list.ToolTip.Text = addon.RemoteInfo.Download : String.Empty;
-                }
-            }
-        }
-
-        #endregion
-
-        #region Destruction
-
-        private void OnDestroy()
-        {
-            foreach (var dropDownList in this.dropDownLists.Values)
-            {
-                Destroy(dropDownList);
-            }
-            Logger.Log("IssueGui was destroyed.");
         }
 
         #endregion

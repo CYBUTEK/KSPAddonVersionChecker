@@ -15,22 +15,36 @@
 //     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 // 
 
+#region Using Directives
+
 using System;
 
 using UnityEngine;
+
+#endregion
 
 namespace KSP_AVC
 {
     public class ChangeLogGui : MonoBehaviour
     {
+        #region Fields
+
         private GUIStyle closeStyle;
         private GUIStyle labelStyle;
         private Rect position = new Rect(0, 0, Screen.width, Screen.height);
         private Vector2 scrollPosition;
 
+        #endregion
+
+        #region Properties
+
         public string Name { get; set; }
 
         public string Text { get; set; }
+
+        #endregion
+
+        #region Methods: protected
 
         protected void Awake()
         {
@@ -75,6 +89,10 @@ namespace KSP_AVC
             }
         }
 
+        #endregion
+
+        #region Methods: private
+
         private void InitialiseStyles()
         {
             this.closeStyle = new GUIStyle(HighLogic.Skin.button)
@@ -118,5 +136,7 @@ namespace KSP_AVC
                 Logger.Exception(ex);
             }
         }
+
+        #endregion
     }
 }

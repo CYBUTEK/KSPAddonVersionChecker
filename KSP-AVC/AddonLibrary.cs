@@ -15,6 +15,8 @@
 //     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 // 
 
+#region Using Directives
+
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -22,11 +24,19 @@ using System.Linq;
 using System.Reflection;
 using System.Threading;
 
+#endregion
+
 namespace KSP_AVC
 {
     public static class AddonLibrary
     {
+        #region Fields
+
         private static readonly string rootPath;
+
+        #endregion
+
+        #region Constructors
 
         static AddonLibrary()
         {
@@ -35,9 +45,17 @@ namespace KSP_AVC
             ThreadPool.QueueUserWorkItem(ProcessAddonPopulation);
         }
 
+        #endregion
+
+        #region Properties
+
         public static List<Addon> Addons { get; private set; }
 
         public static bool Populated { get; private set; }
+
+        #endregion
+
+        #region Methods: private
 
         private static string GetRootPath()
         {
@@ -59,5 +77,7 @@ namespace KSP_AVC
                 Logger.Exception(ex);
             }
         }
+
+        #endregion
     }
 }

@@ -15,23 +15,37 @@
 //     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 // 
 
+#region Using Directives
+
 using System;
 
 using UnityEngine;
+
+#endregion
 
 namespace KSP_AVC
 {
     public class ToolTipGui : MonoBehaviour
     {
+        #region Fields
+
         private GUIContent content;
         private GUIStyle labelStyle;
         private Rect position;
+
+        #endregion
+
+        #region Properties
 
         public string Text
         {
             get { return (this.content ?? GUIContent.none).text; }
             set { this.content = new GUIContent(value); }
         }
+
+        #endregion
+
+        #region Methods: protected
 
         protected void Awake()
         {
@@ -87,6 +101,10 @@ namespace KSP_AVC
             this.position.y = Screen.height - Input.mousePosition.y + (this.position.x < Input.mousePosition.x + 20.0f ? 20.0f : 0);
         }
 
+        #endregion
+
+        #region Methods: private
+
         private static Texture2D GetBackgroundTexture()
         {
             var texture = new Texture2D(1, 1, TextureFormat.ARGB32, false);
@@ -121,5 +139,7 @@ namespace KSP_AVC
                 Logger.Exception(ex);
             }
         }
+
+        #endregion
     }
 }

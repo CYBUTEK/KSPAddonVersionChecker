@@ -15,15 +15,21 @@
 //     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 // 
 
+#region Using Directives
+
 using System;
 using System.Reflection;
 
 using UnityEngine;
 
+#endregion
+
 namespace KSP_AVC
 {
     public class FirstRunGui : MonoBehaviour
     {
+        #region Fields
+
         private readonly VersionInfo version = Assembly.GetExecutingAssembly().GetName().Version;
         private GUIStyle buttonStyle;
         private bool hasCentred;
@@ -32,7 +38,15 @@ namespace KSP_AVC
         private string title;
         private GUIStyle titleStyle;
 
+        #endregion
+
+        #region Properties
+
         public bool HasBeenUpdated { get; set; }
+
+        #endregion
+
+        #region Methods: protected
 
         protected void Awake()
         {
@@ -78,6 +92,10 @@ namespace KSP_AVC
                 Logger.Exception(ex);
             }
         }
+
+        #endregion
+
+        #region Methods: private
 
         private void CentreWindow()
         {
@@ -130,5 +148,7 @@ namespace KSP_AVC
                 Logger.Exception(ex);
             }
         }
+
+        #endregion
     }
 }

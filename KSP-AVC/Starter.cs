@@ -15,20 +15,30 @@
 //     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 // 
 
+#region Using Directives
+
 using System;
 using System.Linq;
 using System.Reflection;
 
 using UnityEngine;
 
+#endregion
+
 namespace KSP_AVC
 {
     [KSPAddon(KSPAddon.Startup.Instantly, false)]
     public class Starter : MonoBehaviour
     {
+        #region Fields
+
         private static bool hasAlreadyChecked;
         private CheckerProgressGui checkerProgressGui;
         private FirstRunGui firstRunGui;
+
+        #endregion
+
+        #region Methods: protected
 
         protected void Awake()
         {
@@ -109,6 +119,10 @@ namespace KSP_AVC
             }
         }
 
+        #endregion
+
+        #region Methods: private
+
         private bool HasAlreadyChecked()
         {
             if (hasAlreadyChecked)
@@ -146,5 +160,7 @@ namespace KSP_AVC
             this.firstRunGui = this.gameObject.AddComponent<FirstRunGui>();
             this.firstRunGui.HasBeenUpdated = true;
         }
+
+        #endregion
     }
 }

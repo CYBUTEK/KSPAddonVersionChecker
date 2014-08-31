@@ -15,20 +15,30 @@
 //     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 // 
 
+#region Using Directives
+
 using System;
 using System.IO;
 using System.Threading;
 
 using UnityEngine;
 
+#endregion
+
 namespace KSP_AVC
 {
     public class Addon
     {
+        #region Constructors
+
         public Addon(string path)
         {
             this.RunProcessLocalInfo(path);
         }
+
+        #endregion
+
+        #region Properties
 
         public bool HasError { get; private set; }
 
@@ -57,6 +67,10 @@ namespace KSP_AVC
 
         public AddonInfo RemoteInfo { get; private set; }
 
+        #endregion
+
+        #region Methods: public
+
         public void RunProcessLocalInfo(string path)
         {
             ThreadPool.QueueUserWorkItem(this.ProcessLocalInfo, path);
@@ -66,6 +80,10 @@ namespace KSP_AVC
         {
             ThreadPool.QueueUserWorkItem(this.ProcessRemoteInfo);
         }
+
+        #endregion
+
+        #region Methods: private
 
         private void FetchLocalInfo(string path)
         {
@@ -157,5 +175,7 @@ namespace KSP_AVC
             Logger.Log(this.LocalInfo);
             Logger.Log(this.RemoteInfo + "\n\tUpdateAvailable: " + this.IsUpdateAvailable);
         }
+
+        #endregion
     }
 }

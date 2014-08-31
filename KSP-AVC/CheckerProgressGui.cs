@@ -15,20 +15,30 @@
 //     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 // 
 
+#region Using Directives
+
 using System;
 using System.Linq;
 
 using UnityEngine;
 
+#endregion
+
 namespace KSP_AVC
 {
     public class CheckerProgressGui : MonoBehaviour
     {
+        #region Fields
+
         private bool hasCentred;
         private string message = String.Empty;
         private Rect position = new Rect(Screen.width, Screen.height, 0, 0);
 
         private GUIStyle titleStyle;
+
+        #endregion
+
+        #region Methods: protected
 
         protected void Awake()
         {
@@ -87,6 +97,10 @@ namespace KSP_AVC
             }
         }
 
+        #endregion
+
+        #region Methods: private
+
         private void CentreWindow()
         {
             if (this.hasCentred || !(this.position.width > 0) || !(this.position.height > 0))
@@ -125,5 +139,7 @@ namespace KSP_AVC
                 Logger.Exception(ex);
             }
         }
+
+        #endregion
     }
 }

@@ -15,21 +15,31 @@
 //     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 // 
 
+#region Using Directives
+
 using System;
 
 using UnityEngine;
+
+#endregion
 
 namespace KSP_AVC
 {
     [KSPAddon(KSPAddon.Startup.Instantly, false)]
     public class AddonListGui : MonoBehaviour
     {
+        #region Fields
+
         private DropDownList dropDownList;
 
         private GUIStyle labelStyleLeft;
         private GUIStyle labelStyleLeftIssue;
         private GUIStyle labelStyleRight;
         private GUIStyle labelStyleRightIssue;
+
+        #endregion
+
+        #region Methods: protected
 
         protected void Awake()
         {
@@ -97,6 +107,10 @@ namespace KSP_AVC
             }
         }
 
+        #endregion
+
+        #region Methods: private
+
         private void DrawListItems(DropDownList list)
         {
             if (AddonLibrary.Addons == null)
@@ -148,5 +162,7 @@ namespace KSP_AVC
                 }
             };
         }
+
+        #endregion
     }
 }

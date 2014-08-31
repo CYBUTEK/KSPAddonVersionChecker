@@ -15,22 +15,33 @@
 //     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 // 
 
+#region Using Directives
+
 using System;
 using System.Collections.Generic;
 using System.Threading;
 
 using UnityEngine;
 
+#endregion
+
 namespace KSP_AVC
 {
     public class AddonInfo
     {
+        #region Fields
+
         private static readonly VersionInfo actualKspVersion;
+
         private readonly string path;
 
         private VersionInfo kspVersion;
         private VersionInfo kspVersionMax;
         private VersionInfo kspVersionMin;
+
+        #endregion
+
+        #region Constructors
 
         public AddonInfo(string path, string json)
         {
@@ -57,6 +68,10 @@ namespace KSP_AVC
         {
             actualKspVersion = new VersionInfo(Versioning.version_major, Versioning.version_minor, Versioning.Revision);
         }
+
+        #endregion
+
+        #region Properties
 
         public static VersionInfo ActualKspVersion
         {
@@ -119,6 +134,10 @@ namespace KSP_AVC
 
         public VersionInfo Version { get; private set; }
 
+        #endregion
+
+        #region Methods: public
+
         public void FetchRemoteData()
         {
             if (this.GitHub != null)
@@ -148,6 +167,10 @@ namespace KSP_AVC
                    "\n\tCompatibleKspVersionMax: " + this.IsCompatibleKspVersionMax +
                    "\n\tCompatibleGitHubVersion: " + this.IsCompatibleGitHubVersion;
         }
+
+        #endregion
+
+        #region Methods: private
 
         private static string FormatCompatibleUrl(string url)
         {
@@ -270,15 +293,29 @@ namespace KSP_AVC
             }
         }
 
+        #endregion
+
+        #region Nested Type: GitHubInfo
+
         public class GitHubInfo
         {
+            #region Fields
+
             private readonly AddonInfo addonInfo;
+
+            #endregion
+
+            #region Constructors
 
             public GitHubInfo(object obj, AddonInfo addonInfo)
             {
                 this.addonInfo = addonInfo;
                 this.ParseJson(obj);
             }
+
+            #endregion
+
+            #region Properties
 
             public bool AllowPreRelease { get; private set; }
 
@@ -291,6 +328,10 @@ namespace KSP_AVC
             public string Username { get; private set; }
 
             public VersionInfo Version { get; private set; }
+
+            #endregion
+
+            #region Methods: public
 
             public void FetchRemoteData()
             {
@@ -313,6 +354,10 @@ namespace KSP_AVC
                        "\n\t\tLatestRelease: " + (this.Version != null ? this.Version.ToString() : "NULL") +
                        "\n\t\tAllowPreRelease: " + this.AllowPreRelease;
             }
+
+            #endregion
+
+            #region Methods: private
 
             private void ParseGitHubJson(string json)
             {
@@ -375,6 +420,10 @@ namespace KSP_AVC
                     }
                 }
             }
+
+            #endregion
         }
+
+        #endregion
     }
 }

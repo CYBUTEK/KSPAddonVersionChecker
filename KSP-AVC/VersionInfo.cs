@@ -26,6 +26,8 @@ namespace KSP_AVC
 {
     public class VersionInfo : IComparable
     {
+        #region Constructors
+
         public VersionInfo(long major = 0, long minor = 0, long patch = 0, long build = 0)
         {
             this.SetVersion(major, minor, patch, build);
@@ -59,6 +61,10 @@ namespace KSP_AVC
             }
         }
 
+        #endregion
+
+        #region Properties
+
         public static VersionInfo MaxValue
         {
             get { return new VersionInfo(Int64.MaxValue, Int64.MaxValue, Int64.MaxValue, Int64.MaxValue); }
@@ -76,6 +82,10 @@ namespace KSP_AVC
         public long Minor { get; set; }
 
         public long Patch { get; set; }
+
+        #endregion
+
+        #region Operators
 
         public static bool operator ==(VersionInfo v1, VersionInfo v2)
         {
@@ -116,6 +126,10 @@ namespace KSP_AVC
         {
             return v1.CompareTo(v2) <= 0;
         }
+
+        #endregion
+
+        #region Methods: public
 
         public int CompareTo(object obj)
         {
@@ -188,9 +202,15 @@ namespace KSP_AVC
             return this.Patch > 0 ? String.Format("{0}.{1}.{2}", this.Major, this.Minor, this.Patch) : String.Format("{0}.{1}", this.Major, this.Minor);
         }
 
+        #endregion
+
+        #region Methods: protected
+
         protected bool Equals(VersionInfo other)
         {
             return this.Major.Equals(other.Major) && this.Minor.Equals(other.Minor) && this.Patch.Equals(other.Patch) && this.Build.Equals(other.Build);
         }
+
+        #endregion
     }
 }

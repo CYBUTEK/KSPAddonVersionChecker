@@ -15,16 +15,26 @@
 //     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 // 
 
+#region Using Directives
+
 using System;
 using System.IO;
 using System.Reflection;
 using System.Xml.Serialization;
 
+#endregion
+
 namespace KSP_AVC
 {
     public class Configuration
     {
+        #region Fields
+
         private static readonly string fileName = Path.ChangeExtension(Assembly.GetExecutingAssembly().Location, "xml");
+
+        #endregion
+
+        #region Constructors
 
         static Configuration()
         {
@@ -36,11 +46,19 @@ namespace KSP_AVC
             Load();
         }
 
+        #endregion
+
+        #region Properties
+
         public static Configuration Instance { get; private set; }
 
         public bool FirstRun { get; set; }
 
         public string Version { get; set; }
+
+        #endregion
+
+        #region Methods: public
 
         public static bool GetFirstRun()
         {
@@ -102,5 +120,7 @@ namespace KSP_AVC
             Instance.Version = value;
             Save();
         }
+
+        #endregion
     }
 }
