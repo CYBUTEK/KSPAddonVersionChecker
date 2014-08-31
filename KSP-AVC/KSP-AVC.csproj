@@ -38,7 +38,7 @@
     <Compile Include="AddonLibrary.cs" />
     <Compile Include="AddonListGui.cs" />
     <Compile Include="ChangeLogGui.cs" />
-    <Compile Include="CheckGui.cs" />
+    <Compile Include="CheckerProgressGui.cs" />
     <Compile Include="DropDownList.cs" />
     <Compile Include="FirstRunGui.cs" />
     <Compile Include="IssueGui.cs" />
