@@ -17,6 +17,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Threading;
 
 using UnityEngine;
 
@@ -208,7 +209,10 @@ namespace KSP_AVC
         {
             using (var www = new WWW(this.ChangeLogUrl))
             {
-                while (!www.isDone) { }
+                while (!www.isDone)
+                {
+                    Thread.Sleep(100);
+                }
                 if (www.error == null)
                 {
                     this.ChangeLog = www.text;
@@ -297,7 +301,10 @@ namespace KSP_AVC
             {
                 using (var www = new WWW("https://api.github.com/repos/" + this.Username + "/" + this.Repository + "/releases"))
                 {
-                    while (!www.isDone) { }
+                    while (!www.isDone)
+                    {
+                        Thread.Sleep(100);
+                    }
                     if (www.error == null)
                     {
                         this.ParseGitHubJson(www.text);
