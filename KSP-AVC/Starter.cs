@@ -39,12 +39,12 @@ namespace KSP_AVC
                     return;
                 }
                 DontDestroyOnLoad(this);
-                Logger.Log("Starter was created.");
             }
             catch (Exception ex)
             {
                 Logger.Exception(ex);
             }
+            Logger.Log("Starter was created.");
         }
 
         protected void OnDestroy()
@@ -59,12 +59,12 @@ namespace KSP_AVC
                 {
                     Destroy(this.checkerProgressGui);
                 }
-                Logger.Log("Starter was destroyed.");
             }
             catch (Exception ex)
             {
                 Logger.Exception(ex);
             }
+            Logger.Log("Starter was destroyed.");
         }
 
         protected void Start()
