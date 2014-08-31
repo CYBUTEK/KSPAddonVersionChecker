@@ -33,7 +33,7 @@ namespace KSP_AVC
 
         public VersionInfo(string version)
         {
-            var sections = Regex.Replace(version, @"[^\d\.]", string.Empty).Split('.');
+            var sections = Regex.Replace(version, @"[^\d\.]", String.Empty).Split('.');
 
             switch (sections.Length)
             {
@@ -183,9 +183,9 @@ namespace KSP_AVC
         {
             if (this.Build > 0)
             {
-                return string.Format("{0}.{1}.{2}.{3}", this.Major, this.Minor, this.Patch, this.Build);
+                return String.Format("{0}.{1}.{2}.{3}", this.Major, this.Minor, this.Patch, this.Build);
             }
-            return this.Patch > 0 ? string.Format("{0}.{1}.{2}", this.Major, this.Minor, this.Patch) : string.Format("{0}.{1}", this.Major, this.Minor);
+            return this.Patch > 0 ? String.Format("{0}.{1}.{2}", this.Major, this.Minor, this.Patch) : String.Format("{0}.{1}", this.Major, this.Minor);
         }
 
         protected bool Equals(VersionInfo other)
