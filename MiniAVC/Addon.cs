@@ -174,7 +174,10 @@ namespace MiniAVC
 
                 using (var www = new WWW(this.localInfo.Url))
                 {
-                    while (!www.isDone) { }
+                    while (!www.isDone)
+                    {
+                        Thread.Sleep(100);
+                    }
                     if (www.error == null)
                     {
                         this.remoteInfo = new AddonInfo(this.localInfo.Url, www.text);
