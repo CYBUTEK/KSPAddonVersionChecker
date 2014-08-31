@@ -1,3 +1,8 @@
+1.1.4.2
+    Changed: Done a lot of under the hood refactoring.
+    Fixed: Bug which would freeze the computer when checking many add-ons.
+    Fixed: Bug that caused the compatibility display to show as a long thin window.
+
 1.1.4.1
     Fixed: Log spam.
     Fixed: Checking window staying open after displaying the first run / updated window.

@@ -31,7 +31,7 @@ namespace KSP_AVC
     {
         #region Fields
 
-        private readonly Dictionary<Addon, DropDownList> dropDownLists = new Dictionary<Addon, DropDownList>();
+        private readonly Dictionary<Addon, DropDownList> actionLists = new Dictionary<Addon, DropDownList>();
 
         private GUIStyle boxStyle;
         private GUIStyle buttonStyle;
@@ -45,193 +45,43 @@ namespace KSP_AVC
 
         #endregion
 
-        #region Methods: private
+        #region Methods: protected
 
-        private void Awake()
+        protected void Awake()
         {
             try
             {
                 DontDestroyOnLoad(this);
-                Logger.Log("IssueGui was created.");
             }
             catch (Exception ex)
             {
                 Logger.Exception(ex);
             }
+            Logger.Log("IssueGui was created.");
         }
 
-        private void DrawCompatibilityIssues()
+        protected void OnDestroy()
         {
             try
             {
-                GUILayout.BeginVertical(this.boxStyle);
-                GUILayout.Label("COMPATIBILITY ISSUES", this.nameTitleStyle);
-                foreach (var addon in AddonLibrary.Addons.Where(a => !a.HasError && !a.IsCompatible))
+                foreach (var dropDownList in this.actionLists.Values)
                 {
-                    GUILayout.Label("The currently installed version of " + addon.Name + " was built to run on KSP " + addon.LocalInfo.KspVersion, this.messageStyle);
+                    Destroy(dropDownList);
                 }
-                GUILayout.EndVertical();
             }
             catch (Exception ex)
             {
                 Logger.Exception(ex);
-            }
-        }
-
-        private void DrawDropDownList(DropDownList list, Addon addon)
-        {
-            if (!String.IsNullOrEmpty(addon.RemoteInfo.ChangeLog))
-            {
-                if (GUILayout.Button("Change Log", this.buttonStyle))
-                {
-                    var changeLogGui = this.gameObject.AddComponent<ChangeLogGui>();
-                    changeLogGui.Name = addon.RemoteInfo.Name;
-                    changeLogGui.Text = addon.RemoteInfo.ChangeLog;
-                    list.ShowList = false;
-                }
-            }
-
-            if (!String.IsNullOrEmpty(addon.RemoteInfo.Download))
-            {
-                if (GUILayout.Button("Download", this.buttonStyle))
-                {
-                    Application.OpenURL(addon.RemoteInfo.Download);
-                    list.ShowList = false;
-                }
-                if (Event.current.type == EventType.repaint)
-                {
-                    list.ToolTip.Text = GUILayoutUtility.GetLastRect().Contains(Event.current.mousePosition) ? list.ToolTip.Text = addon.RemoteInfo.Download : String.Empty;
-                }
-            }
-        }
-
-        private void DrawUpdateIssues()
-        {
-            try
-            {
-                GUILayout.BeginVertical(this.boxStyle);
-                GUILayout.BeginHorizontal();
-                GUILayout.Label("ADD-ON NAME", this.nameTitleStyle, GUILayout.Width(250.0f));
-                GUILayout.Label("CURRENT", this.titleStyle, GUILayout.Width(100.0f));
-                GUILayout.Label("AVAILABLE", this.titleStyle, GUILayout.Width(100.0f));
-                GUILayout.FlexibleSpace();
-                GUILayout.EndHorizontal();
-
-                foreach (var addon in AddonLibrary.Addons.Where(a => !a.HasError && a.IsUpdateAvailable))
-                {
-                    GUILayout.BeginHorizontal();
-                    GUILayout.Label(addon.Name, this.nameLabelStyle, GUILayout.Width(250.0f));
-                    GUILayout.Label(addon.LocalInfo.Version.ToString(), this.labelStyle, GUILayout.Width(100.0f));
-                    GUILayout.Label(addon.RemoteInfo.Version.ToString(), this.labelStyle, GUILayout.Width(100.0f));
-                    if (!string.IsNullOrEmpty(addon.RemoteInfo.Download))
-                    {
-                        DropDownList dropDownList;
-                        if (this.dropDownLists.ContainsKey(addon))
-                        {
-                            dropDownList = this.dropDownLists[addon];
-                        }
-                        else
-                        {
-                            dropDownList = this.gameObject.AddComponent<DropDownList>();
-                            dropDownList.Addon = addon;
-                            dropDownList.DrawAddonCallback = this.DrawDropDownList;
-                            this.dropDownLists.Add(addon, dropDownList);
-                        }
-                        dropDownList.DrawButton("ACTIONS", this.position, 125.0f);
-                    }
-                    else
-                    {
-                        GUILayout.Label("-----", this.labelStyle);
-                    }
-                    GUILayout.EndHorizontal();
-                }
-                GUILayout.EndVertical();
-            }
-            catch (Exception ex)
-            {
-                Logger.Exception(ex);
-            }
-        }
-
-        private void InitialiseStyles()
-        {
-            try
-            {
-                this.boxStyle = new GUIStyle(HighLogic.Skin.box)
-                {
-                    padding = new RectOffset(10, 10, 5, 5)
-                };
-
-                this.nameTitleStyle = new GUIStyle(HighLogic.Skin.label)
-                {
-                    normal =
-                    {
-                        textColor = Color.white
-                    },
-                    alignment = TextAnchor.MiddleLeft,
-                    fontStyle = FontStyle.Bold
-                };
-
-                this.titleStyle = new GUIStyle(HighLogic.Skin.label)
-                {
-                    normal =
-                    {
-                        textColor = Color.white
-                    },
-                    alignment = TextAnchor.MiddleCenter,
-                    fontStyle = FontStyle.Bold
-                };
-
-                this.nameLabelStyle = new GUIStyle(HighLogic.Skin.label)
-                {
-                    fixedHeight = 25.0f,
-                    alignment = TextAnchor.MiddleLeft,
-                };
-
-                this.labelStyle = new GUIStyle(HighLogic.Skin.label)
-                {
-                    fixedHeight = 25.0f,
-                    alignment = TextAnchor.MiddleCenter,
-                };
-
-                this.messageStyle = new GUIStyle(HighLogic.Skin.label)
-                {
-                    fixedWidth = this.nameLabelStyle.fixedWidth + (this.labelStyle.fixedWidth * 3)
-                };
-
-                this.buttonStyle = new GUIStyle(HighLogic.Skin.button)
-                {
-                    normal =
-                    {
-                        textColor = Color.white
-                    }
-                };
-            }
-            catch (Exception ex)
-            {
-                Logger.Exception(ex);
-            }
-        }
-
-        private void OnDestroy()
-        {
-            foreach (var dropDownList in this.dropDownLists.Values)
-            {
-                Destroy(dropDownList);
             }
             Logger.Log("IssueGui was destroyed.");
         }
 
-        private void OnGUI()
+        protected void OnGUI()
         {
             try
             {
                 this.position = GUILayout.Window(this.GetInstanceID(), this.position, this.Window, "KSP Add-on Version Checker - Issue Monitor", HighLogic.Skin.window);
-                if (!this.hasCentred && this.position.width > 0 && this.position.height > 0)
-                {
-                    this.position.center = new Vector2(Screen.width * 0.5f, Screen.height * 0.5f);
-                    this.hasCentred = true;
-                }
+                this.CentreWindow();
             }
             catch (Exception ex)
             {
@@ -239,7 +89,7 @@ namespace KSP_AVC
             }
         }
 
-        private void Start()
+        protected void Start()
         {
             try
             {
@@ -249,6 +99,174 @@ namespace KSP_AVC
             {
                 Logger.Exception(ex);
             }
+        }
+
+        #endregion
+
+        #region Methods: private
+
+        private void CentreWindow()
+        {
+            if (this.hasCentred || !(this.position.width > 0) || !(this.position.height > 0))
+            {
+                return;
+            }
+            this.position.center = new Vector2(Screen.width * 0.5f, Screen.height * 0.5f);
+            this.hasCentred = true;
+        }
+
+        private DropDownList CreateActionList(Addon addon)
+        {
+            var actionList = this.gameObject.AddComponent<DropDownList>();
+            actionList.Addon = addon;
+            actionList.DrawAddonCallback = this.DrawActionList;
+            this.actionLists.Add(addon, actionList);
+            return actionList;
+        }
+
+        private void DrawActionButton(Addon addon)
+        {
+            if (String.IsNullOrEmpty(addon.RemoteInfo.Download) && String.IsNullOrEmpty(addon.RemoteInfo.ChangeLog))
+            {
+                return;
+            }
+
+            (this.actionLists.ContainsKey(addon) ? this.actionLists[addon] : this.CreateActionList(addon)).DrawButton("ACTIONS", this.position, 125.0f);
+        }
+
+        private void DrawActionList(DropDownList list, Addon addon)
+        {
+            this.DrawActionListChangeLog(list, addon);
+            this.DrawActionListDownload(list, addon);
+        }
+
+        private void DrawActionListChangeLog(DropDownList list, Addon addon)
+        {
+            if (String.IsNullOrEmpty(addon.RemoteInfo.ChangeLog) || !GUILayout.Button("Change Log", this.buttonStyle))
+            {
+                return;
+            }
+
+            var changeLogGui = this.gameObject.AddComponent<ChangeLogGui>();
+            changeLogGui.Name = addon.RemoteInfo.Name;
+            changeLogGui.Text = addon.RemoteInfo.ChangeLog;
+            list.ShowList = false;
+        }
+
+        private void DrawActionListDownload(DropDownList list, Addon addon)
+        {
+            if (String.IsNullOrEmpty(addon.RemoteInfo.Download))
+            {
+                return;
+            }
+
+            if (GUILayout.Button("Download", this.buttonStyle))
+            {
+                Application.OpenURL(addon.RemoteInfo.Download);
+                list.ShowList = false;
+            }
+            if (Event.current.type == EventType.repaint)
+            {
+                list.ToolTip.Text = GUILayoutUtility.GetLastRect().Contains(Event.current.mousePosition) ? list.ToolTip.Text = addon.RemoteInfo.Download : String.Empty;
+            }
+        }
+
+        private void DrawCompatibilityIssues()
+        {
+            GUILayout.BeginVertical(this.boxStyle);
+            GUILayout.Label("COMPATIBILITY ISSUES", this.nameTitleStyle);
+            foreach (var addon in AddonLibrary.Addons.Where(a => !a.HasError && !a.IsCompatible))
+            {
+                GUILayout.Label("The currently installed version of " + addon.Name + " was built to run on KSP " + addon.LocalInfo.KspVersion, this.messageStyle, GUILayout.MinWidth(575.0f));
+            }
+            GUILayout.EndVertical();
+        }
+
+        private void DrawUpdateHeadings()
+        {
+            GUILayout.BeginHorizontal();
+            GUILayout.Label("ADD-ON NAME", this.nameTitleStyle, GUILayout.Width(250.0f));
+            GUILayout.Label("CURRENT", this.titleStyle, GUILayout.Width(100.0f));
+            GUILayout.Label("AVAILABLE", this.titleStyle, GUILayout.Width(100.0f));
+            GUILayout.EndHorizontal();
+        }
+
+        private void DrawUpdateInformation(Addon addon)
+        {
+            GUILayout.Label(addon.Name, this.nameLabelStyle, GUILayout.Width(250.0f));
+            GUILayout.Label(addon.LocalInfo.Version.ToString(), this.labelStyle, GUILayout.Width(100.0f));
+            GUILayout.Label(addon.RemoteInfo.Version.ToString(), this.labelStyle, GUILayout.Width(100.0f));
+        }
+
+        private void DrawUpdateIssues()
+        {
+            GUILayout.BeginVertical(this.boxStyle);
+            this.DrawUpdateHeadings();
+
+            foreach (var addon in AddonLibrary.Addons.Where(a => !a.HasError && a.IsUpdateAvailable))
+            {
+                GUILayout.BeginHorizontal();
+                this.DrawUpdateInformation(addon);
+                GUILayout.FlexibleSpace();
+                this.DrawActionButton(addon);
+                GUILayout.EndHorizontal();
+            }
+            GUILayout.EndVertical();
+        }
+
+        private void InitialiseStyles()
+        {
+            this.boxStyle = new GUIStyle(HighLogic.Skin.box)
+            {
+                padding = new RectOffset(10, 10, 5, 5)
+            };
+
+            this.nameTitleStyle = new GUIStyle(HighLogic.Skin.label)
+            {
+                normal =
+                {
+                    textColor = Color.white
+                },
+                alignment = TextAnchor.MiddleLeft,
+                fontStyle = FontStyle.Bold,
+                stretchWidth = true
+            };
+
+            this.titleStyle = new GUIStyle(HighLogic.Skin.label)
+            {
+                normal =
+                {
+                    textColor = Color.white
+                },
+                alignment = TextAnchor.MiddleCenter,
+                fontStyle = FontStyle.Bold
+            };
+
+            this.nameLabelStyle = new GUIStyle(HighLogic.Skin.label)
+            {
+                fixedHeight = 25.0f,
+                alignment = TextAnchor.MiddleLeft,
+                stretchWidth = true
+            };
+
+            this.labelStyle = new GUIStyle(HighLogic.Skin.label)
+            {
+                fixedHeight = 25.0f,
+                alignment = TextAnchor.MiddleCenter,
+            };
+
+            this.messageStyle = new GUIStyle(HighLogic.Skin.label)
+            {
+                stretchWidth = true
+            };
+
+            this.buttonStyle = new GUIStyle(HighLogic.Skin.button)
+            {
+                normal =
+                {
+                    textColor = Color.white
+                }
+            };
         }
 
         private void Window(int id)
