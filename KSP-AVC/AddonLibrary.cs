@@ -15,8 +15,6 @@
 //     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 // 
 
-#region Using Directives
-
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -24,48 +22,29 @@ using System.Linq;
 using System.Reflection;
 using System.Threading;
 
-#endregion
-
 namespace KSP_AVC
 {
     public static class AddonLibrary
     {
-        #region Fields
-
         private static readonly string rootPath;
-
-        #endregion
-
-        #region Constructors
 
         static AddonLibrary()
         {
-            try
-            {
-                rootPath = Assembly.GetExecutingAssembly().Location;
-                var gameDataIndex = rootPath.IndexOf("GameData", StringComparison.CurrentCultureIgnoreCase);
-                rootPath = rootPath.Remove(gameDataIndex, rootPath.Length - gameDataIndex);
-                rootPath = Path.Combine(rootPath, "GameData");
-                Logger.Log("Checking Root: " + rootPath);
-                ThreadPool.QueueUserWorkItem(ProcessAddonPopulation);
-            }
-            catch (Exception ex)
-            {
-                Logger.Exception(ex);
-            }
+            rootPath = GetRootPath();
+            Logger.Log("Checking Root: " + rootPath);
+            ThreadPool.QueueUserWorkItem(ProcessAddonPopulation);
         }
-
-        #endregion
-
-        #region Properties
 
         public static List<Addon> Addons { get; private set; }
 
         public static bool Populated { get; private set; }
 
-        #endregion
-
-        #region Private Methods
+        private static string GetRootPath()
+        {
+            var rootPath = Assembly.GetExecutingAssembly().Location;
+            var gameDataIndex = rootPath.IndexOf("GameData", StringComparison.CurrentCultureIgnoreCase);
+            return Path.Combine(rootPath.Remove(gameDataIndex, rootPath.Length - gameDataIndex), "GameData");
+        }
 
         private static void ProcessAddonPopulation(object state)
         {
@@ -80,7 +59,5 @@ namespace KSP_AVC
                 Logger.Exception(ex);
             }
         }
-
-        #endregion
     }
 }
