@@ -70,8 +70,24 @@
     </Reference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Target Name="PostBuildMacros">
+    <GetAssemblyIdentity AssemblyFiles="$(TargetPath)">
+      <Output TaskParameter="Assemblies" ItemName="Targets" />
+    </GetAssemblyIdentity>
+    <ItemGroup>
+      <VersionNumber Include="@(Targets->'%(Version)')" />
+    </ItemGroup>
+  </Target>
   <PropertyGroup>
-    <PostBuildEvent>xcopy "$(SolutionDir)Output\KSP-AVC\*" "$(SolutionDir)Game\GameData\KSP-AVC\*" /E /Y</PostBuildEvent>
+    <PostBuildEventDependsOn>
+        $(PostBuildEventDependsOn);
+        PostBuildMacros;
+      </PostBuildEventDependsOn>
+    <PostBuildEvent>xcopy "$(SolutionDir)Output\KSP-AVC\*" "$(SolutionDir)Game\GameData\KSP-AVC\*" /E /Y
+del "$(SolutionDir)Release\KSP-AVC\*" /Q
+xcopy "$(SolutionDir)Documents\KSP-AVC\*" "$(SolutionDir)Release\KSP-AVC\Documents\*" /E /Y
+7z.exe a -tzip -mx3 "$(SolutionDir)Release\KSP-AVC\$(ProjectName)-@(VersionNumber).zip" "$(SolutionDir)Output\KSP-AVC"
+7z.exe a -tzip -mx3 "$(SolutionDir)Release\KSP-AVC\$(ProjectName)-@(VersionNumber).zip" "$(SolutionDir)Documents\KSP-AVC\*"</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
