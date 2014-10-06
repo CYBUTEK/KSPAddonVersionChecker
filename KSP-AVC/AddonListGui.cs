@@ -18,6 +18,7 @@
 #region Using Directives
 
 using System;
+using System.Linq;
 
 using UnityEngine;
 
@@ -70,12 +71,19 @@ namespace KSP_AVC
 
         protected void OnGUI()
         {
-            if (HighLogic.LoadedScene == GameScenes.SETTINGS)
+            try
             {
-                return;
-            }
+                if (HighLogic.LoadedScene == GameScenes.SETTINGS)
+                {
+                    return;
+                }
 
-            this.dropDownList.DrawButton("Show All KSP-AVC Ready Add-Ons", new Rect(), 400.0f);
+                this.dropDownList.DrawButton("Show All KSP-AVC Ready Add-Ons", new Rect(), 400.0f);
+            }
+            catch (Exception ex)
+            {
+                Logger.Exception(ex);
+            }
         }
 
         protected void Start()

@@ -29,7 +29,7 @@ namespace KSP_AVC
     public class CheckerProgressGui : MonoBehaviour
     {
         #region Fields
-
+        
         private bool hasCentred;
         private string message = String.Empty;
         private Rect position = new Rect(Screen.width, Screen.height, 0, 0);
@@ -88,7 +88,7 @@ namespace KSP_AVC
             try
             {
                 this.message = AddonLibrary.Populated
-                    ? "Checked " + AddonLibrary.Addons.Count(a => a.IsProcessingComplete) + " of " + AddonLibrary.Addons.Count + " add-ons."
+                    ? "Checked " + AddonLibrary.ProcessCount + " of " + AddonLibrary.TotalCount + " add-ons."
                     : "Populating Library...";
             }
             catch (Exception ex)

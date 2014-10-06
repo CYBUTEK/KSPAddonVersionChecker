@@ -106,13 +106,16 @@ namespace KSP_AVC
         /// <returns>An List&lt;object&gt;, a Dictionary&lt;string, object&gt;, a double, an integer,a string, null, true, or false</returns>
         public static object Deserialize(string json)
         {
-            // save the string for debug information
-            if (json == null)
+            try
             {
+                // save the string for debug information
+                return String.IsNullOrEmpty(json) ? null : Parser.Parse(json);
+            }
+            catch (Exception ex)
+            {
+                Logger.Exception(ex);
                 return null;
             }
-
-            return Parser.Parse(json);
         }
 
         /// <summary>

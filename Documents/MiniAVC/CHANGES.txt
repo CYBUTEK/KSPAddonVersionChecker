@@ -1,5 +1,6 @@
 1.0.2.4
     Fixed: Typo in AddonInfo.ToString()
+    Fixed: Bug with empty version files.
 
 1.0.2.3
     Changed: Done a lot of under the hood refactoring.

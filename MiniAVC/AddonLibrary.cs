@@ -29,6 +29,12 @@ namespace MiniAVC
 {
     public static class AddonLibrary
     {
+        #region Fields
+
+        private static List<Addon> addons;
+
+        #endregion
+
         #region Constructors
 
         static AddonLibrary()
@@ -40,11 +46,38 @@ namespace MiniAVC
 
         #region Properties
 
-        public static List<Addon> Addons { get; private set; }
+        public static List<Addon> Addons
+        {
+            get { return (addons != null) ? addons.Where(a => !a.HasError).ToList() : null; }
+        }
+
+        public static List<Addon> AddonsProcessed
+        {
+            get { return (addons != null) ? addons.Where(a => !a.HasError && a.IsProcessingComplete).ToList() : null; }
+        }
 
         public static bool Populated { get; private set; }
 
         public static List<AddonSettings> Settings { get; private set; }
+
+        public static int TotalCount
+        {
+            get { return (addons != null) ? addons.Count : 0; }
+        }
+
+        #endregion
+
+        #region Methods: public
+
+        public static void Remove(Addon addon)
+        {
+            if (addons == null)
+            {
+                return;
+            }
+
+            addons.Remove(addon);
+        }
 
         #endregion
 
@@ -62,7 +95,7 @@ namespace MiniAVC
                     threadSettings.Add(settings);
                     threadAddons.AddRange(Directory.GetFiles(rootPath, "*.version", SearchOption.AllDirectories).Select(p => new Addon(p, settings)).ToList());
                 }
-                Addons = threadAddons;
+                addons = threadAddons;
                 Settings = threadSettings;
                 Populated = true;
             }

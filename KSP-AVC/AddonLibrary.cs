@@ -33,6 +33,7 @@ namespace KSP_AVC
         #region Fields
 
         private static readonly string rootPath;
+        private static List<Addon> addons;
 
         #endregion
 
@@ -49,9 +50,32 @@ namespace KSP_AVC
 
         #region Properties
 
-        public static List<Addon> Addons { get; private set; }
+        public static IEnumerable<Addon> Addons
+        {
+            get { return (addons != null) ? addons.Where(a => !a.HasError).ToList() : null; }
+        }
 
         public static bool Populated { get; private set; }
+
+        public static int ProcessCount
+        {
+            get { return (addons != null) ? addons.Count(a => a.IsProcessingComplete) : 0; }
+        }
+
+        public static IEnumerable<Addon> Processed
+        {
+            get { return (addons != null) ? addons.Where(a => !a.HasError && a.IsProcessingComplete) : null; }
+        }
+
+        public static bool ProcessingComplete
+        {
+            get { return addons != null && addons.All(a => a.IsProcessingComplete); }
+        }
+
+        public static int TotalCount
+        {
+            get { return (addons != null) ? addons.Count : 0; }
+        }
 
         #endregion
 
@@ -68,8 +92,8 @@ namespace KSP_AVC
         {
             try
             {
-                var threadAddons = Directory.GetFiles(rootPath, "*.version", SearchOption.AllDirectories).Select(path => new Addon(path)).ToList();
-                Addons = threadAddons;
+                Populated = false;
+                addons = Directory.GetFiles(rootPath, "*.version", SearchOption.AllDirectories).Select(path => new Addon(path)).ToList();
                 Populated = true;
             }
             catch (Exception ex)

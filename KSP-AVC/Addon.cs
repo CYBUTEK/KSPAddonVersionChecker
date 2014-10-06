@@ -91,6 +91,11 @@ namespace KSP_AVC
             {
                 this.LocalInfo = new AddonInfo(path, stream.ReadToEnd());
                 this.IsLocalReady = true;
+
+                if (this.LocalInfo.ParseError)
+                {
+                    this.SetHasError();
+                }
             }
         }
 

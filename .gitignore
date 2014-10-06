@@ -114,3 +114,4 @@ App_Data/*.ldf
 *.zip
 *.bat
 [Gg]ame/
+[Rr]elease/

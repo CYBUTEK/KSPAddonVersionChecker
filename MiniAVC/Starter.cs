@@ -83,7 +83,7 @@ namespace MiniAVC
                 }
 
                 // Do not show first start if no add-ons were found, or just destroy if all add-ons have been processed.
-                if (AddonLibrary.Addons.Count == 0)
+                if (AddonLibrary.TotalCount == 0)
                 {
                     Destroy(this);
                     return;
@@ -122,20 +122,18 @@ namespace MiniAVC
 
         private void CreateIssueGui()
         {
-            var removeAddons = new List<Addon>();
-            foreach (var addon in AddonLibrary.Addons.Where(a => a.IsProcessingComplete))
+            foreach (var addon in AddonLibrary.AddonsProcessed)
             {
                 if (!addon.HasError && (addon.IsUpdateAvailable || !addon.IsCompatible))
                 {
                     this.shownIssueGui = this.gameObject.AddComponent<IssueGui>();
                     this.shownIssueGui.Addon = addon;
                     this.shownIssueGui.enabled = true;
-                    removeAddons.Add(addon);
+                    AddonLibrary.Remove(addon);
                     break;
                 }
-                removeAddons.Add(addon);
+                AddonLibrary.Remove(addon);
             }
-            AddonLibrary.Addons.RemoveAll(removeAddons.Contains);
         }
 
         #endregion
