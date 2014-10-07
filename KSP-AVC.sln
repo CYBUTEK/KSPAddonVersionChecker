@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KSP-AVC", "KSP-AVC\KSP-AVC.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MiniAVC", "MiniAVC\MiniAVC.csproj", "{F1351BAB-76F1-41DE-B01C-496163CB44D8}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AVCToolkit", "AVCToolkit\AVCToolkit.csproj", "{FD522EDB-A592-41C8-9342-C3629C18A6AD}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{F1351BAB-76F1-41DE-B01C-496163CB44D8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F1351BAB-76F1-41DE-B01C-496163CB44D8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F1351BAB-76F1-41DE-B01C-496163CB44D8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FD522EDB-A592-41C8-9342-C3629C18A6AD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FD522EDB-A592-41C8-9342-C3629C18A6AD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FD522EDB-A592-41C8-9342-C3629C18A6AD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FD522EDB-A592-41C8-9342-C3629C18A6AD}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
