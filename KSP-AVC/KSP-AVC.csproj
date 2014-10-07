@@ -83,7 +83,8 @@
         $(PostBuildEventDependsOn);
         PostBuildMacros;
       </PostBuildEventDependsOn>
-    <PostBuildEvent>xcopy "$(SolutionDir)Output\KSP-AVC\*" "$(SolutionDir)Game\GameData\KSP-AVC\*" /E /Y
+    <PostBuildEvent>$(SolutionDir)\Output\AVCToolkit\AVCToolkit.exe -output "$(SolutionDir)Output\KSP-AVC\KSP-AVC.version" -name "KSP-AVC Plugin" -url "http://ksp-avc.cybutek.net/version.php?id=2" -version @(VersionNumber) -ksp_version 0.25
+xcopy "$(SolutionDir)Output\KSP-AVC\*" "$(SolutionDir)Game\GameData\KSP-AVC\*" /E /Y
 del "$(SolutionDir)Release\KSP-AVC\*" /Q
 xcopy "$(SolutionDir)Documents\KSP-AVC\*" "$(SolutionDir)Release\KSP-AVC\Documents\*" /E /Y
 7z.exe a -tzip -mx3 "$(SolutionDir)Release\KSP-AVC\$(ProjectName)-@(VersionNumber).zip" "$(SolutionDir)Output\KSP-AVC"

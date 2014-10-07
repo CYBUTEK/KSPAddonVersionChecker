@@ -1,6 +1,7 @@
 1.1.4.3
-	Fixed: Typo in AddonInfo.ToString()
-	Fixed: Bug with empty version files which would cause the top drop down to not work.
+    Updated for KSP v0.25.0
+    Fixed: Typo in AddonInfo.ToString()
+    Fixed: Bug with empty version files which would cause the top drop down to not work.
 	
 1.1.4.2
     Changed: Done a lot of under the hood refactoring.

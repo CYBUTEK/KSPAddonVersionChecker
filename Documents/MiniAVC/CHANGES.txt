@@ -1,4 +1,5 @@
 1.0.2.4
+    Updated for KSP v0.25.0
     Fixed: Typo in AddonInfo.ToString()
     Fixed: Bug with empty version files.
 
