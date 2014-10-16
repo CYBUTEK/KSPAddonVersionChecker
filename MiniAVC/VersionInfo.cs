@@ -65,6 +65,11 @@ namespace MiniAVC
 
         #region Properties
 
+        public static VersionInfo AnyValue
+        {
+            get { return new VersionInfo(-1, -1, -1, -1); }
+        }
+
         public static VersionInfo MaxValue
         {
             get { return new VersionInfo(Int64.MaxValue, Int64.MaxValue, Int64.MaxValue, Int64.MaxValue); }
@@ -73,6 +78,11 @@ namespace MiniAVC
         public static VersionInfo MinValue
         {
             get { return new VersionInfo(); }
+        }
+
+        public bool Any
+        {
+            get { return this.Major == -1 && this.Minor == -1 && this.Patch == -1 && this.Build == -1; }
         }
 
         public long Build { get; set; }
@@ -102,12 +112,12 @@ namespace MiniAVC
             return v1.CompareTo(v2) >= 0;
         }
 
-        public static implicit operator System.Version(VersionInfo version)
+        public static implicit operator Version(VersionInfo version)
         {
-            return new System.Version(Convert.ToInt32(version.Major), Convert.ToInt32(version.Minor), Convert.ToInt32(version.Patch), Convert.ToInt32(version.Build));
+            return new Version(Convert.ToInt32(version.Major), Convert.ToInt32(version.Minor), Convert.ToInt32(version.Patch), Convert.ToInt32(version.Build));
         }
 
-        public static implicit operator VersionInfo(System.Version version)
+        public static implicit operator VersionInfo(Version version)
         {
             return new VersionInfo(version.Major, version.Minor, version.Build, version.Revision);
         }
@@ -144,20 +154,43 @@ namespace MiniAVC
                 throw new ArgumentException("Not a VersionInfo object.");
             }
 
-            var major = this.Major.CompareTo(other.Major);
-            if (major != 0)
+            if (this.Major != -1 && other.Major != -1)
             {
-                return major;
+                var major = this.Major.CompareTo(other.Major);
+                if (major != 0)
+                {
+                    return major;
+                }
             }
 
-            var minor = this.Minor.CompareTo(other.Minor);
-            if (minor != 0)
+            if (this.Minor != -1 && other.Minor != -1)
             {
-                return minor;
+                var minor = this.Minor.CompareTo(other.Minor);
+                if (minor != 0)
+                {
+                    return minor;
+                }
             }
 
-            var patch = this.Patch.CompareTo(other.Patch);
-            return patch != 0 ? patch : this.Build.CompareTo(other.Build);
+            if (this.Patch != -1 && other.Patch != -1)
+            {
+                var patch = this.Patch.CompareTo(other.Patch);
+                if (patch != 0)
+                {
+                    return patch;
+                }
+            }
+
+            if (this.Build != -1 && other.Build != -1)
+            {
+                var build = this.Build.CompareTo(other.Build);
+                if (build != 0)
+                {
+                    return build;
+                }
+            }
+
+            return 0;
         }
 
         public override bool Equals(object obj)
@@ -195,11 +228,16 @@ namespace MiniAVC
 
         public override string ToString()
         {
+            if (this.Any)
+            {
+                return "Any";
+            }
+
             if (this.Build > 0)
             {
                 return String.Format("{0}.{1}.{2}.{3}", this.Major, this.Minor, this.Patch, this.Build);
             }
-            return this.Patch > 0 ? String.Format("{0}.{1}.{2}", this.Major, this.Minor, this.Patch) : String.Format("{0}.{1}", this.Major, this.Minor);
+            return this.Patch > 0 ? String.Format("{0}.{1}.{2}", this.Major, this.Minor, this.Patch) : String.Format("{0}.{1}", this.Major, this.Minor).Replace("-1", "*");
         }
 
         #endregion
@@ -208,7 +246,10 @@ namespace MiniAVC
 
         protected bool Equals(VersionInfo other)
         {
-            return this.Major.Equals(other.Major) && this.Minor.Equals(other.Minor) && this.Patch.Equals(other.Patch) && this.Build.Equals(other.Build);
+            return (this.Major == -1 || other.Major == -1 || this.Major.Equals(other.Major)) &&
+                   (this.Minor == -1 || other.Minor == -1 || this.Minor.Equals(other.Minor)) &&
+                   (this.Patch == -1 || other.Patch == -1 || this.Patch.Equals(other.Patch)) &&
+                   (this.Build == -1 || other.Build == -1 || this.Build.Equals(other.Build));
         }
 
         #endregion

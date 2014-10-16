@@ -134,6 +134,14 @@ namespace MiniAVC
 
         #region Methods: public
 
+        public void FetchRemoteData()
+        {
+            if (this.GitHub != null)
+            {
+                this.GitHub.FetchRemoteData();
+            }
+        }
+
         public override string ToString()
         {
             return this.path +
@@ -293,7 +301,7 @@ namespace MiniAVC
 
             #region Methods: public
 
-            public void FetchVersion()
+            public void FetchRemoteData()
             {
                 try
                 {

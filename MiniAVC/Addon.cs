@@ -195,15 +195,24 @@ namespace MiniAVC
         private void SetRemoteInfo(WWW www)
         {
             this.RemoteInfo = new AddonInfo(this.LocalInfo.Url, www.text);
-            if (this.RemoteInfo.GitHub != null)
+            this.RemoteInfo.FetchRemoteData();
+
+            if (this.LocalInfo.Version == this.RemoteInfo.Version)
             {
-                this.RemoteInfo.GitHub.FetchVersion();
+                Logger.Log("Identical remote version found: Using remote version information only.");
+                Logger.Log(this.RemoteInfo);
+                Logger.Blank();
+                this.LocalInfo = this.RemoteInfo;
             }
+            else
+            {
+                Logger.Log(this.LocalInfo);
+                Logger.Log(this.RemoteInfo + "\n\tUpdateAvailable: " + this.IsUpdateAvailable);
+                Logger.Blank();
+            }
+
             this.IsRemoteReady = true;
             this.IsProcessingComplete = true;
-            Logger.Log(this.LocalInfo);
-            Logger.Log(this.RemoteInfo + "\n\tUpdateAvailable: " + this.IsUpdateAvailable);
-            Logger.Blank();
         }
 
         #endregion

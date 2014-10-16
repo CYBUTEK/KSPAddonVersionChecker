@@ -179,11 +179,23 @@ namespace KSP_AVC
         {
             this.RemoteInfo = new AddonInfo(this.LocalInfo.Url, www.text);
             this.RemoteInfo.FetchRemoteData();
+
+            if (this.LocalInfo.Version == this.RemoteInfo.Version)
+            {
+                Logger.Log("Identical remote version found: Using remote version information only.");
+                Logger.Log(this.RemoteInfo);
+                Logger.Blank();
+                this.LocalInfo = this.RemoteInfo;
+            }
+            else
+            {
+                Logger.Log(this.LocalInfo);
+                Logger.Log(this.RemoteInfo + "\n\tUpdateAvailable: " + this.IsUpdateAvailable);
+                Logger.Blank();
+            }
+
             this.IsRemoteReady = true;
             this.IsProcessingComplete = true;
-            Logger.Log(this.LocalInfo);
-            Logger.Log(this.RemoteInfo + "\n\tUpdateAvailable: " + this.IsUpdateAvailable);
-            Logger.Blank();
         }
 
         #endregion

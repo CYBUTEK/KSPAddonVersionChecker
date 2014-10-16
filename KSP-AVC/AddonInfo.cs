@@ -113,7 +113,7 @@ namespace KSP_AVC
 
         public VersionInfo KspVersion
         {
-            get { return this.kspVersion ?? actualKspVersion; }
+            get { return this.kspVersion ?? VersionInfo.AnyValue; }
         }
 
         public VersionInfo KspVersionMax
@@ -335,16 +335,23 @@ namespace KSP_AVC
 
             public void FetchRemoteData()
             {
-                using (var www = new WWW("https://api.github.com/repos/" + this.Username + "/" + this.Repository + "/releases"))
+                try
                 {
-                    while (!www.isDone)
+                    using (var www = new WWW("https://api.github.com/repos/" + this.Username + "/" + this.Repository + "/releases"))
                     {
-                        Thread.Sleep(100);
+                        while (!www.isDone)
+                        {
+                            Thread.Sleep(100);
+                        }
+                        if (www.error == null)
+                        {
+                            this.ParseGitHubJson(www.text);
+                        }
                     }
-                    if (www.error == null)
-                    {
-                        this.ParseGitHubJson(www.text);
-                    }
+                }
+                catch (Exception ex)
+                {
+                    Logger.Exception(ex);
                 }
             }
 
