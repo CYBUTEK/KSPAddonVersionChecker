@@ -37,7 +37,6 @@
     <Compile Include="Addon.cs" />
     <Compile Include="AddonInfo.cs" />
     <Compile Include="AddonLibrary.cs" />
-    <Compile Include="AddonListGui.cs" />
     <Compile Include="ChangeLogGui.cs" />
     <Compile Include="CheckerProgressGui.cs" />
     <Compile Include="DropDownList.cs" />
@@ -45,10 +44,12 @@
     <Compile Include="IssueGui.cs" />
     <Compile Include="Json.cs" />
     <Compile Include="Logger.cs" />
+    <Compile Include="Toolbar\ToolbarWindow.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Configuration.cs" />
     <Compile Include="Starter.cs" />
     <Compile Include="ToolTipGui.cs" />
+    <Compile Include="Utils.cs" />
     <Compile Include="VersionInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -69,6 +70,7 @@
       <Private>False</Private>
     </Reference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="PostBuildMacros">
     <GetAssemblyIdentity AssemblyFiles="$(TargetPath)">
