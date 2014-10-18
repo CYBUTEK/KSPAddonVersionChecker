@@ -18,6 +18,7 @@
 #region Using Directives
 
 using System;
+using System.Linq;
 
 using UnityEngine;
 
@@ -72,6 +73,10 @@ namespace KSP_AVC.Toolbar
         {
             try
             {
+                if (AssemblyLoader.loadedAssemblies.Any(a => a.name == "DevHelper"))
+                {
+                    this.position.y = 60.0f;
+                }
                 this.InitialiseStyles();
             }
             catch (Exception ex)
