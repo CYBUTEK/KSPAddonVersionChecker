@@ -35,30 +35,12 @@ namespace KSP_AVC
 
         public VersionInfo(string version)
         {
-            var sections = Regex.Replace(version, @"[^\d\.]", String.Empty).Split('.');
+            this.SetVersion(version);
+        }
 
-            switch (sections.Length)
-            {
-                case 1:
-                    this.SetVersion(Int64.Parse(sections[0]));
-                    return;
-
-                case 2:
-                    this.SetVersion(Int64.Parse(sections[0]), Int64.Parse(sections[1]));
-                    return;
-
-                case 3:
-                    this.SetVersion(Int64.Parse(sections[0]), Int64.Parse(sections[1]), Int64.Parse(sections[2]));
-                    return;
-
-                case 4:
-                    this.SetVersion(Int64.Parse(sections[0]), Int64.Parse(sections[1]), Int64.Parse(sections[2]), Int64.Parse(sections[3]));
-                    return;
-
-                default:
-                    this.SetVersion();
-                    return;
-            }
+        public VersionInfo(Version version)
+        {
+            this.SetVersion(version.ToString());
         }
 
         #endregion
@@ -224,6 +206,34 @@ namespace KSP_AVC
             this.Minor = minor;
             this.Patch = patch;
             this.Build = build;
+        }
+
+        public void SetVersion(string version)
+        {
+            var sections = Regex.Replace(version, @"[^\d\.]", String.Empty).Split('.');
+
+            switch (sections.Length)
+            {
+                case 1:
+                    this.SetVersion(Int64.Parse(sections[0]));
+                    return;
+
+                case 2:
+                    this.SetVersion(Int64.Parse(sections[0]), Int64.Parse(sections[1]));
+                    return;
+
+                case 3:
+                    this.SetVersion(Int64.Parse(sections[0]), Int64.Parse(sections[1]), Int64.Parse(sections[2]));
+                    return;
+
+                case 4:
+                    this.SetVersion(Int64.Parse(sections[0]), Int64.Parse(sections[1]), Int64.Parse(sections[2]), Int64.Parse(sections[3]));
+                    return;
+
+                default:
+                    this.SetVersion();
+                    return;
+            }
         }
 
         public override string ToString()

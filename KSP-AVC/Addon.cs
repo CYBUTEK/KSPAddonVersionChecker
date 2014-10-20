@@ -89,7 +89,7 @@ namespace KSP_AVC
         {
             using (var stream = new StreamReader(File.OpenRead(path)))
             {
-                this.LocalInfo = new AddonInfo(path, stream.ReadToEnd());
+                this.LocalInfo = new AddonInfo(path, stream.ReadToEnd(), AddonInfo.RemoteType.AVC);
                 this.IsLocalReady = true;
 
                 if (this.LocalInfo.ParseError)
@@ -101,19 +101,40 @@ namespace KSP_AVC
 
         private void FetchRemoteInfo()
         {
-            using (var www = new WWW(this.LocalInfo.Url))
+            if (String.IsNullOrEmpty(this.LocalInfo.KerbalStuffUrl))
             {
-                while (!www.isDone)
+                using (var www = new WWW(this.LocalInfo.Url))
                 {
-                    Thread.Sleep(100);
+                    while (!www.isDone)
+                    {
+                        Thread.Sleep(100);
+                    }
+                    if (www.error == null)
+                    {
+                        this.SetRemoteAvcInfo(www);
+                    }
+                    else
+                    {
+                        this.SetLocalInfoOnly();
+                    }
                 }
-                if (www.error == null)
+            }
+            else
+            {
+                using (var www = new WWW(this.LocalInfo.KerbalStuffUrl))
                 {
-                    this.SetRemoteInfo(www);
-                }
-                else
-                {
-                    this.SetLocalInfoOnly();
+                    while (!www.isDone)
+                    {
+                        Thread.Sleep(100);
+                    }
+                    if (www.error == null)
+                    {
+                        this.SetRemoteKerbalStuffInfo(www);
+                    }
+                    else
+                    {
+                        this.SetLocalInfoOnly();
+                    }
                 }
             }
         }
@@ -145,7 +166,7 @@ namespace KSP_AVC
         {
             try
             {
-                if (string.IsNullOrEmpty(this.LocalInfo.Url))
+                if (String.IsNullOrEmpty(this.LocalInfo.Url) && String.IsNullOrEmpty(this.LocalInfo.KerbalStuffUrl))
                 {
                     this.SetLocalInfoOnly();
                     return;
@@ -175,10 +196,32 @@ namespace KSP_AVC
             Logger.Blank();
         }
 
-        private void SetRemoteInfo(WWW www)
+        private void SetRemoteAvcInfo(WWW www)
         {
-            this.RemoteInfo = new AddonInfo(this.LocalInfo.Url, www.text);
+            this.RemoteInfo = new AddonInfo(this.LocalInfo.Url, www.text, AddonInfo.RemoteType.AVC);
             this.RemoteInfo.FetchRemoteData();
+
+            if (this.LocalInfo.Version == this.RemoteInfo.Version)
+            {
+                Logger.Log("Identical remote version found: Using remote version information only.");
+                Logger.Log(this.RemoteInfo);
+                Logger.Blank();
+                this.LocalInfo = this.RemoteInfo;
+            }
+            else
+            {
+                Logger.Log(this.LocalInfo);
+                Logger.Log(this.RemoteInfo + "\n\tUpdateAvailable: " + this.IsUpdateAvailable);
+                Logger.Blank();
+            }
+
+            this.IsRemoteReady = true;
+            this.IsProcessingComplete = true;
+        }
+
+        private void SetRemoteKerbalStuffInfo(WWW www)
+        {
+            this.RemoteInfo = new AddonInfo(this.LocalInfo.KerbalStuffUrl, www.text, AddonInfo.RemoteType.KerbalStuff);
 
             if (this.LocalInfo.Version == this.RemoteInfo.Version)
             {

@@ -19,6 +19,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 
 using UnityEngine;
@@ -43,12 +44,21 @@ namespace KSP_AVC
 
         #region Constructors
 
-        public AddonInfo(string path, string json)
+        public AddonInfo(string path, string json, RemoteType remoteType)
         {
             try
             {
                 this.path = path;
-                this.Parse(json);
+                switch (remoteType)
+                {
+                    case RemoteType.AVC:
+                        this.ParseAvc(json);
+                        break;
+
+                    case RemoteType.KerbalStuff:
+                        this.ParseKerbalStuff(json);
+                        break;
+                }
             }
             catch
             {
@@ -71,12 +81,24 @@ namespace KSP_AVC
 
         #endregion
 
+        #region Enums
+
+        public enum RemoteType
+        {
+            AVC,
+            KerbalStuff
+        }
+
+        #endregion
+
         #region Properties
 
         public static VersionInfo ActualKspVersion
         {
             get { return actualKspVersion; }
         }
+
+        public AssemblyLoader.LoadedAssembly Assembly { get; private set; }
 
         public string ChangeLog { get; private set; }
 
@@ -110,6 +132,8 @@ namespace KSP_AVC
         {
             get { return this.KspVersionMin <= actualKspVersion; }
         }
+
+        public string KerbalStuffUrl { get; private set; }
 
         public VersionInfo KspVersion
         {
@@ -238,7 +262,7 @@ namespace KSP_AVC
             }
         }
 
-        private void Parse(string json)
+        private void ParseAvc(string json)
         {
             var data = Json.Deserialize(json) as Dictionary<string, object>;
             if (data == null)
@@ -252,6 +276,10 @@ namespace KSP_AVC
                 {
                     case "NAME":
                         this.Name = (string)data[key];
+                        break;
+
+                    case "KERBAL_STUFF_URL":
+                        this.KerbalStuffUrl = (string)data[key];
                         break;
 
                     case "URL":
@@ -274,6 +302,14 @@ namespace KSP_AVC
                         this.GitHub = new GitHubInfo(data[key], this);
                         break;
 
+                    case "ASSEMBLY_NAME":
+                        this.Assembly = AssemblyLoader.loadedAssemblies.FirstOrDefault(a => a.name == (string)data[key]);
+                        if (this.Assembly != null)
+                        {
+                            this.Version = new VersionInfo(this.Assembly.assembly.GetName().Version);
+                        }
+                        break;
+
                     case "VERSION":
                         this.Version = GetVersion(data[key]);
                         break;
@@ -288,6 +324,35 @@ namespace KSP_AVC
 
                     case "KSP_VERSION_MAX":
                         this.kspVersionMax = GetVersion(data[key]);
+                        break;
+                }
+            }
+        }
+
+        private void ParseKerbalStuff(string json)
+        {
+            var data = Json.Deserialize(json) as Dictionary<string, object>;
+            if (data == null)
+            {
+                this.ParseError = true;
+                return;
+            }
+
+            this.Name = (string)data["name"];
+        }
+
+        private void ParseKerbalStuffVersion(Dictionary<string, object> data)
+        {
+            foreach (var key in data.Keys)
+            {
+                switch (key.ToUpper())
+                {
+                    case "FRIENDLY_VERSION":
+                        this.Version = GetVersion(data[key]);
+                        break;
+
+                    case "KSP_VERSION":
+                        this.kspVersion = GetVersion(data[key]);
                         break;
                 }
             }
