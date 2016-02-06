@@ -101,15 +101,20 @@ namespace KSP_AVC
 
         private void FetchRemoteInfo()
         {
+			const float timeoutSeconds = 10.0f;
+			float startTime = Time.time;
+			float currentTime = startTime;
+
             if (String.IsNullOrEmpty(this.LocalInfo.KerbalStuffUrl))
             {
-                using (var www = new WWW(this.LocalInfo.Url))
+				using (var www = new WWW(this.LocalInfo.Url))
                 {
-                    while (!www.isDone)
+					while ((!www.isDone) && ((currentTime - startTime) < timeoutSeconds))
                     {
                         Thread.Sleep(100);
+						currentTime = Time.time;
                     }
-                    if (www.error == null)
+					if ((www.error == null) && ((currentTime - startTime) < timeoutSeconds))
                     {
                         this.SetRemoteAvcInfo(www);
                     }
@@ -123,11 +128,12 @@ namespace KSP_AVC
             {
                 using (var www = new WWW(this.LocalInfo.KerbalStuffUrl))
                 {
-                    while (!www.isDone)
+					while ((!www.isDone) && ((currentTime - startTime) < timeoutSeconds))
                     {
                         Thread.Sleep(100);
+						currentTime = Time.time;
                     }
-                    if (www.error == null)
+					if ((www.error == null) && ((currentTime - startTime) < timeoutSeconds))
                     {
                         this.SetRemoteKerbalStuffInfo(www);
                     }
