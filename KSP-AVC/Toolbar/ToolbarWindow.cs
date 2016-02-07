@@ -208,7 +208,7 @@ namespace KSP_AVC.Toolbar
             {
                 normal =
                 {
-					background = GameDatabase.Instance.GetTexture("OverlayBackground.png",true)
+                    background = Utils.GetTexture("OverlayBackground.png", 400, 100)
                 },
                 border = new RectOffset(3, 3, 20, 3),
                 padding = new RectOffset(10, 10, 23, 5)
