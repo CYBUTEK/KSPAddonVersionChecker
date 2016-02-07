@@ -24,7 +24,7 @@ using System.Runtime.InteropServices;
 
 [assembly: AssemblyTitle("KSP-AVC")]
 [assembly: AssemblyProduct("KSP-AVC")]
-[assembly: AssemblyCopyright("Copyright © 2014 CYBUTEK")]
+[assembly: AssemblyCopyright("Copyright © 2015 CYBUTEK")]
 [assembly: ComVisible(false)]
 [assembly: Guid("be1fd3ec-c1ba-47ec-9e16-f83da6fe87d5")]
-[assembly: AssemblyVersion("1.1.5")]
+[assembly: AssemblyVersion("1.1.6")]
