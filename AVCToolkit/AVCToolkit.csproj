@@ -61,8 +61,7 @@
         $(PostBuildEventDependsOn);
         PostBuildMacros;
       </PostBuildEventDependsOn>
-    <PostBuildEvent>xcopy "$(SolutionDir)Output\AVCToolkit\*" "$(SolutionDir)Game\GameData\AVCToolkit\*" /E /Y
-del "$(SolutionDir)Release\AVCToolkit\*" /Q
+    <PostBuildEvent>del "$(SolutionDir)Release\AVCToolkit\*" /Q
 xcopy "$(SolutionDir)Documents\AVCToolkit\*" "$(SolutionDir)Release\AVCToolkit\Documents\*" /E /Y
 7z.exe a -tzip -mx3 "$(SolutionDir)Release\AVCToolkit\$(ProjectName)-@(VersionNumber).zip" "$(SolutionDir)Output\AVCToolkit"
 7z.exe a -tzip -mx3 "$(SolutionDir)Release\AVCToolkit\$(ProjectName)-@(VersionNumber).zip" "$(SolutionDir)Documents\AVCToolkit\*"</PostBuildEvent>

@@ -54,7 +54,7 @@
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Assembly-CSharp">
-      <HintPath>..\Game\KSP_Data\Managed\Assembly-CSharp.dll</HintPath>
+      <HintPath>..\..\Game\KSP_Data\Managed\Assembly-CSharp.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="System">
@@ -66,7 +66,7 @@
       <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine">
-      <HintPath>..\Game\KSP_Data\Managed\UnityEngine.dll</HintPath>
+      <HintPath>..\..\Game\KSP_Data\Managed\UnityEngine.dll</HintPath>
       <Private>False</Private>
     </Reference>
   </ItemGroup>
@@ -85,7 +85,7 @@
         $(PostBuildEventDependsOn);
         PostBuildMacros;
       </PostBuildEventDependsOn>
-    <PostBuildEvent>xcopy "$(SolutionDir)Output\KSP-AVC\*" "$(SolutionDir)Game\GameData\KSP-AVC\*" /E /Y
+    <PostBuildEvent>xcopy "$(SolutionDir)Output\KSP-AVC\*" "$(SolutionDir)..\Game\GameData\KSP-AVC\*" /E /Y
 del "$(SolutionDir)Release\KSP-AVC\*" /Q
 xcopy "$(SolutionDir)Documents\KSP-AVC\*" "$(SolutionDir)Release\KSP-AVC\Documents\*" /E /Y
 7z.exe a -tzip -mx3 "$(SolutionDir)Release\KSP-AVC\$(ProjectName)-@(VersionNumber).zip" "$(SolutionDir)Output\KSP-AVC"
