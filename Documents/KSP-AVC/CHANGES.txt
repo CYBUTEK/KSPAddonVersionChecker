@@ -1,4 +1,6 @@
-1.1.5.1
+1.1.6.0
+    Built on KSP Experimental 1.1.0.1171
+    Added: 10-second timeout on invalid URLs.
     Added: DevHelper GUI avoidence.
     
 1.1.5.0

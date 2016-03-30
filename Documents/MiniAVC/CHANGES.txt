@@ -1,3 +1,6 @@
+1.0.3.1
+    Built on KSP Experimental 1.1.0.1171
+
 1.0.3.0
     Added: Remote version files take priority when local/remote add-on versions are the same.
     Added: 'Any' type versions are now fully supported.
