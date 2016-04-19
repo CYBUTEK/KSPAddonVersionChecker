@@ -1,3 +1,6 @@
+1.1.6.1
+    Build on KSP 1.1.0.1230
+
 1.1.6.0
     Built on KSP Experimental 1.1.0.1171
     Added: 10-second timeout on invalid URLs.

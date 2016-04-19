@@ -1,3 +1,6 @@
+1.0.3.2
+    Built on KSP 1.1.0.1230
+
 1.0.3.1
     Built on KSP Experimental 1.1.0.1171
 
