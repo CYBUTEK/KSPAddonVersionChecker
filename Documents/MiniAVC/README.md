@@ -138,6 +138,7 @@ For simple management of your version files you can use the KSP-AVC Online websi
         "PATCH":2
     }
 }
+```
 
 ## Changelog
 
@@ -145,4 +146,4 @@ See [CHANGES.txt](CHANGES.txt)
 
 ## Software License
 
-Licensed under the [GNU General Public License v3](./LICENSE.txt).
+Licensed under the [GNU General Public License v3](LICENSE.txt).
