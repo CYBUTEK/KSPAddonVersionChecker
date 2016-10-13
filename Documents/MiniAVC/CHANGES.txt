@@ -1,3 +1,7 @@
+1.0.3.3
+    Build on KSP 1.2.0.1586
+    Fixed: URLs are escaped before being processed.
+
 1.0.3.2
     Built on KSP 1.1.0.1230
 
