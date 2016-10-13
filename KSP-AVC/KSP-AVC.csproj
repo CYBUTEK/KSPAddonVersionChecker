@@ -54,23 +54,19 @@
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Assembly-CSharp">
-      <HintPath>..\..\Game\KSP_Data\Managed\Assembly-CSharp.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="KSPUtil">
-      <HintPath>..\..\game\KSP_Data\Managed\KSPUtil.dll</HintPath>
+      <HintPath>..\..\Game\KSP_x64_Data\Managed\Assembly-CSharp.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="System">
-      <HintPath>..\Game\KSP_Data\Managed\System.dll</HintPath>
+      <HintPath>..\..\Game\KSP_x64_Data\Managed\System.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="System.Xml">
-      <HintPath>..\Game\KSP_Data\Managed\System.Xml.dll</HintPath>
+      <HintPath>..\..\Game\KSP_x64_Data\Managed\System.Xml.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="UnityEngine">
-      <HintPath>..\..\Game\KSP_Data\Managed\UnityEngine.dll</HintPath>
+      <HintPath>..\..\Game\KSP_x64_Data\Managed\UnityEngine.dll</HintPath>
       <Private>False</Private>
     </Reference>
   </ItemGroup>

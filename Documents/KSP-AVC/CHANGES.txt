@@ -1,3 +1,8 @@
+1.1.6.2
+    Build on KSP 1.2.0.1586
+    Fixed: URLs are escaped before being processed.
+    Fixed: UI is destroyed upon entering the Space Centre. This mitigates issues that may cause the progress window to remain visible indefinitely.
+
 1.1.6.1
     Build on KSP 1.1.0.1230
 
