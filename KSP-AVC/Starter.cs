@@ -98,6 +98,11 @@ namespace KSP_AVC
 
         protected void Update()
         {
+            if (HighLogic.LoadedScene == GameScenes.SPACECENTER)
+            {
+                Destroy(gameObject);
+            }
+
             try
             {
                 if (this.firstRunGui != null)
