@@ -105,7 +105,7 @@ namespace KSP_AVC
 			float startTime = Time.time;
 			float currentTime = startTime;
 
-            if (String.IsNullOrEmpty(this.LocalInfo.KerbalStuffUrl))
+            if (string.IsNullOrEmpty(this.LocalInfo.Url) == false)
             {
 				using (var www = new WWW(this.LocalInfo.Url))
                 {
@@ -126,22 +126,7 @@ namespace KSP_AVC
             }
             else
             {
-                using (var www = new WWW(this.LocalInfo.KerbalStuffUrl))
-                {
-					while ((!www.isDone) && ((currentTime - startTime) < timeoutSeconds))
-                    {
-                        Thread.Sleep(100);
-						currentTime = Time.time;
-                    }
-					if ((www.error == null) && ((currentTime - startTime) < timeoutSeconds))
-                    {
-                        this.SetRemoteKerbalStuffInfo(www);
-                    }
-                    else
-                    {
-                        this.SetLocalInfoOnly();
-                    }
-                }
+                this.SetLocalInfoOnly();
             }
         }
 
