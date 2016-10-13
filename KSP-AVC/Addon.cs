@@ -107,7 +107,7 @@ namespace KSP_AVC
 
             if (string.IsNullOrEmpty(this.LocalInfo.Url) == false)
             {
-				using (var www = new WWW(this.LocalInfo.Url))
+				using (var www = new WWW(Uri.EscapeUriString(this.LocalInfo.Url)))
                 {
 					while ((!www.isDone) && ((currentTime - startTime) < timeoutSeconds))
                     {

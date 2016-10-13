@@ -113,7 +113,7 @@ namespace MiniAVC
 
         private void FetchRemoteInfo()
         {
-            using (var www = new WWW(this.LocalInfo.Url))
+            using (var www = new WWW(Uri.EscapeUriString(this.LocalInfo.Url)))
             {
                 while (!www.isDone)
                 {
