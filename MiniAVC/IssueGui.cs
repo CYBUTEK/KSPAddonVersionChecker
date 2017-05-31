@@ -1,34 +1,24 @@
-﻿// 
-//     Copyright (C) 2014 CYBUTEK
-// 
-//     This program is free software: you can redistribute it and/or modify
-//     it under the terms of the GNU General Public License as published by
-//     the Free Software Foundation, either version 3 of the License, or
-//     (at your option) any later version.
-// 
-//     This program is distributed in the hope that it will be useful,
-//     but WITHOUT ANY WARRANTY; without even the implied warranty of
-//     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-//     GNU General Public License for more details.
-// 
-//     You should have received a copy of the GNU General Public License
-//     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-// 
-
-#region Using Directives
+﻿// Copyright (C) 2014 CYBUTEK
+//
+// This program is free software: you can redistribute it and/or modify it under the terms of the GNU
+// General Public License as published by the Free Software Foundation, either version 3 of the
+// License, or (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+// even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+// General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License along with this program. If not,
+// see <http://www.gnu.org/licenses/>.
 
 using System;
 
 using UnityEngine;
 
-#endregion
-
 namespace MiniAVC
 {
     public class IssueGui : MonoBehaviour
     {
-        #region Fields
-
         private GUIStyle buttonStyle;
         private bool hasCentred;
         private GUIStyle labelStyle;
@@ -36,15 +26,7 @@ namespace MiniAVC
         private GUIStyle titleStyle;
         private ToolTipGui toolTipGui;
 
-        #endregion
-
-        #region Properties
-
         public Addon Addon { get; set; }
-
-        #endregion
-
-        #region Methods: protected
 
         protected void Awake()
         {
@@ -68,8 +50,8 @@ namespace MiniAVC
         {
             try
             {
-                this.position = GUILayout.Window(this.GetInstanceID(), this.position, this.Window, this.Addon.Name, HighLogic.Skin.window);
-                this.CentreWindow();
+                position = GUILayout.Window(GetInstanceID(), position, Window, Addon.Name, HighLogic.Skin.window);
+                CentreWindow();
             }
             catch (Exception ex)
             {
@@ -81,7 +63,7 @@ namespace MiniAVC
         {
             try
             {
-                this.InitialiseStyles();
+                InitialiseStyles();
             }
             catch (Exception ex)
             {
@@ -89,71 +71,67 @@ namespace MiniAVC
             }
         }
 
-        #endregion
-
-        #region Methods: private
-
         private void CentreWindow()
         {
-            if (this.hasCentred || !(this.position.width > 0) || !(this.position.height > 0))
+            if (hasCentred || !(position.width > 0) || !(position.height > 0))
             {
                 return;
             }
-            this.position.center = new Vector2(Screen.width * 0.5f, Screen.height * 0.5f);
-            this.hasCentred = true;
+            position.center = new Vector2(Screen.width * 0.5f, Screen.height * 0.5f);
+            hasCentred = true;
         }
 
         private void DrawDownloadButton()
         {
-            if (String.IsNullOrEmpty(this.Addon.RemoteInfo.Download))
+            if (String.IsNullOrEmpty(Addon.RemoteInfo.Download))
             {
                 return;
             }
 
-            if (GUILayout.Button("DOWNLOAD", this.buttonStyle))
+            if (GUILayout.Button("DOWNLOAD", buttonStyle))
             {
-                Application.OpenURL(this.Addon.RemoteInfo.Download);
+                Application.OpenURL(Addon.RemoteInfo.Download);
             }
 
-            if (this.toolTipGui == null)
+            if (toolTipGui == null)
             {
-                this.toolTipGui = this.gameObject.AddComponent<ToolTipGui>();
+                toolTipGui = gameObject.AddComponent<ToolTipGui>();
             }
-            this.toolTipGui.Text = GUILayoutUtility.GetLastRect().Contains(Event.current.mousePosition) ? this.Addon.RemoteInfo.Download : String.Empty;
+            toolTipGui.Text = GUILayoutUtility.GetLastRect().Contains(Event.current.mousePosition) ? Addon.RemoteInfo.Download : String.Empty;
         }
 
         private void DrawNotCompatible()
         {
-            if (this.Addon.IsCompatible)
+            if (Addon.IsCompatible)
             {
                 return;
             }
 
             GUILayout.BeginVertical(HighLogic.Skin.box);
-            GUILayout.Label("Unsupported KSP version... Please use " + this.Addon.LocalInfo.KspVersion, this.titleStyle, GUILayout.Width(300.0f));
+            GUILayout.Label($"Unsupported by KSP v{VersioningBase.GetVersionString()} please use v{Addon.LocalInfo.KspVersion}", titleStyle, GUILayout.Width(300.0f));
             GUILayout.EndVertical();
         }
 
         private void DrawUpdateAvailable()
         {
-            if (!this.Addon.IsUpdateAvailable)
+            if (!Addon.IsUpdateAvailable)
             {
                 return;
             }
 
             GUILayout.BeginVertical(HighLogic.Skin.box);
-            GUILayout.Label("AN UPDATE IS AVAILABLE", this.titleStyle);
+            GUILayout.Label("AN UPDATE IS AVAILABLE", titleStyle);
             GUILayout.BeginHorizontal();
-            GUILayout.Label("Installed: " + this.Addon.LocalInfo.Version, this.labelStyle, GUILayout.Width(150.0f));
-            GUILayout.Label("Available: " + this.Addon.RemoteInfo.Version, this.labelStyle, GUILayout.Width(150.0f));
+            GUILayout.Label("Installed: " + Addon.LocalInfo.Version, labelStyle, GUILayout.Width(150.0f));
+            GUILayout.Label("Available: " + Addon.RemoteInfo.Version, labelStyle, GUILayout.Width(150.0f));
             GUILayout.EndHorizontal();
-            this.DrawDownloadButton();
+            DrawDownloadButton();
             GUILayout.EndVertical();
         }
 
         private void InitialiseStyles()
         {
-            this.titleStyle = new GUIStyle(HighLogic.Skin.label)
+            titleStyle = new GUIStyle(HighLogic.Skin.label)
             {
                 normal =
                 {
@@ -165,14 +143,14 @@ namespace MiniAVC
                 stretchWidth = true
             };
 
-            this.labelStyle = new GUIStyle(HighLogic.Skin.label)
+            labelStyle = new GUIStyle(HighLogic.Skin.label)
             {
                 fontSize = 13,
                 alignment = TextAnchor.MiddleCenter,
                 stretchWidth = true
             };
 
-            this.buttonStyle = new GUIStyle(HighLogic.Skin.button)
+            buttonStyle = new GUIStyle(HighLogic.Skin.button)
             {
                 normal =
                 {
@@ -185,10 +163,10 @@ namespace MiniAVC
         {
             try
             {
-                this.DrawUpdateAvailable();
-                this.DrawNotCompatible();
+                DrawUpdateAvailable();
+                DrawNotCompatible();
 
-                if (GUILayout.Button("CLOSE", this.buttonStyle))
+                if (GUILayout.Button("CLOSE", buttonStyle))
                 {
                     Destroy(this);
                 }
@@ -200,7 +178,5 @@ namespace MiniAVC
                 Logger.Exception(ex);
             }
         }
-
-        #endregion
     }
 }
