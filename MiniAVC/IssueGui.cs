@@ -88,7 +88,7 @@ namespace MiniAVC
                 return;
             }
 
-            if (GUILayout.Button("DOWNLOAD", buttonStyle))
+            if (GUILayout.Button("UPDATE", buttonStyle))
             {
                 Application.OpenURL(Addon.RemoteInfo.Download);
             }
@@ -108,7 +108,7 @@ namespace MiniAVC
             }
 
             GUILayout.BeginVertical(HighLogic.Skin.box);
-            GUILayout.Label($"Unsupported by KSP v{VersioningBase.GetVersionString()} please use v{Addon.LocalInfo.KspVersion}", titleStyle, GUILayout.Width(300.0f));
+            GUILayout.Label($"Unsupported by KSP v{VersioningBase.GetVersionString()}, please use v{Addon.LocalInfo.KspVersion}.", titleStyle, GUILayout.Width(400.0f));
             GUILayout.EndVertical();
         }
 
@@ -122,8 +122,10 @@ namespace MiniAVC
             GUILayout.BeginVertical(HighLogic.Skin.box);
             GUILayout.Label("AN UPDATE IS AVAILABLE", titleStyle);
             GUILayout.BeginHorizontal();
+            GUILayout.FlexibleSpace();
             GUILayout.Label("Installed: " + Addon.LocalInfo.Version, labelStyle, GUILayout.Width(150.0f));
             GUILayout.Label("Available: " + Addon.RemoteInfo.Version, labelStyle, GUILayout.Width(150.0f));
+            GUILayout.FlexibleSpace();
             GUILayout.EndHorizontal();
             DrawDownloadButton();
             GUILayout.EndVertical();
@@ -166,10 +168,16 @@ namespace MiniAVC
                 DrawUpdateAvailable();
                 DrawNotCompatible();
 
-                if (GUILayout.Button("CLOSE", buttonStyle))
+                GUILayout.BeginHorizontal();
+                if (GUILayout.Button("REMIND ME LATER", buttonStyle))
                 {
                     Destroy(this);
                 }
+                if (GUILayout.Button("IGNORE THIS UPDATE", buttonStyle, GUILayout.Width(175f)))
+                {
+                    Destroy(this);
+                }
+                GUILayout.EndHorizontal();
 
                 GUI.DragWindow();
             }
