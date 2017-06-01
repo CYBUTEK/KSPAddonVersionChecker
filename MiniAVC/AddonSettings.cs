@@ -1,49 +1,33 @@
-﻿// 
-//     Copyright (C) 2014 CYBUTEK
-// 
-//     This program is free software: you can redistribute it and/or modify
-//     it under the terms of the GNU General Public License as published by
-//     the Free Software Foundation, either version 3 of the License, or
-//     (at your option) any later version.
-// 
-//     This program is distributed in the hope that it will be useful,
-//     but WITHOUT ANY WARRANTY; without even the implied warranty of
-//     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-//     GNU General Public License for more details.
-// 
-//     You should have received a copy of the GNU General Public License
-//     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-// 
+﻿// Copyright (C) 2014 CYBUTEK
+//
+// This program is free software: you can redistribute it and/or modify it under the terms of the GNU
+// General Public License as published by the Free Software Foundation, either version 3 of the
+// License, or (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+// even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+// General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License along with this program. If not,
+// see <http://www.gnu.org/licenses/>.
 
-#region Using Directives
-
+using System.Collections.Generic;
 using System.IO;
 using System.Xml.Serialization;
-
-#endregion
+using UnityEngine;
 
 namespace MiniAVC
 {
     public class AddonSettings
     {
-        #region Fields
-
         private bool firstRun = true;
-
-        #endregion
-
-        #region Constructors
 
         public AddonSettings() { }
 
         public AddonSettings(string fileName)
         {
-            this.FileName = fileName;
+            FileName = fileName;
         }
-
-        #endregion
-
-        #region Properties
 
         public bool AllowCheck { get; set; }
 
@@ -52,13 +36,11 @@ namespace MiniAVC
 
         public bool FirstRun
         {
-            get { return this.firstRun; }
-            set { this.firstRun = value; }
+            get { return firstRun; }
+            set { firstRun = value; }
         }
 
-        #endregion
-
-        #region Methods: public
+        public List<string> IgnoredUpdates { get; set; } = new List<string>();
 
         public static AddonSettings Load(string rootPath)
         {
@@ -81,13 +63,11 @@ namespace MiniAVC
 
         public void Save()
         {
-            using (var stream = new FileStream(this.FileName, FileMode.Create))
+            using (var stream = new FileStream(FileName, FileMode.Create))
             {
                 new XmlSerializer(typeof(AddonSettings)).Serialize(stream, this);
                 stream.Close();
             }
         }
-
-        #endregion
     }
 }

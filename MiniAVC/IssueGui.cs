@@ -175,6 +175,8 @@ namespace MiniAVC
                 }
                 if (GUILayout.Button("IGNORE THIS UPDATE", buttonStyle, GUILayout.Width(175f)))
                 {
+                    Addon.Settings.IgnoredUpdates.Add(Addon.Base64String);
+                    Addon.Settings.Save();
                     Destroy(this);
                 }
                 GUILayout.EndHorizontal();

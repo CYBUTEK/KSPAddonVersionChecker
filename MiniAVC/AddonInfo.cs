@@ -1,36 +1,28 @@
-﻿// 
-//     Copyright (C) 2014 CYBUTEK
-// 
-//     This program is free software: you can redistribute it and/or modify
-//     it under the terms of the GNU General Public License as published by
-//     the Free Software Foundation, either version 3 of the License, or
-//     (at your option) any later version.
-// 
-//     This program is distributed in the hope that it will be useful,
-//     but WITHOUT ANY WARRANTY; without even the implied warranty of
-//     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-//     GNU General Public License for more details.
-// 
-//     You should have received a copy of the GNU General Public License
-//     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-// 
-
-#region Using Directives
+﻿// Copyright (C) 2014 CYBUTEK
+//
+// This program is free software: you can redistribute it and/or modify it under the terms of the GNU
+// General Public License as published by the Free Software Foundation, either version 3 of the
+// License, or (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+// even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+// General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License along with this program. If not,
+// see <http://www.gnu.org/licenses/>.
 
 using System;
 using System.Collections.Generic;
+using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading;
 
 using UnityEngine;
-
-#endregion
 
 namespace MiniAVC
 {
     public class AddonInfo
     {
-        #region Fields
-
         private static readonly VersionInfo actualKspVersion;
 
         private readonly string path;
@@ -39,44 +31,39 @@ namespace MiniAVC
         private VersionInfo kspVersionMax;
         private VersionInfo kspVersionMin;
 
-        #endregion
-
-        #region Constructors
+        static AddonInfo()
+        {
+            actualKspVersion = new VersionInfo(Versioning.version_major, Versioning.version_minor, Versioning.Revision);
+        }
 
         public AddonInfo(string path, string json)
         {
             try
             {
                 this.path = path;
-                this.Parse(json);
+                Base64String = Regex.Replace(Convert.ToBase64String(Encoding.ASCII.GetBytes(json)), @"\s+", string.Empty); ;
+                Parse(json);
             }
             catch
             {
-                this.ParseError = true;
+                ParseError = true;
                 throw;
             }
             finally
             {
-                if (this.ParseError)
+                if (ParseError)
                 {
                     Logger.Log("Version file contains errors: " + path);
                 }
             }
         }
 
-        static AddonInfo()
-        {
-            actualKspVersion = new VersionInfo(Versioning.version_major, Versioning.version_minor, Versioning.Revision);
-        }
-
-        #endregion
-
-        #region Properties
-
         public static VersionInfo ActualKspVersion
         {
             get { return actualKspVersion; }
         }
+
+        public string Base64String { get; private set; } = string.Empty;
 
         public string Download { get; private set; }
 
@@ -84,42 +71,42 @@ namespace MiniAVC
 
         public bool IsCompatible
         {
-            get { return this.IsCompatibleKspVersion || ((this.kspVersionMin != null || this.kspVersionMax != null) && this.IsCompatibleKspVersionMin && this.IsCompatibleKspVersionMax); }
+            get { return IsCompatibleKspVersion || ((kspVersionMin != null || kspVersionMax != null) && IsCompatibleKspVersionMin && IsCompatibleKspVersionMax); }
         }
 
         public bool IsCompatibleGitHubVersion
         {
-            get { return this.GitHub == null || this.GitHub.Version == null || this.Version == this.GitHub.Version; }
+            get { return GitHub == null || GitHub.Version == null || Version == GitHub.Version; }
         }
 
         public bool IsCompatibleKspVersion
         {
-            get { return Equals(this.KspVersion, actualKspVersion); }
+            get { return Equals(KspVersion, actualKspVersion); }
         }
 
         public bool IsCompatibleKspVersionMax
         {
-            get { return this.KspVersionMax >= actualKspVersion; }
+            get { return KspVersionMax >= actualKspVersion; }
         }
 
         public bool IsCompatibleKspVersionMin
         {
-            get { return this.KspVersionMin <= actualKspVersion; }
+            get { return KspVersionMin <= actualKspVersion; }
         }
 
         public VersionInfo KspVersion
         {
-            get { return (this.kspVersion ?? actualKspVersion); }
+            get { return (kspVersion ?? actualKspVersion); }
         }
 
         public VersionInfo KspVersionMax
         {
-            get { return (this.kspVersionMax ?? VersionInfo.MaxValue); }
+            get { return (kspVersionMax ?? VersionInfo.MaxValue); }
         }
 
         public VersionInfo KspVersionMin
         {
-            get { return (this.kspVersionMin ?? VersionInfo.MinValue); }
+            get { return (kspVersionMin ?? VersionInfo.MinValue); }
         }
 
         public string Name { get; private set; }
@@ -130,38 +117,30 @@ namespace MiniAVC
 
         public VersionInfo Version { get; private set; }
 
-        #endregion
-
-        #region Methods: public
-
         public void FetchRemoteData()
         {
-            if (this.GitHub != null)
+            if (GitHub != null)
             {
-                this.GitHub.FetchRemoteData();
+                GitHub.FetchRemoteData();
             }
         }
 
         public override string ToString()
         {
-            return this.path +
-                   "\n\tNAME: " + (String.IsNullOrEmpty(this.Name) ? "NULL (required)" : this.Name) +
-                   "\n\tURL: " + (String.IsNullOrEmpty(this.Url) ? "NULL" : this.Url) +
-                   "\n\tDOWNLOAD: " + (String.IsNullOrEmpty(this.Download) ? "NULL" : this.Download) +
-                   "\n\tGITHUB: " + (this.GitHub != null ? this.GitHub.ToString() : "NULL") +
-                   "\n\tVERSION: " + (this.Version != null ? this.Version.ToString() : "NULL (required)") +
-                   "\n\tKSP_VERSION: " + this.KspVersion +
-                   "\n\tKSP_VERSION_MIN: " + (this.kspVersionMin != null ? this.kspVersionMin.ToString() : "NULL") +
-                   "\n\tKSP_VERSION_MAX: " + (this.kspVersionMax != null ? this.kspVersionMax.ToString() : "NULL") +
-                   "\n\tCompatibleKspVersion: " + this.IsCompatibleKspVersion +
-                   "\n\tCompatibleKspVersionMin: " + this.IsCompatibleKspVersionMin +
-                   "\n\tCompatibleKspVersionMax: " + this.IsCompatibleKspVersionMax +
-                   "\n\tCompatibleGitHubVersion: " + this.IsCompatibleGitHubVersion;
+            return path +
+                   "\n\tNAME: " + (String.IsNullOrEmpty(Name) ? "NULL (required)" : Name) +
+                   "\n\tURL: " + (String.IsNullOrEmpty(Url) ? "NULL" : Url) +
+                   "\n\tDOWNLOAD: " + (String.IsNullOrEmpty(Download) ? "NULL" : Download) +
+                   "\n\tGITHUB: " + (GitHub != null ? GitHub.ToString() : "NULL") +
+                   "\n\tVERSION: " + (Version != null ? Version.ToString() : "NULL (required)") +
+                   "\n\tKSP_VERSION: " + KspVersion +
+                   "\n\tKSP_VERSION_MIN: " + (kspVersionMin != null ? kspVersionMin.ToString() : "NULL") +
+                   "\n\tKSP_VERSION_MAX: " + (kspVersionMax != null ? kspVersionMax.ToString() : "NULL") +
+                   "\n\tCompatibleKspVersion: " + IsCompatibleKspVersion +
+                   "\n\tCompatibleKspVersionMin: " + IsCompatibleKspVersionMin +
+                   "\n\tCompatibleKspVersionMax: " + IsCompatibleKspVersionMax +
+                   "\n\tCompatibleGitHubVersion: " + IsCompatibleGitHubVersion;
         }
-
-        #endregion
-
-        #region Methods: private
 
         private static string FormatCompatibleUrl(string url)
         {
@@ -216,10 +195,10 @@ namespace MiniAVC
 
         private void Parse(string json)
         {
-            var data = Json.Deserialize(json) as Dictionary<string, object>;
+            var data = MiniAVC.Json.Deserialize(json) as Dictionary<string, object>;
             if (data == null)
             {
-                this.ParseError = true;
+                ParseError = true;
                 return;
             }
             foreach (var key in data.Keys)
@@ -227,63 +206,49 @@ namespace MiniAVC
                 switch (key.ToUpper())
                 {
                     case "NAME":
-                        this.Name = (string)data[key];
+                        Name = (string)data[key];
                         break;
 
                     case "URL":
-                        this.Url = FormatCompatibleUrl((string)data[key]);
+                        Url = FormatCompatibleUrl((string)data[key]);
                         break;
 
                     case "DOWNLOAD":
-                        this.Download = (string)data[key];
+                        Download = (string)data[key];
                         break;
 
                     case "GITHUB":
-                        this.GitHub = new GitHubInfo(data[key], this);
+                        GitHub = new GitHubInfo(data[key], this);
                         break;
 
                     case "VERSION":
-                        this.Version = GetVersion(data[key]);
+                        Version = GetVersion(data[key]);
                         break;
 
                     case "KSP_VERSION":
-                        this.kspVersion = GetVersion(data[key]);
+                        kspVersion = GetVersion(data[key]);
                         break;
 
                     case "KSP_VERSION_MIN":
-                        this.kspVersionMin = GetVersion(data[key]);
+                        kspVersionMin = GetVersion(data[key]);
                         break;
 
                     case "KSP_VERSION_MAX":
-                        this.kspVersionMax = GetVersion(data[key]);
+                        kspVersionMax = GetVersion(data[key]);
                         break;
                 }
             }
         }
 
-        #endregion
-
-        #region Nested Type: GitHubInfo
-
         public class GitHubInfo
         {
-            #region Fields
-
             private readonly AddonInfo addonInfo;
-
-            #endregion
-
-            #region Constructors
 
             public GitHubInfo(object obj, AddonInfo addonInfo)
             {
                 this.addonInfo = addonInfo;
-                this.ParseJson(obj);
+                ParseJson(obj);
             }
-
-            #endregion
-
-            #region Properties
 
             public bool AllowPreRelease { get; private set; }
 
@@ -297,15 +262,11 @@ namespace MiniAVC
 
             public VersionInfo Version { get; private set; }
 
-            #endregion
-
-            #region Methods: public
-
             public void FetchRemoteData()
             {
                 try
                 {
-                    using (var www = new WWW("https://api.github.com/repos/" + this.Username + "/" + this.Repository + "/releases"))
+                    using (var www = new WWW("https://api.github.com/repos/" + Username + "/" + Repository + "/releases"))
                     {
                         while (!www.isDone)
                         {
@@ -313,7 +274,7 @@ namespace MiniAVC
                         }
                         if (www.error == null)
                         {
-                            this.ParseGitHubJson(www.text);
+                            ParseGitHubJson(www.text);
                         }
                     }
                 }
@@ -325,29 +286,25 @@ namespace MiniAVC
 
             public override string ToString()
             {
-                return this.Username + "/" + this.Repository +
-                       "\n\t\tLatestRelease: " + (this.Version != null ? this.Version.ToString() : "NULL") +
-                       "\n\t\tAllowPreRelease: " + this.AllowPreRelease;
+                return Username + "/" + Repository +
+                       "\n\t\tLatestRelease: " + (Version != null ? Version.ToString() : "NULL") +
+                       "\n\t\tAllowPreRelease: " + AllowPreRelease;
             }
-
-            #endregion
-
-            #region Methods: private
 
             private void ParseGitHubJson(string json)
             {
                 try
                 {
-                    var obj = Json.Deserialize(json) as List<object>;
+                    var obj = MiniAVC.Json.Deserialize(json) as List<object>;
                     if (obj == null || obj.Count == 0)
                     {
-                        this.ParseError = true;
+                        ParseError = true;
                         return;
                     }
 
                     foreach (Dictionary<string, object> data in obj)
                     {
-                        if (!this.AllowPreRelease && (bool)data["prerelease"])
+                        if (!AllowPreRelease && (bool)data["prerelease"])
                         {
                             continue;
                         }
@@ -355,17 +312,17 @@ namespace MiniAVC
                         var tag = (string)data["tag_name"];
                         var version = GetVersion(data["tag_name"]);
 
-                        if (version == null || version <= this.Version)
+                        if (version == null || version <= Version)
                         {
                             continue;
                         }
 
-                        this.Version = version;
-                        this.Tag = tag;
+                        Version = version;
+                        Tag = tag;
 
-                        if (String.IsNullOrEmpty(this.addonInfo.Download))
+                        if (String.IsNullOrEmpty(addonInfo.Download))
                         {
-                            this.addonInfo.Download = "https://github.com/" + this.Username + "/" + this.Repository + "/releases/tag/" + this.Tag;
+                            addonInfo.Download = "https://github.com/" + Username + "/" + Repository + "/releases/tag/" + Tag;
                         }
                     }
                 }
@@ -380,7 +337,7 @@ namespace MiniAVC
                 var data = obj as Dictionary<string, object>;
                 if (data == null)
                 {
-                    this.ParseError = true;
+                    ParseError = true;
                     return;
                 }
 
@@ -389,23 +346,19 @@ namespace MiniAVC
                     switch (key)
                     {
                         case "USERNAME":
-                            this.Username = (string)data[key];
+                            Username = (string)data[key];
                             break;
 
                         case "REPOSITORY":
-                            this.Repository = (string)data[key];
+                            Repository = (string)data[key];
                             break;
 
                         case "ALLOW_PRE_RELEASE":
-                            this.AllowPreRelease = (bool)data[key];
+                            AllowPreRelease = (bool)data[key];
                             break;
                     }
                 }
             }
-
-            #endregion
         }
-
-        #endregion
     }
 }

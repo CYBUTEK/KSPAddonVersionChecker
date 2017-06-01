@@ -1,57 +1,54 @@
-﻿// 
-//     Copyright (C) 2014 CYBUTEK
-// 
-//     This program is free software: you can redistribute it and/or modify
-//     it under the terms of the GNU General Public License as published by
-//     the Free Software Foundation, either version 3 of the License, or
-//     (at your option) any later version.
-// 
-//     This program is distributed in the hope that it will be useful,
-//     but WITHOUT ANY WARRANTY; without even the implied warranty of
-//     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-//     GNU General Public License for more details.
-// 
-//     You should have received a copy of the GNU General Public License
-//     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-// 
-
-#region Using Directives
+﻿// Copyright (C) 2014 CYBUTEK
+//
+// This program is free software: you can redistribute it and/or modify it under the terms of the GNU
+// General Public License as published by the Free Software Foundation, either version 3 of the
+// License, or (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
+// even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+// General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License along with this program. If not,
+// see <http://www.gnu.org/licenses/>.
 
 using System;
 using System.IO;
 using System.Threading;
-
 using UnityEngine;
-
-#endregion
 
 namespace MiniAVC
 {
     public class Addon
     {
-        #region Fields
-
         private readonly AddonSettings settings;
-
-        #endregion
-
-        #region Constructors
 
         public Addon(string path, AddonSettings settings)
         {
             this.settings = settings;
-            this.RunProcessLocalInfo(path);
+            RunProcessLocalInfo(path);
         }
 
-        #endregion
-
-        #region Properties
+        public string Base64String
+        {
+            get
+            {
+                return LocalInfo.Base64String + RemoteInfo.Base64String;
+            }
+        }
 
         public bool HasError { get; private set; }
 
         public bool IsCompatible
         {
-            get { return this.IsLocalReady && this.LocalInfo.IsCompatible; }
+            get { return IsLocalReady && LocalInfo.IsCompatible; }
+        }
+
+        public bool IsIgnored
+        {
+            get
+            {
+                return settings.IgnoredUpdates.Contains(Base64String);
+            }
         }
 
         public bool IsLocalReady { get; private set; }
@@ -62,58 +59,50 @@ namespace MiniAVC
 
         public bool IsUpdateAvailable
         {
-            get { return this.IsProcessingComplete && this.LocalInfo.Version != null && this.RemoteInfo.Version != null && this.RemoteInfo.Version > this.LocalInfo.Version && this.RemoteInfo.IsCompatibleKspVersion && this.RemoteInfo.IsCompatibleGitHubVersion; }
+            get { return IsProcessingComplete && LocalInfo.Version != null && RemoteInfo.Version != null && RemoteInfo.Version > LocalInfo.Version && RemoteInfo.IsCompatibleKspVersion && RemoteInfo.IsCompatibleGitHubVersion; }
         }
 
         public AddonInfo LocalInfo { get; private set; }
 
         public string Name
         {
-            get { return this.LocalInfo.Name; }
+            get { return LocalInfo.Name; }
         }
 
         public AddonInfo RemoteInfo { get; private set; }
 
         public AddonSettings Settings
         {
-            get { return this.settings; }
+            get { return settings; }
         }
-
-        #endregion
-
-        #region Methods: public
 
         public void RunProcessLocalInfo(string file)
         {
-            ThreadPool.QueueUserWorkItem(this.ProcessLocalInfo, file);
+            ThreadPool.QueueUserWorkItem(ProcessLocalInfo, file);
         }
 
         public void RunProcessRemoteInfo()
         {
-            ThreadPool.QueueUserWorkItem(this.ProcessRemoteInfo);
+            ThreadPool.QueueUserWorkItem(ProcessRemoteInfo);
         }
-
-        #endregion
-
-        #region Methods: private
 
         private void FetchLocalInfo(string path)
         {
             using (var stream = new StreamReader(File.OpenRead(path)))
             {
-                this.LocalInfo = new AddonInfo(path, stream.ReadToEnd());
-                this.IsLocalReady = true;
+                LocalInfo = new AddonInfo(path, stream.ReadToEnd());
+                IsLocalReady = true;
 
-                if (this.LocalInfo.ParseError)
+                if (LocalInfo.ParseError)
                 {
-                    this.SetHasError();
+                    SetHasError();
                 }
             }
         }
 
         private void FetchRemoteInfo()
         {
-            using (var www = new WWW(Uri.EscapeUriString(this.LocalInfo.Url)))
+            using (var www = new WWW(Uri.EscapeUriString(LocalInfo.Url)))
             {
                 while (!www.isDone)
                 {
@@ -121,11 +110,11 @@ namespace MiniAVC
                 }
                 if (www.error == null)
                 {
-                    this.SetRemoteInfo(www);
+                    SetRemoteInfo(www);
                 }
                 else
                 {
-                    this.SetLocalInfoOnly();
+                    SetLocalInfoOnly();
                 }
             }
         }
@@ -137,19 +126,19 @@ namespace MiniAVC
                 var path = (string)state;
                 if (File.Exists(path))
                 {
-                    this.FetchLocalInfo(path);
-                    this.RunProcessRemoteInfo();
+                    FetchLocalInfo(path);
+                    RunProcessRemoteInfo();
                 }
                 else
                 {
                     Logger.Log("File Not Found: " + path);
-                    this.SetHasError();
+                    SetHasError();
                 }
             }
             catch (Exception ex)
             {
                 Logger.Exception(ex);
-                this.SetHasError();
+                SetHasError();
             }
         }
 
@@ -157,64 +146,62 @@ namespace MiniAVC
         {
             try
             {
-                if (this.settings.FirstRun)
+                if (settings.FirstRun)
                 {
                     return;
                 }
 
-                if (!this.settings.AllowCheck || string.IsNullOrEmpty(this.LocalInfo.Url))
+                if (!settings.AllowCheck || string.IsNullOrEmpty(LocalInfo.Url))
                 {
-                    this.SetLocalInfoOnly();
+                    SetLocalInfoOnly();
                     return;
                 }
 
-                this.FetchRemoteInfo();
+                FetchRemoteInfo();
             }
             catch (Exception ex)
             {
                 Logger.Exception(ex);
-                this.SetLocalInfoOnly();
+                SetLocalInfoOnly();
             }
         }
 
         private void SetHasError()
         {
-            this.HasError = true;
-            this.IsProcessingComplete = true;
+            HasError = true;
+            IsProcessingComplete = true;
         }
 
         private void SetLocalInfoOnly()
         {
-            this.RemoteInfo = this.LocalInfo;
-            this.IsRemoteReady = true;
-            this.IsProcessingComplete = true;
-            Logger.Log(this.LocalInfo);
+            RemoteInfo = LocalInfo;
+            IsRemoteReady = true;
+            IsProcessingComplete = true;
+            Logger.Log(LocalInfo);
             Logger.Blank();
         }
 
         private void SetRemoteInfo(WWW www)
         {
-            this.RemoteInfo = new AddonInfo(this.LocalInfo.Url, www.text);
-            this.RemoteInfo.FetchRemoteData();
+            RemoteInfo = new AddonInfo(LocalInfo.Url, www.text);
+            RemoteInfo.FetchRemoteData();
 
-            if (this.LocalInfo.Version == this.RemoteInfo.Version)
+            if (LocalInfo.Version == RemoteInfo.Version)
             {
                 Logger.Log("Identical remote version found: Using remote version information only.");
-                Logger.Log(this.RemoteInfo);
+                Logger.Log(RemoteInfo);
                 Logger.Blank();
-                this.LocalInfo = this.RemoteInfo;
+                LocalInfo = RemoteInfo;
             }
             else
             {
-                Logger.Log(this.LocalInfo);
-                Logger.Log(this.RemoteInfo + "\n\tUpdateAvailable: " + this.IsUpdateAvailable);
+                Logger.Log(LocalInfo);
+                Logger.Log(RemoteInfo + "\n\tUpdateAvailable: " + IsUpdateAvailable);
                 Logger.Blank();
             }
 
-            this.IsRemoteReady = true;
-            this.IsProcessingComplete = true;
+            IsRemoteReady = true;
+            IsProcessingComplete = true;
         }
-
-        #endregion
     }
 }
