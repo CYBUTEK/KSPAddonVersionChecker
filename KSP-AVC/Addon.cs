@@ -55,7 +55,13 @@ namespace KSP_AVC
 
         public bool IsUpdateAvailable
         {
-            get { return this.IsProcessingComplete && this.LocalInfo.Version != null && this.RemoteInfo.Version != null && this.RemoteInfo.Version > this.LocalInfo.Version && this.RemoteInfo.IsCompatibleKspVersion && this.RemoteInfo.IsCompatibleGitHubVersion; }
+            get { return this.IsProcessingComplete && 
+                    this.LocalInfo.Version != null && 
+                    this.RemoteInfo.Version != null && 
+                    this.RemoteInfo.Version > this.LocalInfo.Version && 
+                    // this.RemoteInfo.IsCompatibleKspVersion && 
+                    this.RemoteInfo.IsCompatible &&
+                    this.RemoteInfo.IsCompatibleGitHubVersion; }
         }
 
         public AddonInfo LocalInfo { get; private set; }
