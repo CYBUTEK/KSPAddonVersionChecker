@@ -1,13 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2013
-VisualStudioVersion = 12.0.30110.0
+# Visual Studio 15
+VisualStudioVersion = 15.0.27428.2015
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KSP-AVC", "KSP-AVC\KSP-AVC.csproj", "{F745CC0C-B7A0-4EF2-BF5A-1D3F0C19202C}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MiniAVC", "MiniAVC\MiniAVC.csproj", "{F1351BAB-76F1-41DE-B01C-496163CB44D8}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AVCToolkit", "AVCToolkit\AVCToolkit.csproj", "{FD522EDB-A592-41C8-9342-C3629C18A6AD}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -23,12 +21,11 @@ Global
 		{F1351BAB-76F1-41DE-B01C-496163CB44D8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F1351BAB-76F1-41DE-B01C-496163CB44D8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F1351BAB-76F1-41DE-B01C-496163CB44D8}.Release|Any CPU.Build.0 = Release|Any CPU
-		{FD522EDB-A592-41C8-9342-C3629C18A6AD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{FD522EDB-A592-41C8-9342-C3629C18A6AD}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{FD522EDB-A592-41C8-9342-C3629C18A6AD}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{FD522EDB-A592-41C8-9342-C3629C18A6AD}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {2E4A6C1E-3FD6-448A-9441-8A631D0B15AA}
 	EndGlobalSection
 EndGlobal
