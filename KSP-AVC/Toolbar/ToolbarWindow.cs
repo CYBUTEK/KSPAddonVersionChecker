@@ -146,7 +146,7 @@ namespace KSP_AVC.Toolbar
 
             var textEditor = new TextEditor
             {
-                content = new GUIContent(copyText)
+                text = copyText
             };
             textEditor.SelectAll();
             textEditor.Copy();
