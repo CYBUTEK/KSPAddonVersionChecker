@@ -144,13 +144,11 @@ namespace KSP_AVC.Toolbar
                            " - OS: " + SystemInfo.operatingSystem +
                            this.addonList;
 
-            var textEditor = new TextEditor();
-#if false
+            var textEditor = new TextEditor
             {
-                content = new GUIContent(copyText)
+               text = copyText
             };
-#endif
-            textEditor.text = copyText;
+
             textEditor.SelectAll();
             textEditor.Copy();
         }

@@ -65,7 +65,7 @@ namespace KSP_AVC
             catch
             {
                 this.ParseError = true;
-                    this.AddParseErrorMsg = "Error parsing";
+                this.AddParseErrorMsg = "Error parsing";
                 throw;
             }
             finally
@@ -339,34 +339,41 @@ namespace KSP_AVC
                 }
             }
         }
-
+        VersionInfo zero = new VersionInfo();
         private void FixMissingMinMax()
         {
-            if (this.kspVersionMin != null || this.kspVersionMax != null)
+           
+
+            if (this.kspVersionMin != zero || this.kspVersionMax != zero)
             {
-                if (this.kspVersion != null && this.kspVersionMin == null)
+                Debug.Log("FixMissingMinMax before Name: " + this.Name + ", Min: " + this.kspVersionMin + ", Max: " + this.kspVersionMax);
+
+                if (this.kspVersion != zero && this.kspVersionMin == zero)
                     this.kspVersionMin = VersionInfo.Min(this.kspVersion, this.kspVersionMax);
                 else
                     this.kspVersionMin = VersionInfo.Min(this.kspVersionMin, this.kspVersionMax);
 
-                if (this.kspVersion != null && this.kspVersionMax == null)
+                if (this.kspVersion != zero && this.kspVersionMax == zero)
                     this.kspVersionMax = VersionInfo.Max(this.kspVersion, this.kspVersionMin);
                 else
                     this.kspVersionMax = VersionInfo.Max(this.kspVersionMin, this.kspVersionMax);
             }
 
-            if (this.kspVersion != null && this.kspVersionMin != null)
+            if (this.kspVersion != zero && this.kspVersionMin != zero)
             {
                 this.kspVersion = VersionInfo.Max(this.kspVersionMin, this.kspVersion);
             }
-            if (this.kspVersion != null && this.kspVersionMax != null)
+            if (this.kspVersion != zero && this.kspVersionMax != zero)
             {
                 this.kspVersion = VersionInfo.Min(this.kspVersionMax, this.kspVersion);
             }
+            Debug.Log("FixMissingMinMax  Name: " + this.Name + ", Min: " + this.kspVersionMin + ", Max: " + this.kspVersionMax);
         }
+
         private void ValidateKspMinMax()
         {
-            if (KspVersionMin != null && kspVersionMax != null &&  KspVersionMin > KspVersionMax)
+            Debug.Log("ValidateKspMinMax");
+            if (KspVersionMin != zero && kspVersionMax != zero &&  KspVersionMin > KspVersionMax)
             {
                 this.ParseError = true;
                 this.AddParseErrorMsg = "KSP_VERSION_MIN greater than KSP_VERSION_MAX";

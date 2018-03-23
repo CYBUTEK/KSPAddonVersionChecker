@@ -1,6 +1,6 @@
 {
     "NAME":"KspVersion, Update Available",
-    "URL":"https://raw.githubusercontent.com/linuxgurugamer/KSPAddonVersionChecker/master/TestCases/KspVersion.version",
+    "URL":"file://D:/Users/jbb/github/KSPAddonVersionChecker/TestCases/KspVersion.version",
     "VERSION":
     {
         "MAJOR":1,

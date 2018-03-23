@@ -181,7 +181,7 @@ namespace KSP_AVC
                 if (addon.LocalInfo.KspVersionMin == null || addon.LocalInfo.KspVersion == addon.LocalInfo.KspVersionMin)
                     built = " was built to run on KSP " + addon.LocalInfo.KspVersion;
                 else
-                    built = "was built to run on KSP versions " + addon.LocalInfo.KspVersionMin + " through " + addon.LocalInfo.KspVersionMax;
+                    built = " was built to run on KSP " + addon.LocalInfo.KspVersionMin + " - " + addon.LocalInfo.KspVersionMax;
                 GUILayout.Label("The currently installed version of " + addon.Name + built, this.messageStyle, GUILayout.MinWidth(575.0f));
             }
             GUILayout.EndVertical();

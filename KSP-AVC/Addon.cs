@@ -59,7 +59,7 @@ namespace KSP_AVC
                     this.LocalInfo.Version != null && 
                     this.RemoteInfo.Version != null && 
                     this.RemoteInfo.Version > this.LocalInfo.Version && 
-                    // this.RemoteInfo.IsCompatibleKspVersion && 
+                    this.RemoteInfo.IsCompatibleKspVersion && 
                     this.RemoteInfo.IsCompatible &&
                     this.RemoteInfo.IsCompatibleGitHubVersion; }
         }
@@ -199,6 +199,7 @@ namespace KSP_AVC
             this.RemoteInfo = new AddonInfo(this.LocalInfo.Url, www.text, AddonInfo.RemoteType.AVC);
             this.RemoteInfo.FetchRemoteData();
 
+#if false
             if (this.LocalInfo.Version == this.RemoteInfo.Version)
             {
                 Logger.Log("Identical remote version found: Using remote version information only.");
@@ -207,6 +208,7 @@ namespace KSP_AVC
                 this.LocalInfo = this.RemoteInfo;
             }
             else
+#endif
             {
                 Logger.Log("SetRemoteAvcInfo, LocalInfo", this.LocalInfo);
                 Logger.Log(this.RemoteInfo + "\n\tUpdateAvailable: " + this.IsUpdateAvailable);
@@ -239,6 +241,6 @@ namespace KSP_AVC
             this.IsProcessingComplete = true;
         }
 
-        #endregion
+#endregion
     }
 }
