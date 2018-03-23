@@ -170,7 +170,7 @@ namespace KSP_AVC
                 list.ToolTip.Text = GUILayoutUtility.GetLastRect().Contains(Event.current.mousePosition) ? list.ToolTip.Text = addon.RemoteInfo.Download : String.Empty;
             }
         }
-
+        VersionInfo zero = new VersionInfo();
         private void DrawCompatibilityIssues()
         {
             GUILayout.BeginVertical(this.boxStyle);
@@ -178,7 +178,7 @@ namespace KSP_AVC
             foreach (var addon in AddonLibrary.Addons.Where(a => !a.IsCompatible))
             {
                 string built = "";
-                if (addon.LocalInfo.KspVersionMin == null || addon.LocalInfo.KspVersion == addon.LocalInfo.KspVersionMin)
+                if (addon.LocalInfo.KspVersionMin == zero || addon.LocalInfo.KspVersion == addon.LocalInfo.KspVersionMin)
                     built = " was built to run on KSP " + addon.LocalInfo.KspVersion;
                 else
                     built = " was built to run on KSP " + addon.LocalInfo.KspVersionMin + " - " + addon.LocalInfo.KspVersionMax;

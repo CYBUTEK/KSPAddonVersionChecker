@@ -1,3 +1,4 @@
+1.1.6.5
 KSP-AVC/AddonInfo
 
 	Add code to ensure that the Min/max are both there, and that they override the KSPVersion if it is there
@@ -15,6 +16,8 @@ KSP-AVC/AddonInfo
 	Updated the "built for" message to be either a single version or a range of versions
 
 
+1.1.6.6
+	Fixed crazy numbers being shown when no min or max is specified
 
 Test Cases												
 For all the following, VERSION < remote VERSION.  The following cases  should all result in an update available message

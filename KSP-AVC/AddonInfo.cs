@@ -342,12 +342,8 @@ namespace KSP_AVC
         VersionInfo zero = new VersionInfo();
         private void FixMissingMinMax()
         {
-           
-
             if (this.kspVersionMin != zero || this.kspVersionMax != zero)
             {
-                Debug.Log("FixMissingMinMax before Name: " + this.Name + ", Min: " + this.kspVersionMin + ", Max: " + this.kspVersionMax);
-
                 if (this.kspVersion != zero && this.kspVersionMin == zero)
                     this.kspVersionMin = VersionInfo.Min(this.kspVersion, this.kspVersionMax);
                 else
@@ -363,16 +359,15 @@ namespace KSP_AVC
             {
                 this.kspVersion = VersionInfo.Max(this.kspVersionMin, this.kspVersion);
             }
+
             if (this.kspVersion != zero && this.kspVersionMax != zero)
             {
                 this.kspVersion = VersionInfo.Min(this.kspVersionMax, this.kspVersion);
             }
-            Debug.Log("FixMissingMinMax  Name: " + this.Name + ", Min: " + this.kspVersionMin + ", Max: " + this.kspVersionMax);
         }
 
         private void ValidateKspMinMax()
         {
-            Debug.Log("ValidateKspMinMax");
             if (KspVersionMin != zero && kspVersionMax != zero &&  KspVersionMin > KspVersionMax)
             {
                 this.ParseError = true;
