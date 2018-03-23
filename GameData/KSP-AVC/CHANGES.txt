@@ -1,0 +1,91 @@
+1.1.6.2
+    Build on KSP 1.2.0.1586
+    Fixed: URLs are escaped before being processed.
+    Fixed: UI is destroyed upon entering the Space Centre. This mitigates issues that may cause the progress window to remain visible indefinitely.
+
+1.1.6.1
+    Build on KSP 1.1.0.1230
+
+1.1.6.0
+    Built on KSP Experimental 1.1.0.1171
+    Added: 10-second timeout on invalid URLs.
+    Added: DevHelper GUI avoidence.
+    
+1.1.5.0
+    Added: Remote version files take priority when local/remote add-on versions are the same.
+    Added: 'Any' type versions are now fully supported.
+    Added: Wildcards for version fields with '-1'.
+    Added: New informational toolbar to the top left of the screen, replacing the drop down button.
+    Added: Toolbar display's the number of installed add-ons that are KSP-AVC ready.
+    Added: Toolbar has a dynamic list that will allow scrolling when taller than half the game screen height.
+    Added: Toolbar has a 'Copy to Clipboard' button that will copy the list and environment information (KSP/Unity/OS) to the clipboard.
+
+1.1.4.3
+    Updated for KSP v0.25.0
+    Fixed: Typo in AddonInfo.ToString()
+    Fixed: Bug with empty version files which would cause the top drop down to not work.
+	
+1.1.4.2
+    Changed: Done a lot of under the hood refactoring.
+    Fixed: Bug that would freeze the computer when checking many add-ons.
+    Fixed: Bug that caused the compatibility display to show as a long thin window.
+
+1.1.4.1
+    Fixed: Log spam.
+    Fixed: Checking window staying open after displaying the first run / updated window.
+    
+1.1.4.0
+    Added: Drop down action menu support allowing for multiple actions per add-on.
+    Added: Change log support, allowing the player to view the add-on's change log.
+    Added: Drop down list showing all KSP-AVC ready add-ons on loading and main menu.
+    Changed: Versions will always have the minimum formatting of 'x.x'.
+    Fixed: Issue with non-RAW GitHub version file hosting, extending the url formatter.
+    Fixed: Bug where it would do a re-check when reloading the database.
+
+1.1.3.1
+    Fixed: Game breaking bug.
+
+1.1.3.0
+    Added: GitHub latest release checking.
+    Added: Version file reading is now case insensitive.
+    Fixed: Bug in version equality checking. (Now using a custom VersionInfo object).
+
+1.1.2.0
+    Added: Tooltip when hovering over the download button showing the destination URL.
+    Fixed: Certain situations would cause the root directory to be incorrect.
+    Fixed: File not found handling solving the lock whilst on the checking display.
+
+1.1.1.0
+    Added: Blanket exception handling and logging.
+    Added: Logger will flush on destruction and GC finaliser.
+    Added: Check to remove '/tree/' from github urls.
+    Changed: Remote checking back to WWW because WebRequest in Mono does not support TLS/SSL.
+    Changed: Version file search is now limited to just the GameData directory.
+    Fixed: Possible null refs caused by invalid remote urls.
+
+1.1.0.0
+    Complete re-write of the core code.
+    Added: Replaced LitJson with embeded MiniJson for compatibility and to reduce dependancies.
+    Added: Better utilisation of multi-threading.
+    Added: Check progress window which will show whilst processing.
+    Changed: Remote version file fetching now uses WebRequest instead of Unity's archaic WWW.
+    Fixed: Version formatting bug where it did not recognise build numbers in certain cases.
+
+1.0.4.0
+    Added: Url check to fix problems caused by non-raw github .version files.
+    Added: Logging system now also saves into the standard ksp log file.
+    Changed: Extended logging system now saves with the associated '.dll' file.
+
+1.0.3.0
+    Updated for KSP version 0.24.2.
+    Added: Extended logging system that saves to "KSP-AVC.log".
+    Added: First run checker which will show to indicate a successful install.
+    Changed: Window is now centred on the screen.
+
+1.0.2.0
+    Updated for KSP version 0.24.
+    Fixed a small bug with parsing KSP versions.
+
+1.0.1.0
+    Added minimum and maximum KSP version support.
+    Updates will only be shown if the remote version is compatible with the installed version of KSP.

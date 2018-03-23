@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset='UTF-8'>
+	<title>KSP-AVC Plugin - README</title>
+	<link href='http://fonts.googleapis.com/css?family=PT+Sans:400,700' rel='stylesheet' type='text/css'>
+	<style>
+		* {
+			margin: 0; padding: 0;
+			box-sizing: border-box; moz-box-sizing: border-box; webkit-box-sizing: border-box;
+		}
+
+		html, body {
+			height: 100%;
+			font-family: 'PT Sans', Verdana, Geneva, sans-serif;
+		}
+
+		a {
+			text-decoration: none;
+			font-weight: 700;
+			color: inherit;
+		}
+
+		a:hover {
+			text-decoration: underline;
+		}
+
+		h3 {
+			display: block;
+			line-height: 1.5em;
+			font-size: 1.1em;
+			font-weight: 700;
+		}
+
+		p {
+			display: block;
+			margin: 0 0.5em;
+			text-align: justify;
+		}
+
+		ul {
+			display: block;
+			margin-left: 1.5em;
+			list-style-type: square;
+		}
+
+		li {
+			margin-top: 0.5em;
+			text-align: justify;
+		}
+
+		iframe {
+			width: 100%;
+			border: none;
+		}
+
+		header {
+			display: block;
+			padding: 25px;
+			text-align: center;
+			font-size: 3rem;
+			font-weight: 700;
+			letter-spacing: 0.2em;
+			color: white;
+			background-color: black;
+		}
+
+		section {
+			display: block;
+			margin: 10px;
+			padding: 0.5em 1em;
+			line-height: 1.5em;
+			background-color: #DDD;
+		}
+
+		footer {
+			display: block;
+			text-align: center;
+			line-height: 50px;
+			font-size: 0.8rem;
+			letter-spacing: 0.2em;
+			color: white;
+			background-color: black;
+		}
+
+		.nested_list > li {
+			margin-top: 1em;
+		}
+
+		.nested_list > li:first-child {
+			margin-top: 0.5em;
+		}
+
+		#root {
+			clear: both;
+			min-height: 100%;
+			height: auto !important;
+			height: 100%;
+			margin-bottom: -50px;
+		}
+
+		#root > #root_footer {
+			height: 50px;
+		}
+
+		#footer {
+			clear: both;
+			position: relative;
+			height: 50px;
+		}
+	</style>
+</head>
+<body>
+	<div id='root'>
+		<header>KSP Add-on Version Checker</header>
+
+		<section>
+			<h3>Developer</h3>
+			<p>CYBUTEK</p>
+		</section>
+
+		<section>
+			<h3>KSP-AVC Ready</h3>
+			<p>
+				KSP Add-on Version Checker is a standardised system for versioning mods. You can get more information on the
+				<a href='http://forum.kerbalspaceprogram.com/threads/79745' target='_blank'>forum thread</a>.
+			</p>
+		</section>
+
+		<section>
+			<h3>Description</h3>
+			<p>
+				On starting KSP this plugin will search your game directory for '.version' files.  It will then proceed to check each one for version related issues.  If any issues are found, an issue monitor will be displayed notifying you of what they are.  There are two main types of version issues, with the first being related to the add-on's version and the second being its compatibility with your version of KSP.  Some add-ons will also support a download option in their version check.  If you require an update of an add-on and it has a download location set, you will be given a button which will open up your default browser and take you there.  This could link directly to the .zip file or to a page with details on how to update.  Note that you will need to close down KSP, install the updates and then restart KSP for them to work.
+			</p>
+		</section>
+
+		<section>
+			<h3>Installation</h3>
+			<ul>
+				<li>Copy the 'KSP-AVC' folder into the 'GameData' folder located within your Kerbal Space Program installation directory.</li>
+			</ul>
+		</section>
+
+		<section>
+			<h3>Version File Breakdown</h3>
+			<p>
+				<ul class='nested_list'>
+					<li><b>NAME</b> - Required<br>
+						The display name for the add-on.<br>
+					</li>
+					<li><b>URL</b> - Optional<br>
+						Location of a remote version file for update checking.
+					</li>
+					<li><b>DOWNLOAD</b> - Optional<br>
+						Web address where the latest version can be downloaded.<br>
+						<i>This is only used from the remote version file.</i>
+					</li>
+					<li><b>CHANGE_LOG</b> - Optional<br>
+						The complete or incremental change log for the add-on.<br>
+						<i>This is only used from the remote version file.</i>
+					</li>
+					<li><b>CHANGE_LOG_URL</b> - Optional<br>
+						Populates the CHANGE_LOG field using the file at this url.<br>
+						<i>This is only used from the remote version file.</i>
+					</li>
+					<li><b>GITHUB</b> - Optional<br>
+						Allows KSP-AVC to do release checks with GitHub including setting a download location if one is not specified.<br>
+						If the latest release version is not equal to the version in the file, an update notification will not appear.<br>
+						<i>This is only used from the remote version file.</i>
+						<ul>
+							<li><b>USERNAME</b> - Required<br>
+								Your GitHub username.
+							</li>
+							<li><b>REPOSITORY</b> - Required<br>
+								The name of the source repository.
+							</li>
+							<li><b>ALLOW_PRE_RELEASE</b> - Optional<br>
+								Include pre-releases in the latest release search.<br>
+								<i>The default value is false.</i>
+							</li>
+						</ul>
+					</li>
+					<li><b>VERSION</b> - Required<br>
+						The version of the add-on.
+					</li>
+					<li><b>KSP_VERSION</b> - Optional, Required for MIN/MAX<br>
+						Version of KSP that the add-on was made to support.
+					</li>
+					<li><b>KSP_VERSION_MIN</b> - Optional<br>
+						Minimum version of KSP that the add-on supports.<br>
+						<i>Requires KSP_VERSION field to work.</i>
+					</li>
+					<li><b>KSP_VERSION_MAX</b> - Optional<br>
+						Maximum version of KSP that the add-on supports.<br>
+						<i>Requires KSP_VERSION field to work.</i>
+					</li>
+				</ul>
+				<br>
+				For simple management of your version files you can use the KSP-AVC Online website at: <a href='http://ksp-avc.cybutek.net' target='_blank'>ksp-avc.cybutek.net</a>.
+			</p>
+		</section>
+
+		<section>
+			<h3>Version File Example</h3>
+			<p>
+				{<br>
+				&nbsp;&nbsp;&nbsp;&nbsp;"NAME":"KSP-AVC",<br>
+				&nbsp;&nbsp;&nbsp;&nbsp;"URL":"http://ksp-avc.cybutek.net/version.php?id=2",<br>
+				&nbsp;&nbsp;&nbsp;&nbsp;"DOWNLOAD":"http://kerbal.curseforge.com/ksp-mods/220462-ksp-avc-add-on-version-checker",<br>
+				&nbsp;&nbsp;&nbsp;&nbsp;"GITHUB":<br>
+				&nbsp;&nbsp;&nbsp;&nbsp;{<br>
+				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"USERNAME":"YourGitHubUserName",<br>
+				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"REPOSITORY":"YourGitHubRepository",<br>
+				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"ALLOW_PRE_RELEASE":false,<br>
+				&nbsp;&nbsp;&nbsp;&nbsp;},<br>
+				&nbsp;&nbsp;&nbsp;&nbsp;"VERSION":<br>
+				&nbsp;&nbsp;&nbsp;&nbsp;{<br>
+				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"MAJOR":1,<br>
+				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"MINOR":1,<br>
+				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"PATCH":0,<br>
+				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"BUILD":0<br>
+				&nbsp;&nbsp;&nbsp;&nbsp;},<br>
+				&nbsp;&nbsp;&nbsp;&nbsp;"KSP_VERSION":<br>
+				&nbsp;&nbsp;&nbsp;&nbsp;{<br>
+				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"MAJOR":0,<br>
+				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"MINOR":24,<br>
+				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"PATCH":2<br>
+				&nbsp;&nbsp;&nbsp;&nbsp;},<br>
+				&nbsp;&nbsp;&nbsp;&nbsp;"KSP_VERSION_MIN":<br>
+				&nbsp;&nbsp;&nbsp;&nbsp;{<br>
+				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"MAJOR":0,<br>
+				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"MINOR":24,<br>
+				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"PATCH":0<br>
+				&nbsp;&nbsp;&nbsp;&nbsp;},<br>
+				&nbsp;&nbsp;&nbsp;&nbsp;"KSP_VERSION_MAX":<br>
+				&nbsp;&nbsp;&nbsp;&nbsp;{<br>
+				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"MAJOR":0,<br>
+				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"MINOR":24,<br>
+				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"PATCH":2<br>
+				&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+				}
+			</p>
+		</section>
+
+		<section>
+			<h3>Change Log</h3>
+			<iframe src='CHANGES.txt' onload='this.style.height = this.contentWindow.document.body.scrollHeight + "px"'></iframe>
+		</section>
+
+		<section>
+			<h3>Software License</h3>
+			<p>
+				Licensed under the <a href='LICENSE.txt'>GNU General Public License v3</a>.
+			</p>
+		</section>
+
+		<div id='root_footer'></div>
+	</div>
+
+	<footer id='footer'>
+		README design by <a href='http://ksp.cybutek.net' target='_blank'><strong>CYBUTEK</strong></a> (GPLv3)
+	</footer>
+</body>
+</html>
