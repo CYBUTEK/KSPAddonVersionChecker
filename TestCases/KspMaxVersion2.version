@@ -1,6 +1,6 @@
 {
     "NAME":"KspVersion & KspMaxVersion, No Update Available",
-    "URL":"http://ksp-avc.cybutek.net/version.php?id=2",
+    "URL":"https://raw.githubusercontent.com/linuxgurugamer/KSPAddonVersionChecker/master/TestCases/KspMaxVersion.version",
     "VERSION":
     {
         "MAJOR":1,

@@ -1,6 +1,6 @@
 {
     "NAME":"KspVersion",
-    "URL":"http://ksp-avc.cybutek.net/version.php?id=2",
+    "URL":"https://raw.githubusercontent.com/linuxgurugamer/KSPAddonVersionChecker/master/TestCases/KspVersion.version",
     "VERSION":
     {
         "MAJOR":1,
