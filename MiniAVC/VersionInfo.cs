@@ -33,26 +33,39 @@ namespace MiniAVC
             this.SetVersion(major, minor, patch, build);
         }
 
+        Int64 SafeParseInt64(string s)
+        {
+            try
+            {
+                return Int64.Parse(s);
+            }
+            catch (Exception e)
+            {
+                Logger.Log("SafeParseInt64, exception: string: " + s);
+                return 0;
+            }
+        }
+
         public VersionInfo(string version)
         {
             var sections = Regex.Replace(version, @"[^\d\.]", String.Empty).Split('.');
-
+            
             switch (sections.Length)
             {
                 case 1:
-                    this.SetVersion(Int64.Parse(sections[0]));
+                    this.SetVersion(SafeParseInt64(sections[0]));                    
                     return;
 
                 case 2:
-                    this.SetVersion(Int64.Parse(sections[0]), Int64.Parse(sections[1]));
+                    this.SetVersion(SafeParseInt64(sections[0]), SafeParseInt64(sections[1]));
                     return;
 
                 case 3:
-                    this.SetVersion(Int64.Parse(sections[0]), Int64.Parse(sections[1]), Int64.Parse(sections[2]));
+                    this.SetVersion(SafeParseInt64(sections[0]), SafeParseInt64(sections[1]), SafeParseInt64(sections[2]));
                     return;
 
                 case 4:
-                    this.SetVersion(Int64.Parse(sections[0]), Int64.Parse(sections[1]), Int64.Parse(sections[2]), Int64.Parse(sections[3]));
+                    this.SetVersion(SafeParseInt64(sections[0]), SafeParseInt64(sections[1]), SafeParseInt64(sections[2]), SafeParseInt64(sections[3]));
                     return;
 
                 default:

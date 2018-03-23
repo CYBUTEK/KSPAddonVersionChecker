@@ -102,6 +102,7 @@ namespace KSP_AVC
                 {
                     this.SetHasError();
                 }
+                Logger.Log("FetchLocalInfo, LocalInfo", this.LocalInfo);
             }
         }
 
@@ -189,7 +190,7 @@ namespace KSP_AVC
             this.RemoteInfo = this.LocalInfo;
             this.IsRemoteReady = true;
             this.IsProcessingComplete = true;
-            Logger.Log(this.LocalInfo);
+            Logger.Log("SetLocalInfoOnly, LocalInfo", this.LocalInfo);
             Logger.Blank();
         }
 
@@ -201,13 +202,13 @@ namespace KSP_AVC
             if (this.LocalInfo.Version == this.RemoteInfo.Version)
             {
                 Logger.Log("Identical remote version found: Using remote version information only.");
-                Logger.Log(this.RemoteInfo);
+                Logger.Log("SetRemoteAvcInfo, RemoteInfo", this.RemoteInfo);
                 Logger.Blank();
                 this.LocalInfo = this.RemoteInfo;
             }
             else
             {
-                Logger.Log(this.LocalInfo);
+                Logger.Log("SetRemoteAvcInfo, LocalInfo", this.LocalInfo);
                 Logger.Log(this.RemoteInfo + "\n\tUpdateAvailable: " + this.IsUpdateAvailable);
                 Logger.Blank();
             }
@@ -223,13 +224,13 @@ namespace KSP_AVC
             if (this.LocalInfo.Version == this.RemoteInfo.Version)
             {
                 Logger.Log("Identical remote version found: Using remote version information only.");
-                Logger.Log(this.RemoteInfo);
+                Logger.Log("SetRemoteKerbalStuffInfo, RemoteInfo", this.RemoteInfo);
                 Logger.Blank();
                 this.LocalInfo = this.RemoteInfo;
             }
             else
             {
-                Logger.Log(this.LocalInfo);
+                Logger.Log("SetRemoteKerbalStuffInfo, LocalInfo", this.LocalInfo);
                 Logger.Log(this.RemoteInfo + "\n\tUpdateAvailable: " + this.IsUpdateAvailable);
                 Logger.Blank();
             }

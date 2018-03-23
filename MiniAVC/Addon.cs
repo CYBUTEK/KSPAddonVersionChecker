@@ -194,6 +194,7 @@ namespace MiniAVC
             RemoteInfo = new AddonInfo(LocalInfo.Url, www.text);
             RemoteInfo.FetchRemoteData();
 
+            Logger.Log("LocalInfo.Url: " + LocalInfo.Url + ",   www.text: " + www.text);
             if (LocalInfo.Version == RemoteInfo.Version)
             {
                 Logger.Log("Identical remote version found: Using remote version information only.");

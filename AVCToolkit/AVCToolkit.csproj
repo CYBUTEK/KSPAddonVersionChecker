@@ -61,13 +61,12 @@
         $(PostBuildEventDependsOn);
         PostBuildMacros;
       </PostBuildEventDependsOn>
-    <PostBuildEvent>del "$(SolutionDir)Release\AVCToolkit\*" /Q
-xcopy "$(SolutionDir)Documents\AVCToolkit\*" "$(SolutionDir)Release\AVCToolkit\Documents\*" /E /Y
-7z.exe a -tzip -mx3 "$(SolutionDir)Release\AVCToolkit\$(ProjectName)-@(VersionNumber).zip" "$(SolutionDir)Output\AVCToolkit"
-7z.exe a -tzip -mx3 "$(SolutionDir)Release\AVCToolkit\$(ProjectName)-@(VersionNumber).zip" "$(SolutionDir)Documents\AVCToolkit\*"</PostBuildEvent>
+    <PostBuildEvent>
+    </PostBuildEvent>
   </PropertyGroup>
   <PropertyGroup>
-    <PreBuildEvent>del "$(TargetDir)*" /Q</PreBuildEvent>
+    <PreBuildEvent>
+    </PreBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

@@ -1,13 +1,35 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2013
-VisualStudioVersion = 12.0.30110.0
+# Visual Studio 15
+VisualStudioVersion = 15.0.27428.2005
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KSP-AVC", "KSP-AVC\KSP-AVC.csproj", "{F745CC0C-B7A0-4EF2-BF5A-1D3F0C19202C}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MiniAVC", "MiniAVC\MiniAVC.csproj", "{F1351BAB-76F1-41DE-B01C-496163CB44D8}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AVCToolkit", "AVCToolkit\AVCToolkit.csproj", "{FD522EDB-A592-41C8-9342-C3629C18A6AD}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{6DF0E8C4-1D1F-40BA-A655-FF074C24FE50}"
+	ProjectSection(SolutionItems) = preProject
+		ChangeLog.txt = ChangeLog.txt
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "TestCases", "TestCases", "{34AF4147-05C0-43DB-B9C4-9D2162560CAE}"
+	ProjectSection(SolutionItems) = preProject
+		TestCases\KspMaxVersion.version = TestCases\KspMaxVersion.version
+		TestCases\KspMaxVersion1.version = TestCases\KspMaxVersion1.version
+		TestCases\KspMaxVersion2.version = TestCases\KspMaxVersion2.version
+		TestCases\KspMinMaxVersion.version = TestCases\KspMinMaxVersion.version
+		TestCases\KspMinMaxVersion1.version = TestCases\KspMinMaxVersion1.version
+		TestCases\KspMinMaxVersion2.version = TestCases\KspMinMaxVersion2.version
+		TestCases\KspMinMaxVersion3.version = TestCases\KspMinMaxVersion3.version
+		TestCases\KspMinVersion.version = TestCases\KspMinVersion.version
+		TestCases\KspMinVersion1.version = TestCases\KspMinVersion1.version
+		TestCases\KspMinVersion2.version = TestCases\KspMinVersion2.version
+		TestCases\KspVersion.version = TestCases\KspVersion.version
+		TestCases\KspVersion1.version = TestCases\KspVersion1.version
+		TestCases\KspVersion2.version = TestCases\KspVersion2.version
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -30,5 +52,8 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {C215420A-C972-49E5-B498-3C8E2BC4C6D5}
 	EndGlobalSection
 EndGlobal

@@ -127,6 +127,7 @@ namespace KSP_AVC
             }
         }
 
+#if false
         public static void Log(object obj)
         {
             lock (messages)
@@ -152,6 +153,7 @@ namespace KSP_AVC
                 }
             }
         }
+#endif
 
         public static void Log(string name, object obj)
         {
@@ -162,13 +164,15 @@ namespace KSP_AVC
                     if (obj is IEnumerable)
                     {
                         messages.Add(new[] {"Text " + DateTime.Now.TimeOfDay, name});
+                        
                         foreach (var o in obj as IEnumerable)
                         {
-                            messages.Add(new[] {"\t", o.ToString()});
+                            messages.Add(new[] {"\t", o.ToString()});                           
                         }
                     }
                     else
                     {
+                        messages.Add(new[] { "Text " + DateTime.Now.TimeOfDay, name });
                         messages.Add(new[] {"Text " + DateTime.Now.TimeOfDay, obj.ToString()});
                     }
                 }
@@ -195,9 +199,9 @@ namespace KSP_AVC
             }
         }
 
-        #endregion
+#endregion
 
-        #region Methods: protected
+#region Methods: protected
 
         protected void Awake()
         {
@@ -214,6 +218,6 @@ namespace KSP_AVC
             Flush();
         }
 
-        #endregion
+#endregion
     }
 }

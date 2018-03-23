@@ -1,0 +1,33 @@
+KSP-AVC/AddonInfo
+
+	Add code to ensure that the Min/max are both there, and that they override the KSPVersion if it is there
+		Added Min/Max functions to VersionIfno
+		Added FixMissingMinMax after parsing files
+
+		if KSP_VERSION is outside the bounds of KSP_VERSION_MIN and KSP_VERSION_MAX, it will be replaced with the appropriate one.  
+		If only one of the KSP_VERSION_MIN and KSP_VERSION_MAX are specified and KSP_VERSION is specified, then the missing parameter 
+		will be set to either the appropriate min/max against  KSP_VERSION
+
+	Added some messages to indicate what sort of error occurred
+
+	Updated the "built for" message to be either a single version or a range of versions
+
+
+TODO
+	Add check to be sure that kspVersionMin is less than or equal to kspVersionMax, if both are there
+
+Test Cases												
+For all the following, VERSION < remote VERSION.  The following cases  should all result in an update available message
+
+	KSP_VERSION only
+		KSPActual == remote KSP_VERSION					
+	
+	KSP_VERSION & KSP_MIN_VERSION
+		KSPActual >= remote KSP_MIN_VERSION
+		
+	KSP_VERSION & KSP_MAX_VERSION
+		KSPActual <= remote KSP_MAX_VERSION
+
+	KSP_MIN_VERSION & KSP_MAX_VERSION
+		KSPActual >= remote KSP_MIN_VERSION && KSPActual <= remote KSP_MAX_VERSION
+

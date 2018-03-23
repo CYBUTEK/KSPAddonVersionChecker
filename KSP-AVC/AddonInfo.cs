@@ -59,10 +59,13 @@ namespace KSP_AVC
                         this.ParseKerbalStuff(json);
                         break;
                 }
+                FixMissingMinMax();
+                ValidateKspMinMax();
             }
             catch
             {
                 this.ParseError = true;
+                    this.AddParseErrorMsg = "Error parsing";
                 throw;
             }
             finally
@@ -70,6 +73,8 @@ namespace KSP_AVC
                 if (this.ParseError)
                 {
                     Logger.Log("Version file contains errors: " + path);
+                    foreach (var s in this.ParseErrorMsgs)
+                        Logger.Log("Error: " + s);
                 }
             }
         }
@@ -110,7 +115,8 @@ namespace KSP_AVC
 
         public bool IsCompatible
         {
-            get { return this.IsCompatibleKspVersion || ((this.kspVersionMin != null || this.kspVersionMax != null) && this.IsCompatibleKspVersionMin && this.IsCompatibleKspVersionMax); }
+            get { return this.IsCompatibleKspVersion || 
+                    ((this.kspVersionMin != null || this.kspVersionMax != null) && this.IsCompatibleKspVersionMin && this.IsCompatibleKspVersionMax); }
         }
 
         public bool IsCompatibleGitHubVersion
@@ -153,6 +159,10 @@ namespace KSP_AVC
         public string Name { get; private set; }
 
         public bool ParseError { get; private set; }
+
+        private List<string> parseErrorMsgs = new List<string>();
+        public string AddParseErrorMsg { set { parseErrorMsgs.Add(value); } }
+        internal List<string> ParseErrorMsgs { get { return parseErrorMsgs; } }
 
         public string Url { get; private set; }
 
@@ -268,6 +278,7 @@ namespace KSP_AVC
             if (data == null)
             {
                 this.ParseError = true;
+                this.AddParseErrorMsg = "Error in Json.Deserialize";
                 return;
             }
             foreach (var key in data.Keys)
@@ -329,12 +340,46 @@ namespace KSP_AVC
             }
         }
 
+        private void FixMissingMinMax()
+        {
+            if (this.kspVersionMin != null || this.kspVersionMax != null)
+            {
+                if (this.kspVersion != null && this.kspVersionMin == null)
+                    this.kspVersionMin = VersionInfo.Min(this.kspVersion, this.kspVersionMax);
+                else
+                    this.kspVersionMin = VersionInfo.Min(this.kspVersionMin, this.kspVersionMax);
+
+                if (this.kspVersion != null && this.kspVersionMax == null)
+                    this.kspVersionMax = VersionInfo.Max(this.kspVersion, this.kspVersionMin);
+                else
+                    this.kspVersionMax = VersionInfo.Max(this.kspVersionMin, this.kspVersionMax);
+            }
+
+            if (this.kspVersion != null && this.kspVersionMin != null)
+            {
+                this.kspVersion = VersionInfo.Max(this.kspVersionMin, this.kspVersion);
+            }
+            if (this.kspVersion != null && this.kspVersionMax != null)
+            {
+                this.kspVersion = VersionInfo.Min(this.kspVersionMax, this.kspVersion);
+            }
+        }
+        private void ValidateKspMinMax()
+        {
+            if (KspVersionMin != null && kspVersionMax != null &&  KspVersionMin > KspVersionMax)
+            {
+                this.ParseError = true;
+                this.AddParseErrorMsg = "KSP_VERSION_MIN greater than KSP_VERSION_MAX";
+            }
+        }
+
         private void ParseKerbalStuff(string json)
         {
             var data = Json.Deserialize(json) as Dictionary<string, object>;
             if (data == null)
             {
                 this.ParseError = true;
+                this.AddParseErrorMsg = "No data from Json (kerbalstuff)";
                 return;
             }
 
@@ -385,6 +430,9 @@ namespace KSP_AVC
             public bool AllowPreRelease { get; private set; }
 
             public bool ParseError { get; private set; }
+            private List<string> parseErrorMsgs = new List<string>();
+            public string AddParseErrorMsg { set { parseErrorMsgs.Add(value); } }
+            internal List<string> ParseErrorMsgs { get { return parseErrorMsgs; } }
 
             public string Repository { get; private set; }
 
@@ -437,6 +485,7 @@ namespace KSP_AVC
                 if (obj == null || obj.Count == 0)
                 {
                     this.ParseError = true;
+                    this.AddParseErrorMsg = "No data after parsing Github Json";
                     return;
                 }
 
@@ -471,6 +520,7 @@ namespace KSP_AVC
                 if (data == null)
                 {
                     this.ParseError = true;
+                    this.AddParseErrorMsg = "No data in dictionary (ParseJson)";
                     return;
                 }
 

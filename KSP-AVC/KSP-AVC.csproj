@@ -54,23 +54,14 @@
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Assembly-CSharp">
-      <HintPath>..\..\..\KSP-Environment\KSP_x64_Data\Managed\Assembly-CSharp.dll</HintPath>
-      <Private>False</Private>
+      <HintPath>R:\KSP_1.4.1_dev\KSP_x64_Data\Managed\Assembly-CSharp.dll</HintPath>
     </Reference>
-    <Reference Include="System">
-      <HintPath>..\..\Game\KSP_x64_Data\Managed\System.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="System.Xml">
-      <HintPath>..\..\Game\KSP_x64_Data\Managed\System.Xml.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Xml" />
     <Reference Include="UnityEngine">
-      <HintPath>..\..\..\KSP-Environment\KSP_x64_Data\Managed\UnityEngine.dll</HintPath>
-      <Private>False</Private>
+      <HintPath>R:\KSP_1.4.1_dev\KSP_x64_Data\Managed\UnityEngine.dll</HintPath>
     </Reference>
   </ItemGroup>
-  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="PostBuildMacros">
     <GetAssemblyIdentity AssemblyFiles="$(TargetPath)">
@@ -85,11 +76,8 @@
         $(PostBuildEventDependsOn);
         PostBuildMacros;
       </PostBuildEventDependsOn>
-    <PostBuildEvent>xcopy "$(SolutionDir)Output\KSP-AVC\*" "$(SolutionDir)..\..\KSP-Environment\GameData\KSP-AVC\*" /E /Y
-del "$(SolutionDir)Release\KSP-AVC\*" /Q
-xcopy "$(SolutionDir)Documents\KSP-AVC\*" "$(SolutionDir)Release\KSP-AVC\Documents\*" /E /Y
-7z.exe a -tzip -mx3 "$(SolutionDir)Release\KSP-AVC\$(ProjectName)-@(VersionNumber).zip" "$(SolutionDir)Output\KSP-AVC"
-7z.exe a -tzip -mx3 "$(SolutionDir)Release\KSP-AVC\$(ProjectName)-@(VersionNumber).zip" "$(SolutionDir)Documents\KSP-AVC\*"</PostBuildEvent>
+    <PostBuildEvent>
+    </PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

@@ -177,7 +177,12 @@ namespace KSP_AVC
             GUILayout.Label("COMPATIBILITY ISSUES", this.nameTitleStyle);
             foreach (var addon in AddonLibrary.Addons.Where(a => !a.IsCompatible))
             {
-                GUILayout.Label("The currently installed version of " + addon.Name + " was built to run on KSP " + addon.LocalInfo.KspVersion, this.messageStyle, GUILayout.MinWidth(575.0f));
+                string built = "";
+                if (addon.LocalInfo.KspVersionMin == null || addon.LocalInfo.KspVersion == addon.LocalInfo.KspVersionMin)
+                    built = " was built to run on KSP " + addon.LocalInfo.KspVersion;
+                else
+                    built = "was built to run on KSP versions " + addon.LocalInfo.KspVersionMin + " through " + addon.LocalInfo.KspVersionMax;
+                GUILayout.Label("The currently installed version of " + addon.Name + built, this.messageStyle, GUILayout.MinWidth(575.0f));
             }
             GUILayout.EndVertical();
         }

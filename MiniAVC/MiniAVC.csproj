@@ -46,20 +46,12 @@
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Assembly-CSharp">
-      <HintPath>..\..\..\KSP-Environment\KSP_x64_Data\Managed\Assembly-CSharp.dll</HintPath>
-      <Private>False</Private>
+      <HintPath>R:\KSP_1.4.1_dev\KSP_x64_Data\Managed\Assembly-CSharp.dll</HintPath>
     </Reference>
-    <Reference Include="System">
-      <HintPath>..\..\Game\KSP_x64_Data\Managed\System.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="System.Xml">
-      <HintPath>..\..\Game\KSP_x64_Data\Managed\System.Xml.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Xml" />
     <Reference Include="UnityEngine">
-      <HintPath>..\..\..\KSP-Environment\KSP_x64_Data\Managed\UnityEngine.dll</HintPath>
-      <Private>False</Private>
+      <HintPath>R:\KSP_1.4.1_dev\KSP_x64_Data\Managed\UnityEngine.dll</HintPath>
     </Reference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
@@ -76,11 +68,8 @@
         $(PostBuildEventDependsOn);
         PostBuildMacros;
       </PostBuildEventDependsOn>
-    <PostBuildEvent>xcopy "$(SolutionDir)Output\MiniAVC\*" "$(SolutionDir)..\Game\GameData\MiniAVC\*" /E /Y
-del "$(SolutionDir)Release\MiniAVC\*" /Q
-xcopy "$(SolutionDir)Documents\MiniAVC\*" "$(SolutionDir)Release\MiniAVC\Documents\*" /E /Y
-7z.exe a -tzip -mx3 "$(SolutionDir)Release\MiniAVC\$(ProjectName)-@(VersionNumber).zip" "$(SolutionDir)Output\MiniAVC"
-7z.exe a -tzip -mx3 "$(SolutionDir)Release\MiniAVC\$(ProjectName)-@(VersionNumber).zip" "$(SolutionDir)Documents\MiniAVC\*"</PostBuildEvent>
+    <PostBuildEvent>
+    </PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
