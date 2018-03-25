@@ -159,9 +159,18 @@ namespace KSP_AVC
             get { return this.kspVersion ?? VersionInfo.AnyValue; }
         }
 
+        public bool KspVersionMaxIsNull
+        {
+            get { return this.kspVersionMax == null; }
+        }
+
         public VersionInfo KspVersionMax
         {
             get { return this.kspVersionMax ?? actualKspVersion; }
+        }
+
+        public bool KspVersionMinIsNull {
+            get { return this.kspVersionMin == null; }
         }
 
         public VersionInfo KspVersionMin
@@ -360,6 +369,7 @@ namespace KSP_AVC
             {
                 this.ParseError = true;
                 this.AddParseErrorMsg = "KSP_VERSION_MIN greater than KSP_VERSION_MAX";
+                throw new ArgumentException("KSP_VERSION_MIN greater than KSP_VERSION_MAX");
             }
 
             
@@ -372,7 +382,7 @@ namespace KSP_AVC
             {
                 this.ParseError = true;
                 this.AddParseErrorMsg = "No data from Json (kerbalstuff)";
-                return;
+                throw new ArgumentException("No data from Json (kerbalstuff)");
             }
 
             this.Name = (string)data["name"];
@@ -457,6 +467,7 @@ namespace KSP_AVC
                 catch (Exception ex)
                 {
                     Logger.Exception(ex);
+                    this.AddParseErrorMsg = "Error fetching data from Github: " + "https://api.github.com/repos/" + this.Username + "/" + this.Repository + "/releases";
                 }
             }
 
@@ -478,7 +489,7 @@ namespace KSP_AVC
                 {
                     this.ParseError = true;
                     this.AddParseErrorMsg = "No data after parsing Github Json";
-                    return;
+                    throw new ArgumentException("No data after parsing Github Json");
                 }
 
                 foreach (Dictionary<string, object> data in obj)
@@ -513,7 +524,7 @@ namespace KSP_AVC
                 {
                     this.ParseError = true;
                     this.AddParseErrorMsg = "No data in dictionary (ParseJson)";
-                    return;
+                    throw new ArgumentException("No data in dictionary (ParseJson)");
                 }
 
                 foreach (var key in data.Keys)

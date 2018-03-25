@@ -178,7 +178,7 @@ namespace KSP_AVC
             foreach (var addon in AddonLibrary.Addons.Where(a => !a.IsCompatible))
             {
                 string built = "";
-                if (addon.LocalInfo.KspVersionMin == null && addon.LocalInfo.KspVersionMax == null ) //|| addon.LocalInfo.KspVersion == addon.LocalInfo.KspVersionMin)
+                if (addon.LocalInfo.KspVersionMinIsNull && addon.LocalInfo.KspVersionMaxIsNull ) //|| addon.LocalInfo.KspVersion == addon.LocalInfo.KspVersionMin)
                     built = " was built to run on KSP " + addon.LocalInfo.KspVersion;
                 else
                     built = " was built to run on KSP " + addon.LocalInfo.KspVersionMin + " - " + addon.LocalInfo.KspVersionMax;

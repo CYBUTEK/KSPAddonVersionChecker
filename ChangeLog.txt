@@ -42,3 +42,7 @@ For all the following, VERSION < remote VERSION.  The following cases  should al
 
 1.1.6.8
 	Fixed issue where KSP_VERSION was missing
+
+1.1.6.9
+	Fixed check of Min/Max being null when displaying error
+	Added and improved error messages in log
