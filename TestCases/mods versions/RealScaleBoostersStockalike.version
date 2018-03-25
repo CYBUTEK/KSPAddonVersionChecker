@@ -1,0 +1,15 @@
+{
+	"NAME": "RSB Stockalike",
+	"URL": "http://ksp.necrobones.com/files/RealScaleBoosters/RealScaleBoostersStockalike.version",
+	"DOWNLOAD": "http://ksp.necrobones.com/files/RealScaleBoosters/",
+	"VERSION": {
+		"MAJOR": 0,
+		"MINOR": 4,
+		"PATCH": 0
+	},
+	"KSP_VERSION_MIN": {
+		"MAJOR": 1,
+		"MINOR": 1,
+		"PATCH": 0
+	}
+}

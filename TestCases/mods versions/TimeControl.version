@@ -1,0 +1,27 @@
+{
+  "NAME": "TimeControl",
+  "URL": "http://ksp-avc.cybutek.net/version.php?id=310",
+  "DOWNLOAD": "https://github.com/ntwest/TimeControl/releases",
+  "CHANGE_LOG_URL": "https://github.com/ntwest/TimeControl/blob/master/CHANGELOG.md",
+  "VERSION": {
+    "MAJOR": 2,
+    "MINOR": 9,
+    "PATCH": 0,
+    "BUILD": 0
+  },
+  "KSP_VERSION": {
+    "MAJOR": 1,
+    "MINOR": 4,
+    "PATCH": 1
+  },
+  "KSP_VERSION_MIN": {
+    "MAJOR": 1,
+    "MINOR": 4,
+    "PATCH": 1
+  },
+  "KSP_VERSION_MAX": {
+    "MAJOR": 1,
+    "MINOR": 4,
+    "PATCH": 1
+  }
+}

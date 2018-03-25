@@ -187,9 +187,11 @@ namespace KSP_AVC
 
         private void SetLocalInfoOnly()
         {
+
             this.RemoteInfo = this.LocalInfo;
             this.IsRemoteReady = true;
             this.IsProcessingComplete = true;
+            
             Logger.Log("SetLocalInfoOnly, LocalInfo", this.LocalInfo);
             Logger.Blank();
         }

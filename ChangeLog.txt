@@ -2,7 +2,7 @@
 KSP-AVC/AddonInfo
 
 	Add code to ensure that the Min/max are both there, and that they override the KSPVersion if it is there
-		Added Min/Max functions to VersionIfno
+		Added Min/Max functions to VersionInfno
 		Added FixMissingMinMax after parsing files
 
 		if KSP_VERSION is outside the bounds of KSP_VERSION_MIN and KSP_VERSION_MAX, it will be replaced with the appropriate one.  
@@ -34,3 +34,8 @@ For all the following, VERSION < remote VERSION.  The following cases  should al
 	KSP_MIN_VERSION & KSP_MAX_VERSION
 		KSPActual >= remote KSP_MIN_VERSION && KSPActual <= remote KSP_MAX_VERSION
 
+1.1.6.7
+	Fixed null ref which showed one time when displaying addons
+	Fixed bug where a missing VERSION would cause the dropdown to cause nullrefs
+	Removed Min/Max functions to VersionInfno as not needed anymore
+	Removed FixMissingMinMax after parsing files as not needed anymore

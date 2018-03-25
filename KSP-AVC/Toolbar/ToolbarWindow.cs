@@ -35,7 +35,7 @@ namespace KSP_AVC.Toolbar
         private GUIStyle labelGreen;
         private GUIStyle labelYellow;
         private Rect position = new Rect(0.0f, 0.0f, 400.0f, 0.0f);
-        private Vector2 scrollPosition;
+        private Vector2 scrollPosition = new Vector2(0, 0);
         private bool showAddons;
         private bool useScrollView;
         private GUIStyle windowStyle;
@@ -164,12 +164,25 @@ namespace KSP_AVC.Toolbar
                 GUILayout.EndVertical();
             }
         }
-
+        bool err = false;
         private void DrawAddonBoxStart()
         {
             if (this.useScrollView)
             {
-                this.scrollPosition = GUILayout.BeginScrollView(this.scrollPosition, GUILayout.Height(Screen.height * 0.5f));
+                try
+                {
+
+                    this.scrollPosition = GUILayout.BeginScrollView(this.scrollPosition, GUILayout.Height(Screen.height * 0.5f));
+
+                }
+                catch  (Exception ex )
+                {
+                    // Strange, the above call generates a single exception, not the first time called.  But after that
+                    // it's ok, so this will just bypass the error
+
+                    err = true;
+                    return;
+                }
             }
             else
             {
@@ -180,6 +193,11 @@ namespace KSP_AVC.Toolbar
         private void DrawAddonList()
         {
             this.DrawAddonBoxStart();
+            if (err)
+            {
+                err = false;
+                return;
+            }
             this.DrawAddons();
             this.DrawAddonBoxEnd();
 
@@ -193,13 +211,14 @@ namespace KSP_AVC.Toolbar
             this.addonList = String.Empty;
             foreach (var addon in AddonLibrary.Addons)
             {
-                var labelStyle = !addon.IsCompatible || addon.IsUpdateAvailable ? this.labelYellow : this.labelGreen;
-                this.addonList += Environment.NewLine + addon.Name + " - " + addon.LocalInfo.Version;
-                GUILayout.BeginHorizontal();
-                GUILayout.Label(addon.Name, labelStyle);
-                GUILayout.FlexibleSpace();
-                GUILayout.Label(addon.LocalInfo != null ? addon.LocalInfo.Version.ToString() : String.Empty, labelStyle);
-                GUILayout.EndHorizontal();
+                    var labelStyle = !addon.IsCompatible || addon.IsUpdateAvailable ? this.labelYellow : this.labelGreen;
+                    this.addonList += Environment.NewLine + addon.Name + " - " + addon.LocalInfo.Version;
+                    GUILayout.BeginHorizontal();
+                    GUILayout.Label(addon.Name, labelStyle);
+                    GUILayout.FlexibleSpace();
+                    GUILayout.Label(addon.LocalInfo.Version != null ? addon.LocalInfo.Version.ToString() : String.Empty, labelStyle);
+                    GUILayout.EndHorizontal();
+                
             }
         }
 

@@ -90,8 +90,9 @@
         $(PostBuildEventDependsOn);
         PostBuildMacros;
       </PostBuildEventDependsOn>
-    <PostBuildEvent>
-    </PostBuildEvent>
+    <PostBuildEvent>del R:\KSP_1.4.1_dev\GameData\KSP-AVC\KSP-AVC.dll
+copy D:\Users\jbb\github\KSPAddonVersionChecker\Output\KSP-AVC\KSP-AVC.dll R:\KSP_1.4.1_dev\GameData\KSP-AVC
+</PostBuildEvent>
   </PropertyGroup>
   <PropertyGroup>
     <PreBuildEvent>

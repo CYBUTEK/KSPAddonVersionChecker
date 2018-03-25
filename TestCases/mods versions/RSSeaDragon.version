@@ -1,0 +1,15 @@
+{
+	"NAME": "Real Scale Sea Dragon",
+	"URL": "http://ksp.necrobones.com/files/RSSeaDragon/RSSeaDragon.version",
+	"DOWNLOAD": "http://spacedock.info/mod/440/Real%20Scale%20Sea%20Dragon",
+	"VERSION": {
+		"MAJOR": 0,
+		"MINOR": 3,
+		"PATCH": 4
+	},
+	"KSP_VERSION_MIN": {
+		"MAJOR": 1,
+		"MINOR": 1,
+		"PATCH": 0
+	}
+}

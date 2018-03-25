@@ -46,26 +46,27 @@ namespace KSP_AVC
 
         public AddonInfo(string path, string json, RemoteType remoteType)
         {
+            // Following because some files are returning a few gibberish chars when downloading from Github
+            json = DeleteCharsPrecedingBrace(json);
             try
             {
                 this.path = path;
                 switch (remoteType)
                 {
                     case RemoteType.AVC:
-                        this.ParseAvc(json);
+                        this.ParseAvc(path, json);
                         break;
 
                     case RemoteType.KerbalStuff:
                         this.ParseKerbalStuff(json);
                         break;
                 }
-                FixMissingMinMax();
                 ValidateKspMinMax();
             }
             catch
             {
                 this.ParseError = true;
-                this.AddParseErrorMsg = "Error parsing";
+                this.AddParseErrorMsg = "Error parsing: " + path;
                 throw;
             }
             finally
@@ -75,10 +76,21 @@ namespace KSP_AVC
                     Logger.Log("Version file contains errors: " + path);
                     foreach (var s in this.ParseErrorMsgs)
                         Logger.Log("Error: " + s);
+                    throw new ArgumentException("Not a valid JSON object.");
                 }
             }
         }
 
+        string DeleteCharsPrecedingBrace(string json)
+        {
+            int i = json.IndexOf('{');
+            if (i == 0)
+                return json;
+            if (i == -1)
+                return "";
+            return json.Substring(i);
+
+        }
         static AddonInfo()
         {
             actualKspVersion = new VersionInfo(Versioning.version_major, Versioning.version_minor, Versioning.Revision);
@@ -148,7 +160,7 @@ namespace KSP_AVC
 
         public VersionInfo KspVersionMax
         {
-            get { return this.kspVersionMax ?? VersionInfo.MaxValue; }
+            get { return this.kspVersionMax ?? actualKspVersion; }
         }
 
         public VersionInfo KspVersionMin
@@ -272,14 +284,15 @@ namespace KSP_AVC
             }
         }
 
-        private void ParseAvc(string json)
+        private void ParseAvc(string path, string json)
         {
             var data = Json.Deserialize(json) as Dictionary<string, object>;
             if (data == null)
             {
                 this.ParseError = true;
-                this.AddParseErrorMsg = "Error in Json.Deserialize";
-                return;
+                this.AddParseErrorMsg = "Error in Json.Deserialize, file: " + path;
+
+                throw new ArgumentException("Not a valid JSON object.");
             }
             foreach (var key in data.Keys)
             {
@@ -339,40 +352,16 @@ namespace KSP_AVC
                 }
             }
         }
-        VersionInfo zero = new VersionInfo();
-        private void FixMissingMinMax()
-        {
-            if (this.kspVersionMin != zero || this.kspVersionMax != zero)
-            {
-                if (this.kspVersion != zero && this.kspVersionMin == zero)
-                    this.kspVersionMin = VersionInfo.Min(this.kspVersion, this.kspVersionMax);
-                else
-                    this.kspVersionMin = VersionInfo.Min(this.kspVersionMin, this.kspVersionMax);
-
-                if (this.kspVersion != zero && this.kspVersionMax == zero)
-                    this.kspVersionMax = VersionInfo.Max(this.kspVersion, this.kspVersionMin);
-                else
-                    this.kspVersionMax = VersionInfo.Max(this.kspVersionMin, this.kspVersionMax);
-            }
-
-            if (this.kspVersion != zero && this.kspVersionMin != zero)
-            {
-                this.kspVersion = VersionInfo.Max(this.kspVersionMin, this.kspVersion);
-            }
-
-            if (this.kspVersion != zero && this.kspVersionMax != zero)
-            {
-                this.kspVersion = VersionInfo.Min(this.kspVersionMax, this.kspVersion);
-            }
-        }
 
         private void ValidateKspMinMax()
         {
-            if (KspVersionMin != zero && kspVersionMax != zero &&  KspVersionMin > KspVersionMax)
+            if ( KspVersionMin > KspVersionMax)
             {
                 this.ParseError = true;
                 this.AddParseErrorMsg = "KSP_VERSION_MIN greater than KSP_VERSION_MAX";
             }
+
+            
         }
 
         private void ParseKerbalStuff(string json)

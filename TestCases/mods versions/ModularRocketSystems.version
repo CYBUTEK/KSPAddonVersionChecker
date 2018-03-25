@@ -1,0 +1,15 @@
+{
+	"NAME": "Modular Rocket Systems",
+	"URL": "http://ksp.necrobones.com/files/ModRocketSys/ModularRocketSystems.version",
+	"DOWNLOAD": "http://spacedock.info/mod/86/Modular%20Rocket%20Systems",
+	"VERSION": {
+		"MAJOR": 1,
+		"MINOR": 13,
+		"PATCH": 2
+	},
+	"KSP_VERSION_MIN": {
+		"MAJOR": 1,
+		"MINOR": 2,
+		"PATCH": 0
+	}
+}

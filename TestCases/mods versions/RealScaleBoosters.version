@@ -1,0 +1,15 @@
+{
+	"NAME": "Real Scale Boosters",
+	"URL": "http://ksp.necrobones.com/files/RealScaleBoosters/RealScaleBoosters.version",
+	"DOWNLOAD": "http://spacedock.info/mod/90/Real%20Scale%20Boosters",
+	"VERSION": {
+		"MAJOR": 0,
+		"MINOR": 16,
+		"PATCH": 0
+	},
+	"KSP_VERSION_MIN": {
+		"MAJOR": 1,
+		"MINOR": 2,
+		"PATCH": 0
+	}
+}

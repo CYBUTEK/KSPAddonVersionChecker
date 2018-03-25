@@ -1,0 +1,31 @@
+{
+     "NAME":"Maeneuver Node Evolved",
+	 "URL":"https://raw.githubusercontent.com/DMagic1/KSP_Better_Maneuvering/master/GameData/ManeuverNodeEvolved/ManeuverNodeEvolved.version",
+	 "DOWNLOAD":"https://github.com/DMagic1/KSP_Better_Maneuvering/releases",
+     "GITHUB":{
+         "USERNAME":"DMagic1",
+         "REPOSITORY":"KSP_Better_Maneuvering",
+         "ALLOW_PRE_RELEASE":false,
+     },
+     "VERSION":{
+         "MAJOR":1,
+         "MINOR":0,
+         "PATCH":4,
+         "BUILD":0
+     },
+     "KSP_VERSION":{
+         "MAJOR":1,
+         "MINOR":4,
+         "PATCH":1
+     },
+     "KSP_VERSION_MIN":{
+         "MAJOR":1,
+         "MINOR":4,
+         "PATCH":0
+     },
+     "KSP_VERSION_MAX":{
+         "MAJOR":1,
+         "MINOR":4,
+         "PATCH":8
+     }
+ } 

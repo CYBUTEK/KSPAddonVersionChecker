@@ -1,0 +1,31 @@
+{
+     "NAME":"Contract Reward Modifier",
+	 "URL":"https://raw.githubusercontent.com/DMagic1/Contract-Modifier/master/GameData/ContractRewardModifier/ContractRewardModifier.version",
+     "DOWNLOAD":"http://spacedock.info/mod/132/Contract%20Reward%20Modifier/download/2.6",
+     "GITHUB":{
+         "USERNAME":"DMagic1",
+         "REPOSITORY":"Contract-Modifier",
+         "ALLOW_PRE_RELEASE":false,
+     },
+     "VERSION":{
+         "MAJOR":1,
+         "MINOR":0,
+         "PATCH":2,
+         "BUILD":6
+     },
+     "KSP_VERSION":{
+         "MAJOR":1,
+         "MINOR":4,
+         "PATCH":1
+     },
+     "KSP_VERSION_MIN":{
+         "MAJOR":1,
+         "MINOR":4,
+         "PATCH":0
+     },
+     "KSP_VERSION_MAX":{
+         "MAJOR":1,
+         "MINOR":4,
+         "PATCH":8
+     }
+ } 

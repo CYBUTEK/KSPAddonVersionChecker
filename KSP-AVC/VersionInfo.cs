@@ -188,31 +188,6 @@ namespace KSP_AVC
             return obj.GetType() == this.GetType() && this.Equals((VersionInfo)obj);
         }
 
-        public static VersionInfo Max(VersionInfo v1, VersionInfo v2)
-        {
-            if (v1 != null && v2 != null)
-            {
-                if (v1 > v2)
-                    return v1;
-                return v2;
-            }
-            if (v1 != null)
-                return v1;
-            return v2;
-        }
-        public static VersionInfo Min(VersionInfo v1, VersionInfo v2)
-        {
-            if (v1 != null && v2 != null)
-            {
-                if (v1 < v2)
-                    return v1;
-                return v2;
-            }
-            if (v1 != null)
-                return v1;
-            return v2;
-        }
-
         public override int GetHashCode()
         {
             unchecked
