@@ -71,7 +71,12 @@ namespace MiniAVC
 
         public bool IsCompatible
         {
-            get { return IsCompatibleKspVersion || ((kspVersionMin != null || kspVersionMax != null) && IsCompatibleKspVersionMin && IsCompatibleKspVersionMax); }
+            get
+            {
+                return (this.IsCompatibleKspVersion && this.kspVersionMin == null && this.kspVersionMax == null)
+                 ||
+                 ((this.kspVersionMin != null || this.kspVersionMax != null) && this.IsCompatibleKspVersionMin && this.IsCompatibleKspVersionMax);
+            }
         }
 
         public bool IsCompatibleGitHubVersion

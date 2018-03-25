@@ -127,7 +127,8 @@ namespace KSP_AVC
 
         public bool IsCompatible
         {
-            get { return this.IsCompatibleKspVersion || 
+            get { return (this.IsCompatibleKspVersion && this.kspVersionMin == null && this.kspVersionMax == null)
+                    || 
                     ((this.kspVersionMin != null || this.kspVersionMax != null) && this.IsCompatibleKspVersionMin && this.IsCompatibleKspVersionMax); }
         }
 

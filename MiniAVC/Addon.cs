@@ -195,6 +195,7 @@ namespace MiniAVC
             RemoteInfo.FetchRemoteData();
 
             Logger.Log("LocalInfo.Url: " + LocalInfo.Url + ",   www.text: " + www.text);
+#if false
             if (LocalInfo.Version == RemoteInfo.Version)
             {
                 Logger.Log("Identical remote version found: Using remote version information only.");
@@ -203,6 +204,7 @@ namespace MiniAVC
                 LocalInfo = RemoteInfo;
             }
             else
+#endif
             {
                 Logger.Log(LocalInfo);
                 Logger.Log(RemoteInfo + "\n\tUpdateAvailable: " + IsUpdateAvailable);
