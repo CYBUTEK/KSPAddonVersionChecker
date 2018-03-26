@@ -178,10 +178,15 @@ namespace KSP_AVC
             foreach (var addon in AddonLibrary.Addons.Where(a => !a.IsCompatible))
             {
                 string built = "";
-                if (addon.LocalInfo.KspVersionMinIsNull && addon.LocalInfo.KspVersionMaxIsNull ) //|| addon.LocalInfo.KspVersion == addon.LocalInfo.KspVersionMin)
+                if (addon.LocalInfo.KspVersionMinIsNull && addon.LocalInfo.KspVersionMaxIsNull) //|| addon.LocalInfo.KspVersion == addon.LocalInfo.KspVersionMin)
                     built = " was built to run on KSP " + addon.LocalInfo.KspVersion;
                 else
-                    built = " was built to run on KSP " + addon.LocalInfo.KspVersionMin + " - " + addon.LocalInfo.KspVersionMax;
+                {
+                    if (addon.LocalInfo.KspVersionMin == addon.LocalInfo.KspVersionMax)
+                        built = " was built to run on KSP " + addon.LocalInfo.KspVersionMax;
+                    else
+                        built = " was built to run on KSP " + addon.LocalInfo.KspVersionMin + " - " + addon.LocalInfo.KspVersionMax;
+                }
                 GUILayout.Label("The currently installed version of " + addon.Name + built, this.messageStyle, GUILayout.MinWidth(575.0f));
             }
             GUILayout.EndVertical();

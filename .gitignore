@@ -231,5 +231,6 @@ $RECYCLE.BIN/
 *~
 *.swp
 *.dll
+*.exe
 *.pdb
 .vs
