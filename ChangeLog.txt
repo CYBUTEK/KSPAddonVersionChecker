@@ -52,3 +52,6 @@ For all the following, VERSION < remote VERSION.  The following cases  should al
 1.1.6.10
 	Fixed when min and max are equal, it was showing a from/to
 	Added jenkins config for MiniAVC
+
+1.2.0
+	Release
