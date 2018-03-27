@@ -1,12 +1,18 @@
 {
     "NAME":"KSP-AVC Plugin",
-    "URL":"http://ksp-avc.cybutek.net/version.php?id=2",
+    "URL":"https://raw.githubusercontent.com/linuxgurugamer/KSPAddonVersionChecker/master/KSP-AVC.version",
+    "DOWNLOAD" : "https://github.com/linuxgurugamer/KSPAddonVersionChecker/releases",
+    "GITHUB" :
+    {
+        "USERNAME" : "linuxgurugamer",
+KSPAddonVersionChecker    },
+
     "VERSION":
     {
         "MAJOR":1,
-        "MINOR":1,
-        "PATCH":6,
-        "BUILD":10
+        "MINOR":2,
+        "PATCH":0,
+        "BUILD":0
     },
     "KSP_VERSION":
     {
