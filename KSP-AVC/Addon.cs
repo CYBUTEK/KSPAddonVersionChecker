@@ -201,7 +201,7 @@ namespace KSP_AVC
             this.RemoteInfo = new AddonInfo(this.LocalInfo.Url, www.text, AddonInfo.RemoteType.AVC);
             this.RemoteInfo.FetchRemoteData();
 
-#if false
+#if true
             if (this.LocalInfo.Version == this.RemoteInfo.Version)
             {
                 Logger.Log("Identical remote version found: Using remote version information only.");

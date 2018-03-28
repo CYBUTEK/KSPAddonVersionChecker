@@ -55,3 +55,6 @@ For all the following, VERSION < remote VERSION.  The following cases  should al
 
 1.2.0
 	Release
+
+1.2.0.1
+	Re-enabled the remote overriding local if the versions were identical
