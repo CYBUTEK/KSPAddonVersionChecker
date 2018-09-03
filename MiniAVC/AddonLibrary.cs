@@ -94,7 +94,7 @@ namespace MiniAVC
                 {
                     var settings = AddonSettings.Load(rootPath);
                     threadSettings.Add(settings);
-                    foreach (string versionFile in Directory.GetFiles(rootPath, "*.version", SearchOption.AllDirectories)
+                    foreach (string versionFile in Directory.GetFiles(rootPath, "*.version", SearchOption.AllDirectories))
                     {
                         // Check whether we've already seen this file
                         AddonSettings prevSettings;
