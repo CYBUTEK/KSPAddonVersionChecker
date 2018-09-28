@@ -89,12 +89,31 @@ namespace MiniAVC
             {
                 var threadAddons = new List<Addon>();
                 var threadSettings = new List<AddonSettings>();
+                var versionFileSettings = new Dictionary<string, AddonSettings>();
                 foreach (var rootPath in AssemblyLoader.loadedAssemblies.Where(a => a.name == "MiniAVC").Select(a => Path.GetDirectoryName(a.path)))
                 {
                     var settings = AddonSettings.Load(rootPath);
                     threadSettings.Add(settings);
-                    threadAddons.AddRange(Directory.GetFiles(rootPath, "*.version", SearchOption.AllDirectories).Select(p => new Addon(p, settings)).ToList());
+                    foreach (string versionFile in Directory.GetFiles(rootPath, "*.version", SearchOption.AllDirectories))
+                    {
+                        // Check whether we've already seen this file
+                        AddonSettings prevSettings;
+                        if (versionFileSettings.TryGetValue(versionFile, out prevSettings))
+                        {
+                            // Use the settings closest to the DLL (== longest path)
+                            if (prevSettings.FileName.Length < settings.FileName.Length)
+                            {
+                                versionFileSettings[versionFile] = settings;
+                            }
+                        }
+                        else
+                        {
+                            versionFileSettings.Add(versionFile, settings);
+                        }
+                    }
                 }
+                threadAddons.AddRange(versionFileSettings.Select(kvp => new Addon(kvp.Key, kvp.Value)));
+
                 addons = threadAddons;
                 Settings = threadSettings;
                 Populated = true;
