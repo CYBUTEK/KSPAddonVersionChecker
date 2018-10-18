@@ -81,6 +81,10 @@ namespace KSP_AVC
         {
             try
             {
+                if (!Configuration.CfgLoaded)
+                {
+                    Configuration.LoadCfg();
+                }
                 if (new System.Version(Configuration.GetVersion()) < Assembly.GetExecutingAssembly().GetName().Version)
                 {
                     this.ShowUpdatedWindow();

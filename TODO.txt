@@ -1,0 +1,51 @@
+﻿New config file in KSP-AVC directory, for full KSP-AVC only
+KSP﻿-AVC
+{
+
+	// OVERRIDE_PRIORITY authority; will override anything in any of the .version files.  This includes any of the 
+	// simple overrides in the files
+
+
+	// OVERRIDE_PRIORITY has the following possible values
+	/﻿/	remote	remote file overrides local file
+	//	local	local file overrides remote file
+	//	none	local file overrides remote file
+	
+	OVERRIDE_PRIORITY﻿﻿ = remote
+
+
+
+﻿	// SIMPLE_PRIORITY has the following possible values:
+	//	remote	remote file has priority over local file
+	//	local	local file has priority over remote file
+	
+	SIMPLE_PRIORITY = remote
+
+	// SIMPLE_PRIORITY can allow an individual .version file to specify which file should have priority.
+	// This will allow one of the following lines in an individual .version file to take priority for that file only:
+	//	"LOCAL_HAS_PRIORITY": true
+	//	"LOCAL_HAS_PRIORITY": false
+	//	"REMOTE_HAS_PRIORITY": true
+	//	"REMOTE_HAS_PRIORITY": false
+
+	// KSP-AVC  now can be configured to automatically allow
+	// multiple KSP versions to be compatible with other versions (see below)
+	// This would be in a .version file to explictly say that this override
+	// is not allowable for that specific .version file
+
+	// "DISABLE_COMPATIBLE_VERSION_OVERRIDE": true
+
+}
+
+
+// This can be in a separate file, to be created by the user.  This is entirely optional
+// and is intended to allow a user to tell KSP-AVC that, for example, all mods which are 
+// listed as compatible up to version 1.4.1, would also be compatible with 1.4.3, etc
+KSP-AVC
+{
+	// This tells KSP-AVC that any mod with the first version listed is also compatible 
+	// with the second version on the line
+	COMPATIBLE_VERSION_OVERRIDE = 1.4, 1.4.3
+	COMPATIBLE_VERSION_OVERRIDE = 1.4.1, 1.4.3
+	COMPATIBLE_VERSION_OVERRIDE = 1.4.2, 1.4.3
+}

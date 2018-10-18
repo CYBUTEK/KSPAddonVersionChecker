@@ -59,12 +59,12 @@
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Assembly-CSharp">
-      <HintPath>R:\KSP_1.4.1_dev\KSP_x64_Data\Managed\Assembly-CSharp.dll</HintPath>
+      <HintPath>R:\KSP_1.4.5_dev\KSP_x64_Data\Managed\Assembly-CSharp.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Xml" />
     <Reference Include="UnityEngine">
-      <HintPath>R:\KSP_1.4.1_dev\KSP_x64_Data\Managed\UnityEngine.dll</HintPath>
+      <HintPath>R:\KSP_1.4.5_dev\KSP_x64_Data\Managed\UnityEngine.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -90,13 +90,17 @@
         $(PostBuildEventDependsOn);
         PostBuildMacros;
       </PostBuildEventDependsOn>
-    <PostBuildEvent>del R:\KSP_1.4.1_dev\GameData\KSP-AVC\KSP-AVC.dll
-copy D:\Users\jbb\github\KSPAddonVersionChecker\Output\KSP-AVC\KSP-AVC.dll R:\KSP_1.4.1_dev\GameData\KSP-AVC
+    <PostBuildEvent>del R:\KSP_1.4.5_dev\GameData\KSP-AVC\KSP-AVC.dll
+
+
+copy D:\Users\jbb\github\KSPAddonVersionChecker\Output\KSP-AVC\KSP-AVC.dll R:\KSP_1.4.5_dev\GameData\KSP-AVC
 </PostBuildEvent>
   </PropertyGroup>
   <PropertyGroup>
     <PreBuildEvent>
 set textTemplatingPath="%25ProgramFiles(x86)%25\Microsoft Visual Studio\2017\Community\Common7\IDE\texttransform.exe"
+
+
 
 %25textTemplatingPath%25 "$(ProjectDir)AssemblyVersion.tt"
 </PreBuildEvent>

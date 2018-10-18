@@ -75,6 +75,17 @@ namespace KSP_AVC
 
         public long Patch { get; set; }
 
+        public string Version
+        {
+            get
+            {
+                string v = this.Major.ToString() + "." + this.Minor.ToString() + "." + this.Patch.ToString();
+                if (this.Build > 0)
+                    v += "." + this.Build.ToString();
+                return v;
+            }
+        }
+
         #endregion
 
         #region Operators

@@ -48,6 +48,7 @@ namespace KSP_AVC
         {
             // Following because some files are returning a few gibberish chars when downloading from Github
             json = DeleteCharsPrecedingBrace(json);
+
             try
             {
                 this.path = path;
@@ -61,6 +62,7 @@ namespace KSP_AVC
                         this.ParseKerbalStuff(json);
                         break;
                 }
+                
                 ValidateKspMinMax();
             }
             catch
@@ -127,9 +129,15 @@ namespace KSP_AVC
 
         public bool IsCompatible
         {
-            get { return (this.IsCompatibleKspVersion && this.kspVersionMin == null && this.kspVersionMax == null)
+            get {
+                bool b = (this.IsCompatibleKspVersion && this.kspVersionMin == null && this.kspVersionMax == null)
                     || 
-                    ((this.kspVersionMin != null || this.kspVersionMax != null) && this.IsCompatibleKspVersionMin && this.IsCompatibleKspVersionMax); }
+                    ((this.kspVersionMin != null || this.kspVersionMax != null) && this.IsCompatibleKspVersionMin && this.IsCompatibleKspVersionMax);
+                if (b) return true;
+                // need to add code to check the compatible list here
+      
+                return b;
+            }
         }
 
         public bool IsCompatibleGitHubVersion
@@ -139,17 +147,32 @@ namespace KSP_AVC
 
         public bool IsCompatibleKspVersion
         {
-            get { return Equals(this.KspVersion, actualKspVersion); }
+            get
+            {
+                var b = Equals(this.KspVersion, actualKspVersion);
+                
+                if (!b)
+                {
+                    CompatVersions cv;
+                    if (!Configuration.CompatibleVersions.TryGetValue(this.KspVersion.Version, out cv))
+                        return false;
+                    b = cv.compatibleWithVersion.Contains(actualKspVersion.Version);
+                }
+                return b;
+            }
         }
 
         public bool IsCompatibleKspVersionMax
         {
-            get { return this.KspVersionMax >= actualKspVersion; }
+            get { bool b = this.KspVersionMax >= actualKspVersion;
+                return b; }
         }
 
         public bool IsCompatibleKspVersionMin
         {
-            get { return this.KspVersionMin <= actualKspVersion; }
+            get { bool b = this.KspVersionMin <= actualKspVersion;
+                return b;
+            }
         }
 
         public string KerbalStuffUrl { get; private set; }
@@ -179,6 +202,9 @@ namespace KSP_AVC
         }
 
         public string Name { get; private set; }
+
+        
+        public LocalRemotePriority Priority { get; private set; }
 
         public bool ParseError { get; private set; }
 
@@ -308,6 +334,40 @@ namespace KSP_AVC
             {
                 switch (key.ToUpper())
                 {
+ 
+                    case "LOCAL_HAS_PRIORITY":
+                        {
+                            string s = (string)data[key];
+                            switch (s.ToUpper())
+                            {
+                                case "TRUE":
+                                    this.Priority = LocalRemotePriority.local;
+                                    break;
+                                case "FALSE":
+                                    this.Priority = LocalRemotePriority.remote;
+                                    break;
+                            }
+                        }
+                        break;
+
+                    case "REMOTE_HAS_PRIORITY":
+                        {
+                            string s = (string)data[key];
+                            switch (s.ToUpper())
+                            {
+                                case "TRUE":
+                                    this.Priority = LocalRemotePriority.remote;
+                                    break;
+                                case "FALSE":
+                                    this.Priority = LocalRemotePriority.local;
+                                    break;
+                            }
+                        }
+                        break;
+                      
+
+
+
                     case "NAME":
                         this.Name = (string)data[key];
                         break;
@@ -365,6 +425,7 @@ namespace KSP_AVC
 
         private void ValidateKspMinMax()
         {
+            Debug.Log("ValidateKspMinMax, KspVersionMin: " + KspVersionMin + ", KspVersionMax: " + KspVersionMax);
             if ( KspVersionMin > KspVersionMax)
             {
                 this.ParseError = true;

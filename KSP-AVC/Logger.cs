@@ -34,15 +34,15 @@ namespace KSP_AVC
     {
         #region Fields
 
-        private static readonly AssemblyName assemblyName;
-        private static readonly string fileName;
+        private static AssemblyName assemblyName;
+        private static string fileName;
         private static readonly List<string[]> messages = new List<string[]>();
 
         #endregion
 
         #region Constructors
 
-        static Logger()
+        static void LoggerInit()
         {
             assemblyName = Assembly.GetExecutingAssembly().GetName();
             fileName = Path.ChangeExtension(Assembly.GetExecutingAssembly().Location, "log");
@@ -205,6 +205,7 @@ namespace KSP_AVC
 
         protected void Awake()
         {
+            LoggerInit();
             DontDestroyOnLoad(this);
         }
 

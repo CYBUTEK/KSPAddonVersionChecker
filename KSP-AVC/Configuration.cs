@@ -21,11 +21,22 @@ using System;
 using System.IO;
 using System.Reflection;
 using System.Xml.Serialization;
+using System.Collections.Generic;
 
 #endregion
 
 namespace KSP_AVC
 {
+    public enum LocalRemotePriority { none, local, remote };
+    public class CompatVersions
+    {
+        public string currentVersion;
+        public List<string> compatibleWithVersion;
+
+        public VersionInfo curVersion;
+        public List<VersionInfo> compatWithVersion;
+    }
+
     public class Configuration
     {
         #region Fields
@@ -120,6 +131,62 @@ namespace KSP_AVC
             Instance.Version = value;
             Save();
         }
+
+        /////////
+
+         
+        public static void LoadCfg()
+        {
+            Logger.Log("LoadCfg");
+            OverridePriority = LocalRemotePriority.none;
+            SimplePriority = LocalRemotePriority.none;
+            Logger.Log("KSP-AVC node count: " + GameDatabase.Instance.GetConfigNodes("KSP-AVC").Length);
+            foreach (ConfigNode node in GameDatabase.Instance.GetConfigNodes("KSP-AVC"))
+            {
+                if (node.HasValue("OVERRIDE_PRIORITY﻿﻿"))
+                {
+                    try
+                    {
+                        OverridePriority = (LocalRemotePriority)Enum.Parse(typeof(LocalRemotePriority), node.GetValue("OVERRIDE_PRIORITY﻿﻿"));
+                        Logger.Log("OverridePriority: " + OverridePriority);
+                    }
+                    catch { }
+                }
+                if (node.HasValue("SIMPLE_PRIORITY﻿﻿"))
+                {
+                    try
+                    {
+                        SimplePriority = (LocalRemotePriority)Enum.Parse(typeof(LocalRemotePriority), node.GetValue("SIMPLE_PRIORITY﻿﻿"));
+                        Logger.Log("SimplePriority: " + SimplePriority);
+                    }
+                    catch { }
+                }
+                var compatVerList = node.GetValuesList("COMPATIBLE_VERSION_OVERRIDE");
+                foreach (var a in compatVerList)
+                {
+                    CompatVersions cv = new CompatVersions();
+                    var ar = a.Split(',');
+
+                    cv.currentVersion = ar[0];
+                    cv.curVersion = new VersionInfo(cv.currentVersion);
+                    cv.compatibleWithVersion = new List<string>();
+                    for (int i = 1; i < ar.Length; i++)
+                    {
+                        cv.compatibleWithVersion.Add(ar[i]);
+                        cv.compatWithVersion.Add(new VersionInfo(ar[i]));
+                        Logger.Log("COMPATIBLE_VERSION_OVERRIDE, currentVersion: " + ar[0] + ", compatibleWithVersion: " + ar[i]);
+                    }
+                    CompatibleVersions.Add(cv.currentVersion, cv);
+                }
+            }
+            CfgLoaded = true;
+            Logger.Flush();
+        }
+        public static LocalRemotePriority OverridePriority { get; private set; }
+        public static LocalRemotePriority SimplePriority { get; private set; }
+        public static bool CfgLoaded = false;
+
+        public static Dictionary<string, CompatVersions> CompatibleVersions = new Dictionary<string, CompatVersions>();
 
         #endregion
     }

@@ -34,8 +34,8 @@ namespace MiniAVC
     {
         #region Fields
 
-        private static readonly AssemblyName assemblyName;
-        private static readonly string fileName;
+        private static  AssemblyName assemblyName;
+        private static  string fileName;
 
         private static readonly List<string[]> messages = new List<string[]>();
 
@@ -43,7 +43,9 @@ namespace MiniAVC
 
         #region Constructors
 
-        static Logger()
+        // Following was originally a constructor, Unity 5 doesn't like some of what's happening, so 
+        // it's now called from the Awake method
+        static void LoggerInit()
         {
             assemblyName = Assembly.GetExecutingAssembly().GetName();
             fileName = assemblyName.Name + ".log";
@@ -199,6 +201,7 @@ namespace MiniAVC
 
         protected void Awake()
         {
+            LoggerInit();
             DontDestroyOnLoad(this);
         }
 

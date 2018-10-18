@@ -61,13 +61,15 @@ namespace MiniAVC
         {
             get
             {
-                return this.IsProcessingComplete &&
+                bool b = this.IsProcessingComplete &&
                   this.LocalInfo.Version != null &&
                   this.RemoteInfo.Version != null &&
                   this.RemoteInfo.Version > this.LocalInfo.Version &&
                   // this.RemoteInfo.IsCompatibleKspVersion && 
                   this.RemoteInfo.IsCompatible &&
                   this.RemoteInfo.IsCompatibleGitHubVersion;
+
+                return b;
             }
         }
         public AddonInfo LocalInfo { get; private set; }

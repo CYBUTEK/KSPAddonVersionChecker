@@ -55,13 +55,18 @@ namespace KSP_AVC
 
         public bool IsUpdateAvailable
         {
-            get { return this.IsProcessingComplete && 
+            get {
+                bool b = this.IsProcessingComplete && 
                     this.LocalInfo.Version != null && 
                     this.RemoteInfo.Version != null && 
                     this.RemoteInfo.Version > this.LocalInfo.Version && 
-                    this.RemoteInfo.IsCompatibleKspVersion && 
+                    //this.RemoteInfo.IsCompatibleKspVersion && 
                     this.RemoteInfo.IsCompatible &&
-                    this.RemoteInfo.IsCompatibleGitHubVersion; }
+                    this.RemoteInfo.IsCompatibleGitHubVersion;
+
+                return b;
+
+            }
         }
 
         public AddonInfo LocalInfo { get; private set; }
@@ -198,8 +203,10 @@ namespace KSP_AVC
 
         private void SetRemoteAvcInfo(WWW www)
         {
+
             this.RemoteInfo = new AddonInfo(this.LocalInfo.Url, www.text, AddonInfo.RemoteType.AVC);
             this.RemoteInfo.FetchRemoteData();
+
 
 #if true
             if (this.LocalInfo.Version == this.RemoteInfo.Version)

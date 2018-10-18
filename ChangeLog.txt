@@ -61,3 +61,8 @@ For all the following, VERSION < remote VERSION.  The following cases  should al
 
 1.2.0.2
 	Updated version file for all 1.4
+
+1.2.0.3 
+	Fixed MiniAVC.dll to not show the same .version file if there are multiplie copies of the MiniAVC.dll in the path, thanks @HebaruSan
+	Moved initialization for the  Logger class into the Awake() method
+	Fixed error in full KSP-AVC where it wasn't showing available updates
