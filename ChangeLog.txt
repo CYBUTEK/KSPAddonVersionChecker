@@ -69,3 +69,6 @@ For all the following, VERSION < remote VERSION.  The following cases  should al
 
 1.2.0.4
 	Version bump for 1.5 rebuild
+
+1.2.0.5
+	Version bump to fix .version file
