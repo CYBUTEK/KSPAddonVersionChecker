@@ -28,7 +28,7 @@ using System.Runtime.InteropServices;
 
 [assembly: AssemblyTitle("AVCToolkit")]
 [assembly: AssemblyProduct("AVCToolkit")]
-[assembly: AssemblyCopyright("Copyright © 2014 CYBUTEK")]
+[assembly: AssemblyCopyright("Copyright © 2014 CYBUTEK, Linuxgurugamer 2018")]
 
 // Setting ComVisible to false makes the types in this assembly not visible 
 // to COM components.  If you need to access a type in this assembly from 
