@@ -161,23 +161,46 @@ namespace KSP_AVC
                     }
                     catch { }
                 }
-                var compatVerList = node.GetValuesList("COMPATIBLE_VERSION_OVERRIDE");
-                foreach (var a in compatVerList)
+                if(node.HasValue("COMPATIBLE_VERSION_OVERRIDE"))
                 {
-                    CompatVersions cv = new CompatVersions();
-                    var ar = a.Split(',');
-
-                    cv.currentVersion = ar[0];
-                    cv.curVersion = new VersionInfo(cv.currentVersion);
-                    cv.compatibleWithVersion = new List<string>();
-                    for (int i = 1; i < ar.Length; i++)
+                    try
                     {
-                        cv.compatibleWithVersion.Add(ar[i]);
-                        cv.compatWithVersion.Add(new VersionInfo(ar[i]));
-                        Logger.Log("COMPATIBLE_VERSION_OVERRIDE, currentVersion: " + ar[0] + ", compatibleWithVersion: " + ar[i]);
+                        var compatVerList = node.GetValuesList("COMPATIBLE_VERSION_OVERRIDE");
+                        foreach (var a in compatVerList)
+                        {
+                            CompatVersions cv = new CompatVersions();
+                            var ar = a.Split(',');
+
+                            cv.currentVersion = ar[0];
+                            cv.curVersion = new VersionInfo(cv.currentVersion);
+                            cv.compatibleWithVersion = new List<string>();
+                            cv.compatWithVersion = new List<VersionInfo>(); //initializing the list before adding stuff to it helps to prevent a NRE :) 
+                            for (int i = 1; i < ar.Length; i++)
+                            {
+                                cv.compatibleWithVersion.Add(ar[i]);
+                                cv.compatWithVersion.Add(new VersionInfo(ar[i]));
+                                Logger.Log("COMPATIBLE_VERSION_OVERRIDE, currentVersion: " + ar[0] + ", compatibleWithVersion: " + ar[i]);
+                            }
+                            CompatibleVersions.Add(cv.currentVersion, cv);
+                        }
                     }
-                    CompatibleVersions.Add(cv.currentVersion, cv);
+                    catch { }
+                    
                 }
+                if(node.HasValue("IGNORE_OVERRIDE"))
+                {
+                    try
+                    {
+                        List<string> ignoredMods = node.GetValuesList("IGNORE_OVERRIDE");
+                        foreach (string modName in ignoredMods)
+                        {                            
+                            modsIgnoreOverride.Add(modName);
+                            Logger.Log($"IGNORE_OVERRIDE: {modName}");
+                        }
+                    }
+                    catch { }
+                }
+                
             }
             CfgLoaded = true;
             Logger.Flush();
@@ -185,6 +208,8 @@ namespace KSP_AVC
         public static LocalRemotePriority OverridePriority { get; private set; }
         public static LocalRemotePriority SimplePriority { get; private set; }
         public static bool CfgLoaded = false;
+
+        public static List<string> modsIgnoreOverride = new List<string>();
 
         public static Dictionary<string, CompatVersions> CompatibleVersions = new Dictionary<string, CompatVersions>();
 

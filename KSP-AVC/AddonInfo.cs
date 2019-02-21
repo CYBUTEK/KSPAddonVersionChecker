@@ -134,9 +134,41 @@ namespace KSP_AVC
                     || 
                     ((this.kspVersionMin != null || this.kspVersionMax != null) && this.IsCompatibleKspVersionMin && this.IsCompatibleKspVersionMax);
                 if (b) return true;
-                // need to add code to check the compatible list here
-      
+                
                 return b;
+            }
+        }
+
+        public bool IsForcedCompatible
+        {
+            get
+            {
+                foreach (KeyValuePair<string, CompatVersions> entry in Configuration.CompatibleVersions)
+                {
+                    VersionInfo versionToOverride = new VersionInfo(entry.Key);
+                    for (int i = 0; i < entry.Value.compatWithVersion.Count; i++)
+                    {
+                        if (versionToOverride == KspVersion && entry.Value.compatWithVersion[i] == actualKspVersion)
+                        {
+                            return true;
+                        }
+                    }
+                }
+                return false;
+            }
+        }
+
+        public bool IgnoreOverride
+        {
+            get
+            {
+                bool onIgnoreList = false;
+                foreach (var modName in Configuration.modsIgnoreOverride)
+                {
+                    if (modName == this.Name)
+                        return true;
+                }
+                return onIgnoreList;
             }
         }
 
