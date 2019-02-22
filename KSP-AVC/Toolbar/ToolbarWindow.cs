@@ -34,6 +34,7 @@ namespace KSP_AVC.Toolbar
         private string addonList;
         private GUIStyle labelGreen;
         private GUIStyle labelYellow;
+        private GUIStyle labelBlue;
         private Rect position = new Rect(0.0f, 0.0f, 400.0f, 0.0f);
         private Vector2 scrollPosition = new Vector2(0, 0);
         private bool showAddons;
@@ -211,13 +212,13 @@ namespace KSP_AVC.Toolbar
             this.addonList = String.Empty;
             foreach (var addon in AddonLibrary.Addons)
             {
-                    var labelStyle = !addon.IsCompatible || addon.IsUpdateAvailable ? this.labelYellow : this.labelGreen;
-                    this.addonList += Environment.NewLine + addon.Name + " - " + addon.LocalInfo.Version;
-                    GUILayout.BeginHorizontal();
-                    GUILayout.Label(addon.Name, labelStyle);
-                    GUILayout.FlexibleSpace();
-                    GUILayout.Label(addon.LocalInfo.Version != null ? addon.LocalInfo.Version.ToString() : String.Empty, labelStyle);
-                    GUILayout.EndHorizontal();
+                var labelStyle = addon.LocalInfo.IsForcedCompatible ? this.labelBlue : (!addon.IsCompatible || addon.IsUpdateAvailable) ? this.labelYellow : this.labelGreen;
+                this.addonList += Environment.NewLine + addon.Name + " - " + addon.LocalInfo.Version;
+                GUILayout.BeginHorizontal();
+                GUILayout.Label(addon.Name, labelStyle);
+                GUILayout.FlexibleSpace();
+                GUILayout.Label(addon.LocalInfo.Version != null ? addon.LocalInfo.Version.ToString() : String.Empty, labelStyle);
+                GUILayout.EndHorizontal();
                 
             }
         }
@@ -247,6 +248,14 @@ namespace KSP_AVC.Toolbar
                 normal =
                 {
                     textColor = Color.yellow
+                }
+            };
+
+            this.labelBlue = new GUIStyle
+            {
+                normal =
+                {
+                    textColor = Color.cyan
                 }
             };
         }

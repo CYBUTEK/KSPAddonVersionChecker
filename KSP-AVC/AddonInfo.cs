@@ -133,7 +133,6 @@ namespace KSP_AVC
                 bool b = (this.IsCompatibleKspVersion && this.kspVersionMin == null && this.kspVersionMax == null)
                     || 
                     ((this.kspVersionMin != null || this.kspVersionMax != null) && this.IsCompatibleKspVersionMin && this.IsCompatibleKspVersionMax);
-                if (b) return true;
                 
                 return b;
             }
@@ -143,18 +142,49 @@ namespace KSP_AVC
         {
             get
             {
-                foreach (KeyValuePair<string, CompatVersions> entry in Configuration.CompatibleVersions)
-                {
-                    VersionInfo versionToOverride = new VersionInfo(entry.Key);
-                    for (int i = 0; i < entry.Value.compatWithVersion.Count; i++)
-                    {
-                        if (versionToOverride == KspVersion && entry.Value.compatWithVersion[i] == actualKspVersion)
-                        {
-                            return true;
-                        }
-                    }
-                }
-                return false;
+                if (this.IsCompatible || DisableOverride || IgnoreOverride)
+                    return false;
+
+                bool compatible = (this.IsForcedCompatibleKspVersion && this.kspVersionMin == null && this.kspVersionMax == null)
+                    ||
+                    ((!this.KspVersionMinIsNull || !this.KspVersionMaxIsNull) && this.IsForcedCompatibleKspVersionMin && this.IsForcedCompatibleKspVersionMax);
+                return compatible;
+            }
+        }
+
+        public bool IsForcedCompatibleKspVersionMin
+        {
+            get
+            {
+                bool isCompatible = (from d in Configuration.CompatibleVersions
+                                     where KspVersionMin <= new VersionInfo(d.Key)
+                                     select d.Value.compatWithVersion.Where(x => x == actualKspVersion)).Any();
+
+                return isCompatible;
+            }
+        }
+
+        public bool IsForcedCompatibleKspVersionMax
+        {
+            get
+            {
+                bool isCompatible = (from d in Configuration.CompatibleVersions
+                                     where KspVersionMax >= new VersionInfo(d.Key)
+                                     select d.Value.compatWithVersion.Where(x => x == actualKspVersion)).Any();
+
+                return isCompatible;
+            }
+        }
+
+        public bool IsForcedCompatibleKspVersion
+        {
+            get
+            {
+                bool isCompatible = (from d in Configuration.CompatibleVersions
+                                     where new VersionInfo(d.Key) == KspVersion
+                                     select d.Value.compatWithVersion.Where(x => x == actualKspVersion)).Any();
+
+                return isCompatible;
             }
         }
 
@@ -234,9 +264,10 @@ namespace KSP_AVC
         }
 
         public string Name { get; private set; }
-
         
         public LocalRemotePriority Priority { get; private set; }
+
+        public bool DisableOverride { get; private set; }
 
         public bool ParseError { get; private set; }
 
@@ -396,9 +427,10 @@ namespace KSP_AVC
                             }
                         }
                         break;
-                      
 
-
+                    case "DISABLE_COMPATIBLE_VERSION_OVERRIDE":
+                        this.DisableOverride = (bool)data[key];
+                        break;
 
                     case "NAME":
                         this.Name = (string)data[key];

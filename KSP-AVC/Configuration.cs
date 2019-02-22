@@ -161,18 +161,7 @@ namespace KSP_AVC
                     }
                     catch { }
                 }
-                if (node.HasValue("DISABLE_COMPATIBLE_VERSION_OVERRIDE"))
-                {
-                    try
-                    {
-                        if (node.GetValue("DISABLE_COMPATIBLE_VERSION_OVERRIDE").ToLower() == "true")
-                            disableOverride = true;
-                        else
-                            disableOverride = false;
-                    }
-                    catch { }
-                }
-                if (node.HasValue("COMPATIBLE_VERSION_OVERRIDE") && !disableOverride) //no need to read and process the node if the override feature is disabled
+                if (node.HasValue("COMPATIBLE_VERSION_OVERRIDE"))
                 {
                     try
                     {
@@ -198,7 +187,7 @@ namespace KSP_AVC
                     catch { }
                     
                 }
-                if(node.HasValue("IGNORE_OVERRIDE") && !disableOverride)
+                if(node.HasValue("IGNORE_OVERRIDE"))
                 {
                     try
                     {
@@ -220,7 +209,6 @@ namespace KSP_AVC
         public static bool CfgLoaded = false;
 
         public static List<string> modsIgnoreOverride = new List<string>();
-        public static bool disableOverride;
 
         public static Dictionary<string, CompatVersions> CompatibleVersions = new Dictionary<string, CompatVersions>();
 
