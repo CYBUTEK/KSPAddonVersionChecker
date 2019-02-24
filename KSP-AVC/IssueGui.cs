@@ -170,12 +170,13 @@ namespace KSP_AVC
                 list.ToolTip.Text = GUILayoutUtility.GetLastRect().Contains(Event.current.mousePosition) ? list.ToolTip.Text = addon.RemoteInfo.Download : String.Empty;
             }
         }
+
         VersionInfo zero = new VersionInfo();
         private void DrawCompatibilityIssues()
         {
             GUILayout.BeginVertical(this.boxStyle);
             GUILayout.Label("COMPATIBILITY ISSUES", this.nameTitleStyle);
-            foreach (var addon in AddonLibrary.Addons.Where(a => !a.IsCompatible))
+            foreach (var addon in AddonLibrary.Addons.Where(a => !a.IsCompatible && !a.IsForcedCompatible))
             {
                 string built = "";
                 if (addon.LocalInfo.KspVersionMinIsNull && addon.LocalInfo.KspVersionMaxIsNull) //|| addon.LocalInfo.KspVersion == addon.LocalInfo.KspVersionMin)
@@ -191,7 +192,7 @@ namespace KSP_AVC
             }
             GUILayout.EndVertical();
         }
-
+        
         private void DrawUpdateHeadings()
         {
             GUILayout.BeginHorizontal();
@@ -287,7 +288,7 @@ namespace KSP_AVC
                 {
                     this.DrawUpdateIssues();
                 }
-                if (AddonLibrary.Addons.Any(a => !a.IsCompatible))
+                if (AddonLibrary.Addons.Any(a => !a.IsCompatible && !a.IsForcedCompatible))
                 {
                     this.DrawCompatibilityIssues();
                 }

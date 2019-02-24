@@ -212,7 +212,7 @@ namespace KSP_AVC.Toolbar
             this.addonList = String.Empty;
             foreach (var addon in AddonLibrary.Addons)
             {
-                var labelStyle = addon.LocalInfo.IsForcedCompatible ? this.labelBlue : (!addon.IsCompatible || addon.IsUpdateAvailable) ? this.labelYellow : this.labelGreen;
+                var labelStyle = addon.IsForcedCompatible ? this.labelBlue : (!addon.IsCompatible || addon.IsUpdateAvailable) ? this.labelYellow : this.labelGreen;
                 this.addonList += Environment.NewLine + addon.Name + " - " + addon.LocalInfo.Version;
                 GUILayout.BeginHorizontal();
                 GUILayout.Label(addon.Name, labelStyle);

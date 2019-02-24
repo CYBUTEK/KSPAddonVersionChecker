@@ -155,7 +155,7 @@ namespace KSP_AVC
             {
                 return false;
             }
-            if (AddonLibrary.Addons.Any(a => a.IsUpdateAvailable || !a.IsCompatible))
+            if (AddonLibrary.Addons.Any(a => a.IsUpdateAvailable || !a.IsCompatible || !a.IsForcedCompatible))
             {
                 this.gameObject.AddComponent<IssueGui>();
             }

@@ -142,7 +142,7 @@ namespace KSP_AVC
         {
             get
             {
-                if (this.IsCompatible || DisableOverride || IgnoreOverride)
+                if (this.IsCompatible || this.DisableOverrideGlobal || this.IgnoreOverrideSingle)
                     return false;
 
                 bool compatible = (this.IsForcedCompatibleKspVersion && this.kspVersionMin == null && this.kspVersionMax == null)
@@ -156,11 +156,11 @@ namespace KSP_AVC
         {
             get
             {
-                bool isCompatible = (from d in Configuration.CompatibleVersions
+                bool isForcedCompatible = (from d in Configuration.CompatibleVersions
                                      where KspVersionMin <= new VersionInfo(d.Key)
                                      select d.Value.compatWithVersion.Where(x => x == actualKspVersion)).Any();
 
-                return isCompatible;
+                return isForcedCompatible;
             }
         }
 
@@ -168,11 +168,11 @@ namespace KSP_AVC
         {
             get
             {
-                bool isCompatible = (from d in Configuration.CompatibleVersions
+                bool isForcedCompatible = (from d in Configuration.CompatibleVersions
                                      where KspVersionMax >= new VersionInfo(d.Key)
                                      select d.Value.compatWithVersion.Where(x => x == actualKspVersion)).Any();
 
-                return isCompatible;
+                return isForcedCompatible;
             }
         }
 
@@ -180,15 +180,15 @@ namespace KSP_AVC
         {
             get
             {
-                bool isCompatible = (from d in Configuration.CompatibleVersions
+                bool isForcedCompatible = (from d in Configuration.CompatibleVersions
                                      where new VersionInfo(d.Key) == KspVersion
                                      select d.Value.compatWithVersion.Where(x => x == actualKspVersion)).Any();
 
-                return isCompatible;
+                return isForcedCompatible;
             }
         }
 
-        public bool IgnoreOverride
+        public bool IgnoreOverrideSingle
         {
             get
             {
@@ -267,7 +267,7 @@ namespace KSP_AVC
         
         public LocalRemotePriority Priority { get; private set; }
 
-        public bool DisableOverride { get; private set; }
+        public bool DisableOverrideGlobal { get; private set; }
 
         public bool ParseError { get; private set; }
 
@@ -429,7 +429,7 @@ namespace KSP_AVC
                         break;
 
                     case "DISABLE_COMPATIBLE_VERSION_OVERRIDE":
-                        this.DisableOverride = (bool)data[key];
+                        this.DisableOverrideGlobal = (bool)data[key];
                         break;
 
                     case "NAME":

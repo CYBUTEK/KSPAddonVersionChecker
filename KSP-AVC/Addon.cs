@@ -44,8 +44,18 @@ namespace KSP_AVC
 
         public bool IsCompatible
         {
-            get { return (this.IsLocalReady && this.LocalInfo.IsCompatible) || (this.LocalInfo.IsForcedCompatible && !this.LocalInfo.DisableOverride); }
+            get { return (this.IsLocalReady && this.LocalInfo.IsCompatible); } //|| (this.LocalInfo.IsForcedCompatible && !this.LocalInfo.DisableOverride); }
 
+        }
+
+        public bool IsForcedCompatible
+        {
+            get { return this.LocalInfo.IsForcedCompatible; }
+        }
+
+        public bool DisableOverride
+        {
+            get { return this.LocalInfo.DisableOverrideGlobal; }
         }
 
         public bool IsLocalReady { get; private set; }
