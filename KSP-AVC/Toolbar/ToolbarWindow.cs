@@ -34,7 +34,7 @@ namespace KSP_AVC.Toolbar
         private string addonList;
         private GUIStyle labelGreen;
         private GUIStyle labelYellow;
-        private GUIStyle labelBlue;
+        private GUIStyle labelCyan;
         private Rect position = new Rect(0.0f, 0.0f, 400.0f, 0.0f);
         private Vector2 scrollPosition = new Vector2(0, 0);
         private bool showAddons;
@@ -212,7 +212,7 @@ namespace KSP_AVC.Toolbar
             this.addonList = String.Empty;
             foreach (var addon in AddonLibrary.Addons)
             {
-                var labelStyle = addon.IsForcedCompatible ? this.labelBlue : (!addon.IsCompatible || addon.IsUpdateAvailable) ? this.labelYellow : this.labelGreen;
+                var labelStyle = addon.IsForcedCompatible ? this.labelCyan : (!addon.IsCompatible || addon.IsUpdateAvailable) ? this.labelYellow : this.labelGreen;
                 this.addonList += Environment.NewLine + addon.Name + " - " + addon.LocalInfo.Version;
                 GUILayout.BeginHorizontal();
                 GUILayout.Label(addon.Name, labelStyle);
@@ -251,7 +251,7 @@ namespace KSP_AVC.Toolbar
                 }
             };
 
-            this.labelBlue = new GUIStyle
+            this.labelCyan = new GUIStyle
             {
                 normal =
                 {

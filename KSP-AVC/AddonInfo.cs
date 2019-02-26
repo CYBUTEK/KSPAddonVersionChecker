@@ -138,6 +138,7 @@ namespace KSP_AVC
             }
         }
 
+        //Handles the Compatibility Override by versionnumbers, set in the AVC.cfg
         public bool IsForcedCompatible
         {
             get
@@ -147,8 +148,31 @@ namespace KSP_AVC
 
                 bool compatible = (this.IsForcedCompatibleKspVersion && this.kspVersionMin == null && this.kspVersionMax == null)
                     ||
-                    ((!this.KspVersionMinIsNull || !this.KspVersionMaxIsNull) && this.IsForcedCompatibleKspVersionMin && this.IsForcedCompatibleKspVersionMax);
+                    ((!this.KspVersionMinIsNull || !this.KspVersionMaxIsNull) && this.IsForcedCompatibleKspVersionMin && this.IsForcedCompatibleKspVersionMax)
+                    ||
+                    IsForcedCompatibleByName;
                 return compatible;
+            }
+            //set
+            //{
+            //    IsForcedCompatible = value;
+            //}
+        }
+
+        //Handles the Compatibility Override GUI settings
+        public bool IsForcedCompatibleByName
+        {
+            get
+            {
+                bool isForcedCompatible = (from d in OverrideSettings.Instance.OverrideModCompatibility
+                                           where d == this.Name
+                                           select d).Any();
+
+                return isForcedCompatible;
+            }
+            set
+            {
+                IsForcedCompatibleByName = value;
             }
         }
 
@@ -188,6 +212,7 @@ namespace KSP_AVC
             }
         }
 
+        //Checks for mods which need to ignore the Compatibility Override, this should be Kopernicus by default (set in AVC.cfg)
         public bool IgnoreOverrideSingle
         {
             get
@@ -267,7 +292,7 @@ namespace KSP_AVC
         
         public LocalRemotePriority Priority { get; private set; }
 
-        public bool DisableOverrideGlobal { get; private set; }
+        public bool DisableOverrideGlobal { get; private set; } //Enable/Disable the Compatibility Override feature, set in the AVC.cfg
 
         public bool ParseError { get; private set; }
 

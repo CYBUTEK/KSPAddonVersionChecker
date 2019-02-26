@@ -158,6 +158,7 @@ namespace KSP_AVC
             if (AddonLibrary.Addons.Any(a => a.IsUpdateAvailable || !a.IsCompatible || !a.IsForcedCompatible))
             {
                 this.gameObject.AddComponent<IssueGui>();
+                this.gameObject.AddComponent<OverrideHelper>();
             }
             Destroy(this);
             return true;

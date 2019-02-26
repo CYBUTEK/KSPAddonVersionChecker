@@ -50,7 +50,26 @@ namespace KSP_AVC
 
         public bool IsForcedCompatible
         {
-            get { return this.LocalInfo.IsForcedCompatible; }
+            get
+            {
+                return this.LocalInfo.IsForcedCompatible;
+            }
+            //set
+            //{
+            //    this.LocalInfo.IsForcedCompatible = value;
+            //}
+        }
+
+        public bool IsForcedCompatibleByName
+        {
+            get
+            {
+                return this.LocalInfo.IsForcedCompatibleByName;
+            }
+            set
+            {
+                this.LocalInfo.IsForcedCompatibleByName = value;
+            }
         }
 
         public bool DisableOverride
