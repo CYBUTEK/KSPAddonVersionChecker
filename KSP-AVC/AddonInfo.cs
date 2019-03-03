@@ -127,52 +127,57 @@ namespace KSP_AVC
 
         public GitHubInfo GitHub { get; private set; }
 
+        private bool _IsForcedCompatibleByName;
+
         public bool IsCompatible
         {
             get {
                 bool b = (this.IsCompatibleKspVersion && this.kspVersionMin == null && this.kspVersionMax == null)
                     || 
                     ((this.kspVersionMin != null || this.kspVersionMax != null) && this.IsCompatibleKspVersionMin && this.IsCompatibleKspVersionMax);
-                
                 return b;
             }
         }
 
         //Handles the Compatibility Override by versionnumbers, set in the AVC.cfg
-        public bool IsForcedCompatible
+        public bool IsForcedCompatibleByVersion
         {
             get
             {
-                if (this.IsCompatible || this.DisableOverrideGlobal || this.IgnoreOverrideSingle)
+                if (this.IsCompatible || this.IsLockedByCreator || this.IgnoreOverride || Configuration.OverrideIsDisabledGlobal)
+                {
                     return false;
+                }
+                    
 
                 bool compatible = (this.IsForcedCompatibleKspVersion && this.kspVersionMin == null && this.kspVersionMax == null)
                     ||
-                    ((!this.KspVersionMinIsNull || !this.KspVersionMaxIsNull) && this.IsForcedCompatibleKspVersionMin && this.IsForcedCompatibleKspVersionMax)
-                    ||
-                    IsForcedCompatibleByName;
+                    ((!this.KspVersionMinIsNull || !this.KspVersionMaxIsNull) && this.IsForcedCompatibleKspVersionMin && this.IsForcedCompatibleKspVersionMax);
                 return compatible;
             }
-            //set
-            //{
-            //    IsForcedCompatible = value;
-            //}
         }
 
-        //Handles the Compatibility Override GUI settings
+        //Handles the Compatibility Override by Name, set in the AVC.cfg
         public bool IsForcedCompatibleByName
         {
             get
             {
-                bool isForcedCompatible = (from d in OverrideSettings.Instance.OverrideModCompatibility
+                if (this.IsCompatible || this.IsLockedByCreator  || Configuration.OverrideIsDisabledGlobal)
+                {
+                    return false;
+                }
+                    
+
+                bool isForcedCompatible = (from d in Configuration.OverrideCompatibilityByName
                                            where d == this.Name
                                            select d).Any();
 
-                return isForcedCompatible;
+                _IsForcedCompatibleByName = isForcedCompatible;
+                return _IsForcedCompatibleByName;
             }
             set
             {
-                IsForcedCompatibleByName = value;
+                _IsForcedCompatibleByName = value;
             }
         }
 
@@ -181,8 +186,9 @@ namespace KSP_AVC
             get
             {
                 bool isForcedCompatible = (from d in Configuration.CompatibleVersions
-                                     where KspVersionMin <= new VersionInfo(d.Key)
-                                     select d.Value.compatWithVersion.Where(x => x == actualKspVersion)).Any();
+                                           where KspVersionMin <= new VersionInfo(d.Key)
+                                           where d.Value.compatWithVersion.Contains(actualKspVersion)
+                                           select d).Any();
 
                 return isForcedCompatible;
             }
@@ -193,8 +199,9 @@ namespace KSP_AVC
             get
             {
                 bool isForcedCompatible = (from d in Configuration.CompatibleVersions
-                                     where KspVersionMax >= new VersionInfo(d.Key)
-                                     select d.Value.compatWithVersion.Where(x => x == actualKspVersion)).Any();
+                                           where KspVersionMax >= new VersionInfo(d.Key)
+                                           where d.Value.compatWithVersion.Contains(actualKspVersion)
+                                           select d).Any();
 
                 return isForcedCompatible;
             }
@@ -205,15 +212,16 @@ namespace KSP_AVC
             get
             {
                 bool isForcedCompatible = (from d in Configuration.CompatibleVersions
-                                     where new VersionInfo(d.Key) == KspVersion
-                                     select d.Value.compatWithVersion.Where(x => x == actualKspVersion)).Any();
+                                           where KspVersion == new VersionInfo(d.Key)
+                                           where d.Value.compatWithVersion.Contains(actualKspVersion)
+                                           select d).Any();
 
                 return isForcedCompatible;
             }
         }
 
         //Checks for mods which need to ignore the Compatibility Override, this should be Kopernicus by default (set in AVC.cfg)
-        public bool IgnoreOverrideSingle
+        public bool IgnoreOverride
         {
             get
             {
@@ -292,7 +300,7 @@ namespace KSP_AVC
         
         public LocalRemotePriority Priority { get; private set; }
 
-        public bool DisableOverrideGlobal { get; private set; } //Enable/Disable the Compatibility Override feature, set in the AVC.cfg
+        public bool IsLockedByCreator { get; private set; } //Enable/Disable the Compatibility Override feature, set in the version file
 
         public bool ParseError { get; private set; }
 
@@ -335,7 +343,8 @@ namespace KSP_AVC
                    "\n\tCompatibleKspVersion: " + this.IsCompatibleKspVersion +
                    "\n\tCompatibleKspVersionMin: " + this.IsCompatibleKspVersionMin +
                    "\n\tCompatibleKspVersionMax: " + this.IsCompatibleKspVersionMax +
-                   "\n\tCompatibleGitHubVersion: " + this.IsCompatibleGitHubVersion;
+                   "\n\tCompatibleGitHubVersion: " + this.IsCompatibleGitHubVersion +
+                   "\n\tDISABLE_COMPATIBLE_VERSION_OVERRIDE: " + this.IsLockedByCreator.ToString();
         }
 
         #endregion
@@ -454,7 +463,7 @@ namespace KSP_AVC
                         break;
 
                     case "DISABLE_COMPATIBLE_VERSION_OVERRIDE":
-                        this.DisableOverrideGlobal = (bool)data[key];
+                        this.IsLockedByCreator = (bool)data[key];
                         break;
 
                     case "NAME":

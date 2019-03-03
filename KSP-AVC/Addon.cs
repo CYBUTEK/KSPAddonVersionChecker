@@ -48,11 +48,11 @@ namespace KSP_AVC
 
         }
 
-        public bool IsForcedCompatible
+        public bool IsForcedCompatibleByVersion
         {
             get
             {
-                return this.LocalInfo.IsForcedCompatible;
+                return this.LocalInfo.IsForcedCompatibleByVersion;
             }
             //set
             //{
@@ -72,9 +72,9 @@ namespace KSP_AVC
             }
         }
 
-        public bool DisableOverride
+        public bool IsLockedByCreator
         {
-            get { return this.LocalInfo.DisableOverrideGlobal; }
+            get { return this.LocalInfo.IsLockedByCreator; }
         }
 
         public bool IsLocalReady { get; private set; }

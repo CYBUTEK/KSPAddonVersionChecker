@@ -40,6 +40,8 @@ namespace KSP_AVC.Toolbar
         private bool showAddons;
         private bool useScrollView;
         private GUIStyle windowStyle;
+        private GameObject helper;
+        private GuiHelper InstanceGuiHelper;
 
         #endregion
 
@@ -99,6 +101,15 @@ namespace KSP_AVC.Toolbar
             {
                 Logger.Exception(ex);
             }
+
+            if(helper == null)
+            {
+                helper = GameObject.Find("GuiHelper");
+                if(helper != null)
+                {
+                    InstanceGuiHelper = helper.GetComponent<GuiHelper>();
+                }
+            }
         }
 
         #endregion
@@ -114,6 +125,14 @@ namespace KSP_AVC.Toolbar
 
             this.useScrollView = true;
             this.position.height = Screen.height * 0.5f;
+        }
+
+        private void OverrideGUI()
+        {
+            if(GUILayout.Button("Compatibility Override GUI"))
+            {
+                InstanceGuiHelper.ToggleGUI();                   
+            }            
         }
 
         private void CopyToClipboard()
@@ -204,6 +223,7 @@ namespace KSP_AVC.Toolbar
 
             GUILayout.Space(5.0f);
             this.CopyToClipboard();
+            this.OverrideGUI();
             GUILayout.Space(5.0f);
         }
 
@@ -212,7 +232,7 @@ namespace KSP_AVC.Toolbar
             this.addonList = String.Empty;
             foreach (var addon in AddonLibrary.Addons)
             {
-                var labelStyle = addon.IsForcedCompatible ? this.labelCyan : (!addon.IsCompatible || addon.IsUpdateAvailable) ? this.labelYellow : this.labelGreen;
+                var labelStyle = (addon.IsForcedCompatibleByVersion || addon.IsForcedCompatibleByName) ? this.labelCyan : (!addon.IsCompatible || addon.IsUpdateAvailable) ? this.labelYellow : this.labelGreen;
                 this.addonList += Environment.NewLine + addon.Name + " - " + addon.LocalInfo.Version;
                 GUILayout.BeginHorizontal();
                 GUILayout.Label(addon.Name, labelStyle);

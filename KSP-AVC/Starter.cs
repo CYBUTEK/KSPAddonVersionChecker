@@ -74,6 +74,11 @@ namespace KSP_AVC
             {
                 Logger.Exception(ex);
             }
+
+            if(Configuration.CfgUpdated)
+            {
+                Configuration.SaveCfg();
+            }
             Logger.Log("Starter was destroyed.");
         }
 
@@ -84,6 +89,17 @@ namespace KSP_AVC
                 if (!Configuration.CfgLoaded)
                 {
                     Configuration.LoadCfg();
+                }
+                if(Configuration.AvcInterval == -1)
+                {
+                    ScreenMessages.PostScreenMessage("AVC disabled", 10);
+                    Destroy(this);
+                }
+                else if (DateTime.Compare(DateTime.Now, Configuration.NextRun) <= 0 && Configuration.AvcInterval != 0)
+                {
+                    ScreenMessages.PostScreenMessage("AVC temorary disabled", 10);
+                    ScreenMessages.PostScreenMessage($"AVC runs next: {Configuration.NextRun}", 10);
+                    Destroy(this);
                 }
                 if (new System.Version(Configuration.GetVersion()) < Assembly.GetExecutingAssembly().GetName().Version)
                 {
@@ -155,10 +171,11 @@ namespace KSP_AVC
             {
                 return false;
             }
-            if (AddonLibrary.Addons.Any(a => a.IsUpdateAvailable || !a.IsCompatible || !a.IsForcedCompatible))
+            if (AddonLibrary.Addons.Any(a => a.IsUpdateAvailable || !a.IsCompatible || !a.IsForcedCompatibleByVersion))
             {
                 this.gameObject.AddComponent<IssueGui>();
-                this.gameObject.AddComponent<OverrideHelper>();
+                //this.gameObject.AddComponent<CompatibilityOverrideGui>();
+                this.gameObject.AddComponent<GuiHelper>();
             }
             Destroy(this);
             return true;

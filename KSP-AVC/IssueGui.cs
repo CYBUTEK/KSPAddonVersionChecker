@@ -176,7 +176,7 @@ namespace KSP_AVC
         {
             GUILayout.BeginVertical(this.boxStyle);
             GUILayout.Label("COMPATIBILITY ISSUES", this.nameTitleStyle);
-            foreach (var addon in AddonLibrary.Addons.Where(a => !a.IsCompatible && !a.IsForcedCompatible))
+            foreach (var addon in AddonLibrary.Addons.Where(a => !a.IsCompatible && !a.IsForcedCompatibleByVersion && !a.IsForcedCompatibleByName))
             {
                 string built = "";
                 if (addon.LocalInfo.KspVersionMinIsNull && addon.LocalInfo.KspVersionMaxIsNull) //|| addon.LocalInfo.KspVersion == addon.LocalInfo.KspVersionMin)
@@ -288,7 +288,7 @@ namespace KSP_AVC
                 {
                     this.DrawUpdateIssues();
                 }
-                if (AddonLibrary.Addons.Any(a => !a.IsCompatible && !a.IsForcedCompatible))
+                if (AddonLibrary.Addons.Any(a => !a.IsCompatible && !a.IsForcedCompatibleByVersion && !a.IsForcedCompatibleByName))
                 {
                     this.DrawCompatibilityIssues();
                 }
