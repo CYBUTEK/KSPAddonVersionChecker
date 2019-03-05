@@ -42,6 +42,14 @@ namespace KSP_AVC
 
         public bool HasError { get; private set; }
 
+        public bool TriggerIssueGui
+        {
+            get
+            {
+                return this.LocalInfo.TriggerIssueGui;
+            }
+        }
+
         public bool IsCompatible
         {
             get { return (this.IsLocalReady && this.LocalInfo.IsCompatible); } //|| (this.LocalInfo.IsForcedCompatible && !this.LocalInfo.DisableOverride); }
@@ -54,10 +62,6 @@ namespace KSP_AVC
             {
                 return this.LocalInfo.IsForcedCompatibleByVersion;
             }
-            //set
-            //{
-            //    this.LocalInfo.IsForcedCompatible = value;
-            //}
         }
 
         public bool IsForcedCompatibleByName
@@ -65,10 +69,6 @@ namespace KSP_AVC
             get
             {
                 return this.LocalInfo.IsForcedCompatibleByName;
-            }
-            set
-            {
-                this.LocalInfo.IsForcedCompatibleByName = value;
             }
         }
 

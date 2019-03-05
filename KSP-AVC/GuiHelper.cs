@@ -25,7 +25,7 @@ namespace KSP_AVC
 
         protected void Update()
         {
-            bool modKey = GameSettings.MODIFIER_KEY.GetKey(); //(Input.GetKey(KeyCode.LeftAlt) || Input.GetKey(KeyCode.RightAlt));
+            bool modKey = GameSettings.MODIFIER_KEY.GetKey(); 
             if (modKey && Input.GetKeyDown(KeyCode.Alpha2))
             {
                 ToggleGUI();
@@ -34,12 +34,6 @@ namespace KSP_AVC
             {
                 Destroy(this);
             }
-
-            //debugging stuff
-            //Logger.Log($"1.4.2 is compatible: {Configuration.IsCompatibleVersion("1.4.2, 1.5.1, 1.6.1")}");
-            //Logger.Log($"1.4.2 is compatible: {Configuration.IsCompatibleVersion("1.4.2, 1.5.1")}");
-            //Logger.Log($"1.4.3 is compatible: {Configuration.IsCompatibleVersion("1.4.3, 1.6.1")}");
-            //Logger.Log($"1.4.3 is compatible: {Configuration.IsCompatibleVersion("1.4.3, 1.5.1")}");
         }
 
         protected void OnDestroy()
@@ -52,7 +46,6 @@ namespace KSP_AVC
             if (!this.GetComponent<CompatibilityOverrideGui>())
             {
                 this.gameObject.AddComponent<CompatibilityOverrideGui>();
-                Logger.Log("Display CompatibilityOverrideGui");
                 return;
             }
             else

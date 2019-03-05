@@ -14,6 +14,8 @@ namespace KSP_AVC
         private readonly VersionInfo version = Assembly.GetExecutingAssembly().GetName().Version;
         private enum OverrideType { name, version, ignore, locked };
         private GUIStyle buttonStyle;
+        private GUIStyle buttonStyleRed;
+        private GUIStyle buttonStyleGreen;
         private GUIStyle boxStyle;
         private GUIStyle topLevelTitleStyle;
         private GUIStyle topLevelTitleStyleVersion;
@@ -85,11 +87,6 @@ namespace KSP_AVC
             {
                 Logger.Exception(ex);
             }
-            //Configuration.AddOverrideVersion("1.4.2", "1.4.8");
-            //Configuration.AddOverrideVersion("1.4.4", "1.6.1");
-            //Configuration.AddOverrideVersion("1.4.4", "1.5.1");
-            //Configuration.RemoveOverrideVersion("1.4.3", "1.6.1");
-            //Configuration.RemoveOverrideVersion("1.4.1", "1.5.1");
         }
 
         #endregion
@@ -104,7 +101,7 @@ namespace KSP_AVC
             }
             if (GUILayout.Button("CLOSE", this.buttonStyle))
             {
-                //Configuration.SaveCfg();
+                Configuration.SaveCfg();
                 Destroy(this);
             }
             GUI.DragWindow();
@@ -211,14 +208,14 @@ namespace KSP_AVC
                     GUILayout.BeginHorizontal();
                     GUILayout.Label(Configuration.CompatibleVersions[key].currentVersion + " ==> " + Configuration.CompatibleVersions[key].compatibleWithVersion[i], this.labelStyle);
                     GUILayout.FlexibleSpace();
-                    if (GUILayout.Button("X", this.buttonStyle, GUILayout.Width(25), GUILayout.Height(25)))
+                    if (GUILayout.Button("X", this.buttonStyleRed, GUILayout.Width(25), GUILayout.Height(25)))
                     {
                         UpdateCompatibilityState(OverrideType.version, null, Configuration.CompatibleVersions[key].currentVersion + "," + Configuration.CompatibleVersions[key].compatibleWithVersion[i], true);
                     }
                     GUILayout.EndHorizontal();
                 }                    
             }
-            Configuration.deleteFinally();
+            Configuration.DeleteFinally();
         }
 
         private void DrawInputOverrideVersion()
@@ -229,6 +226,7 @@ namespace KSP_AVC
             if (GUILayout.Button("ADD", this.buttonStyle, GUILayout.Width(75), GUILayout.Height(20)))
             {
                 UpdateCompatibilityState(OverrideType.version, null, userInput);
+                //userInput = "";
                 Logger.Log($"INPUT: {userInput}");
             }
             GUILayout.EndHorizontal();
@@ -258,10 +256,19 @@ namespace KSP_AVC
             int m = listIncompatibleMods.Count();
             for (int i = 0; i < m; i++)
             {
+                bool onIgnore = false;
+                string buttonLabel = "X";
+                GUIStyle button = this.buttonStyleRed;
                 var addon = listIncompatibleMods[i];
                 if(addon.IsLockedByCreator)
                 {
                     continue;
+                }
+                if(Configuration.modsIgnoreOverride.Contains(addon.Name)) //switch button text color and label if mod is on ignore list
+                {
+                    onIgnore = !onIgnore;
+                    buttonLabel = "\u2713"; //unicode for a checkmark
+                    button = buttonStyleGreen;
                 }
                 string range = (addon.LocalInfo.KspVersionMin != null ? addon.LocalInfo.KspVersionMin.ToString() : "NULL") + " to " + (addon.LocalInfo.KspVersionMax != null ? addon.LocalInfo.KspVersionMax.ToString() : "NULL");
                 GUILayout.BeginHorizontal();
@@ -278,7 +285,7 @@ namespace KSP_AVC
                 GUILayout.Space(30);
                 DrawToggleButtonName(addon);
                 GUILayout.FlexibleSpace();
-                if (GUILayout.Button("X", this.buttonStyle, GUILayout.Width(25), GUILayout.Height(25)))
+                if (GUILayout.Button(buttonLabel, button, GUILayout.Width(25), GUILayout.Height(25)) && !onIgnore)
                 {
                     UpdateCompatibilityState(OverrideType.ignore, addon);
                 }
@@ -368,6 +375,7 @@ namespace KSP_AVC
                         if(validateInput(versionInfo))
                         {
                             Logger.Log("Valid input!");
+                            userInput = "";
                             List<string> inputs = reformatInput(versionInfo);
                             foreach (var item in inputs)
                             {
@@ -390,8 +398,10 @@ namespace KSP_AVC
                             {
                                 Configuration.AddOverrideVersion(inputs[0], inputs[i]);
                             }
+                            return;
                         }
                         Logger.Log("Invalid input!");
+                        userInput = "INVALID";
                         return;
                     }
 
@@ -511,6 +521,24 @@ namespace KSP_AVC
                 normal =
                 {
                     textColor = Color.white
+                },
+                fontStyle = FontStyle.Bold,
+            };
+
+            this.buttonStyleRed = new GUIStyle(HighLogic.Skin.button)
+            {
+                normal =
+                {
+                    textColor = Color.red
+                },
+                fontStyle = FontStyle.Bold,
+            };
+
+            this.buttonStyleGreen = new GUIStyle(HighLogic.Skin.button)
+            {
+                normal =
+                {
+                    textColor = Color.green
                 },
                 fontStyle = FontStyle.Bold,
             };

@@ -97,7 +97,7 @@ namespace KSP_AVC
                 }
                 else if (DateTime.Compare(DateTime.Now, Configuration.NextRun) <= 0 && Configuration.AvcInterval != 0)
                 {
-                    ScreenMessages.PostScreenMessage("AVC temorary disabled", 10);
+                    ScreenMessages.PostScreenMessage("AVC version check skipped", 10);
                     ScreenMessages.PostScreenMessage($"AVC runs next: {Configuration.NextRun}", 10);
                     Destroy(this);
                 }
@@ -171,11 +171,13 @@ namespace KSP_AVC
             {
                 return false;
             }
-            if (AddonLibrary.Addons.Any(a => a.IsUpdateAvailable || !a.IsCompatible || !a.IsForcedCompatibleByVersion))
+            if (AddonLibrary.Addons.Any(a => !a.IsCompatible) && !GetComponent<GuiHelper>())
             {
-                this.gameObject.AddComponent<IssueGui>();
-                //this.gameObject.AddComponent<CompatibilityOverrideGui>();
                 this.gameObject.AddComponent<GuiHelper>();
+            }
+            if(AddonLibrary.Addons.Any(a => a.IsUpdateAvailable || a.TriggerIssueGui))
+            {
+                this.gameObject.AddComponent<IssueGui>();                
             }
             Destroy(this);
             return true;

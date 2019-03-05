@@ -30,11 +30,11 @@ namespace KSP_AVC
     public enum LocalRemotePriority { none, local, remote };
     public class CompatVersions
     {
-        public string currentVersion; //old
-        public List<string> compatibleWithVersion; //new
+        public string currentVersion;
+        public List<string> compatibleWithVersion;
 
-        public VersionInfo curVersion; //old
-        public List<VersionInfo> compatWithVersion;//new
+        public VersionInfo curVersion;
+        public List<VersionInfo> compatWithVersion;
 
         public void AddCompatibleWithVersion(string version)
         {
@@ -90,9 +90,7 @@ namespace KSP_AVC
 
         public string Version { get; set; }
 
-        public static List<string> OverrideCompatibilityByName { get; private set; }
-
-        public static List<string> OverrideCompatibilityByVersion { get; private set; } //Do I need this one or can I use the CompatVersions class?
+        public static List<string> OverrideCompatibilityByName { get; private set; } = new List<string>();
 
         public static bool OverrideIsDisabledGlobal { get; private set; }
 
@@ -102,7 +100,7 @@ namespace KSP_AVC
 
         public static bool CfgUpdated { get; set; }
 
-        public static List<string> toDelete { get; private set; } = new List<string>();
+        public static List<string> ToDelete { get; private set; } = new List<string>();
 
         #endregion
 
@@ -144,7 +142,7 @@ namespace KSP_AVC
                 return;
             }
 
-            //If the key doesn't match already, we have to create a whole new dictionary entry
+            //If the key doesn't match, we have to create a whole new dictionary entry
             //Basically the same code which is used to load the config
             CompatVersions cv = new CompatVersions();
 
@@ -168,9 +166,8 @@ namespace KSP_AVC
                 if(CompatibleVersions[oldVersion].compatibleWithVersion.Count == 1)
                 {
                     //CompatibleVersions.Remove(oldVersion);
-                    toDelete.Add(oldVersion); //need to collect keys which are meant to be deleted, bad things will happen if you try this while iterating over the dictionary :o
+                    ToDelete.Add(oldVersion); //need to collect keys which are meant to be deleted, bad things will happen if you try this while iterating over the dictionary :o
                     CfgUpdated = true;
-                    Logger.Log("Key removed!");
                     return;
                 }
                 CompatibleVersions[oldVersion].RemoveCompatibleWithVersion(newVersion);
@@ -178,15 +175,15 @@ namespace KSP_AVC
             }
         }
 
-        public static void deleteFinally()
+        public static void DeleteFinally()
         {
-            if (toDelete.Count > 0)
+            if (ToDelete.Count > 0)
             {
-                foreach (string version in toDelete)
+                foreach (string version in ToDelete)
                 {
                     CompatibleVersions.Remove(version);
                 }
-                toDelete.Clear(); 
+                ToDelete.Clear(); 
             }
         }
 
@@ -281,12 +278,15 @@ namespace KSP_AVC
             if (!File.Exists(AvcConfigFile))
             {
                 File.Create(AvcConfigFile);
-                OverrideCompatibilityByName = new List<string>();
-                //OverrideCompatibilityByVersion = new List<string>();
+                //Some default values so this method can create a config file
+                //modsIgnoreOverride.Add("Kopernicus"); Unfortunately, the name of Kopernicus is actually "<b><color=#CA7B3C>Kopernicus</color></b>" which may irritates some users
                 OverrideIsDisabledGlobal = true;
                 AvcInterval = 0;
+                CfgUpdated = true;
+                //For some reason, if a config file is missing, it will just create an empty config.
+                //By setting the bool CfgUpdated = true, this method will run again on destroy of the starter, which creates the empty config nodes within the file.
             }
-            
+
             ConfigNode cfgnode = new ConfigNode();
             ConfigNode KSPAVC = cfgnode.AddNode("KSP-AVC");
 
@@ -306,7 +306,6 @@ namespace KSP_AVC
                 string temp = kvp.Key;
                 for (int i = 0; i < kvp.Value.compatibleWithVersion.Count; i++)
                 {
-                    //sb.Append($", {kvp.Value.compatibleWithVersion[i]}");
                     temp = temp + $", {kvp.Value.compatibleWithVersion[i]}";
                 }
                 OverrideVersion.AddValue("OverrideEnabled", temp);
@@ -402,7 +401,6 @@ namespace KSP_AVC
                 {
                     ConfigNode _temp = new ConfigNode();
                     _temp = node.GetNode("OVERRIDE_VERSION");
-                    //OverrideCompatibilityByVersion = new List<string>();
                     var compatVerList = _temp.GetValuesList("OverrideEnabled");
                     foreach (var a in compatVerList)
                     {
@@ -418,7 +416,6 @@ namespace KSP_AVC
                             cv.compatibleWithVersion.Add(ar[i]);
                             cv.compatWithVersion.Add(new VersionInfo(ar[i]));
                             Logger.Log("OVERRIDE_VERSION, currentVersion: " + ar[0] + ", compatibleWithVersion: " + ar[i]);
-                            //OverrideCompatibilityByVersion.Add(ar[0] + ", " + ar[i].Trim());
                         }
                         CompatibleVersions.Add(cv.currentVersion, cv);
                     }
@@ -467,6 +464,7 @@ namespace KSP_AVC
             CfgLoaded = true;
             Logger.Flush();
         }
+
         public static LocalRemotePriority OverridePriority { get; private set; }
         public static LocalRemotePriority SimplePriority { get; private set; }
         public static bool CfgLoaded = false;

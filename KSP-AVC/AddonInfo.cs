@@ -87,9 +87,15 @@ namespace KSP_AVC
         {
             int i = json.IndexOf('{');
             if (i == 0)
+            {
+                Logger.Log($"Found no char garbage for {this.Name}: {json}");
                 return json;
+            }
             if (i == -1)
+            {
+                Logger.Log($"Found char garbage for {this.Name}: {json}");
                 return "";
+            }                
             return json.Substring(i);
 
         }
@@ -127,7 +133,17 @@ namespace KSP_AVC
 
         public GitHubInfo GitHub { get; private set; }
 
-        private bool _IsForcedCompatibleByName;
+        public bool TriggerIssueGui
+        {
+            get
+            {
+                if(!IsCompatible && !IsForcedCompatibleByName && !IsForcedCompatibleByVersion)
+                {
+                    return true;
+                }
+                return false;
+            }
+        }
 
         public bool IsCompatible
         {
@@ -172,12 +188,8 @@ namespace KSP_AVC
                                            where d == this.Name
                                            select d).Any();
 
-                _IsForcedCompatibleByName = isForcedCompatible;
-                return _IsForcedCompatibleByName;
-            }
-            set
-            {
-                _IsForcedCompatibleByName = value;
+                //_IsForcedCompatibleByName = isForcedCompatible;
+                return isForcedCompatible;
             }
         }
 
@@ -300,7 +312,7 @@ namespace KSP_AVC
         
         public LocalRemotePriority Priority { get; private set; }
 
-        public bool IsLockedByCreator { get; private set; } //Enable/Disable the Compatibility Override feature, set in the version file
+        public bool IsLockedByCreator { get; private set; } //Enable/Disable the Compatibility Override feature for this mod, set in the version file
 
         public bool ParseError { get; private set; }
 
@@ -336,6 +348,7 @@ namespace KSP_AVC
                    "\n\tURL: " + (String.IsNullOrEmpty(this.Url) ? "NULL" : this.Url) +
                    "\n\tDOWNLOAD: " + (String.IsNullOrEmpty(this.Download) ? "NULL" : this.Download) +
                    "\n\tGITHUB: " + (this.GitHub != null ? this.GitHub.ToString() : "NULL") +
+                   "\n\tDISABLE_COMPATIBLE_VERSION_OVERRIDE: " + this.IsLockedByCreator.ToString() +
                    "\n\tVERSION: " + (this.Version != null ? this.Version.ToString() : "NULL (required)") +
                    "\n\tKSP_VERSION: " + this.KspVersion +
                    "\n\tKSP_VERSION_MIN: " + (this.kspVersionMin != null ? this.kspVersionMin.ToString() : "NULL") +
@@ -343,8 +356,7 @@ namespace KSP_AVC
                    "\n\tCompatibleKspVersion: " + this.IsCompatibleKspVersion +
                    "\n\tCompatibleKspVersionMin: " + this.IsCompatibleKspVersionMin +
                    "\n\tCompatibleKspVersionMax: " + this.IsCompatibleKspVersionMax +
-                   "\n\tCompatibleGitHubVersion: " + this.IsCompatibleGitHubVersion +
-                   "\n\tDISABLE_COMPATIBLE_VERSION_OVERRIDE: " + this.IsLockedByCreator.ToString();
+                   "\n\tCompatibleGitHubVersion: " + this.IsCompatibleGitHubVersion;
         }
 
         #endregion
@@ -523,7 +535,7 @@ namespace KSP_AVC
 
         private void ValidateKspMinMax()
         {
-            Debug.Log("ValidateKspMinMax, KspVersionMin: " + KspVersionMin + ", KspVersionMax: " + KspVersionMax);
+            Logger.Log("ValidateKspMinMax, KspVersionMin: " + KspVersionMin + ", KspVersionMax: " + KspVersionMax);
             if ( KspVersionMin > KspVersionMax)
             {
                 this.ParseError = true;

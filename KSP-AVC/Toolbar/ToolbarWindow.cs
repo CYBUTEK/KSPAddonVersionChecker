@@ -42,6 +42,9 @@ namespace KSP_AVC.Toolbar
         private GUIStyle windowStyle;
         private GameObject helper;
         private GuiHelper InstanceGuiHelper;
+        private string overrideAvailable = "<color=#00FF00>Compatibility Override GUI</color>";
+        private string overrideNotAvailable = "<color=#FF0000>Compatibility Override GUI</color>";
+        private string buttonText;
 
         #endregion
 
@@ -74,6 +77,14 @@ namespace KSP_AVC.Toolbar
 
         protected void Start()
         {
+            if (Configuration.CfgLoaded && Configuration.AvcInterval == -1)
+            {
+                Destroy(this);
+            }
+            else if (Configuration.CfgLoaded && DateTime.Compare(DateTime.Now, Configuration.NextRun) <= 0 && Configuration.AvcInterval != 0)
+            {
+                Destroy(this);
+            }
             try
             {
                 if (AssemblyLoader.loadedAssemblies.Any(a => a.name == "DevHelper"))
@@ -86,6 +97,7 @@ namespace KSP_AVC.Toolbar
             {
                 Logger.Exception(ex);
             }
+
         }
 
         protected void Update()
@@ -105,9 +117,11 @@ namespace KSP_AVC.Toolbar
             if(helper == null)
             {
                 helper = GameObject.Find("GuiHelper");
-                if(helper != null)
+                buttonText = overrideNotAvailable;
+                if (helper != null)
                 {
                     InstanceGuiHelper = helper.GetComponent<GuiHelper>();
+                    buttonText = overrideAvailable;
                 }
             }
         }
@@ -129,9 +143,12 @@ namespace KSP_AVC.Toolbar
 
         private void OverrideGUI()
         {
-            if(GUILayout.Button("Compatibility Override GUI"))
+            if (GUILayout.Button(buttonText))
             {
-                InstanceGuiHelper.ToggleGUI();                   
+                if (InstanceGuiHelper != null)
+                {
+                    InstanceGuiHelper.ToggleGUI();  
+                }                  
             }            
         }
 
