@@ -87,15 +87,9 @@ namespace KSP_AVC
         {
             int i = json.IndexOf('{');
             if (i == 0)
-            {
-                Logger.Log($"Found no char garbage for {this.Name}: {json}");
                 return json;
-            }
             if (i == -1)
-            {
-                Logger.Log($"Found char garbage for {this.Name}: {json}");
-                return "";
-            }                
+                return "";         
             return json.Substring(i);
 
         }
@@ -148,7 +142,7 @@ namespace KSP_AVC
         public bool IsCompatible
         {
             get {
-                bool b = (this.IsCompatibleKspVersion && this.kspVersionMin == null && this.kspVersionMax == null)
+                bool b = (this.IsCompatibleKspVersion && this.KspVersionMinIsNull && this.KspVersionMaxIsNull)
                     || 
                     ((this.kspVersionMin != null || this.kspVersionMax != null) && this.IsCompatibleKspVersionMin && this.IsCompatibleKspVersionMax);
                 return b;
@@ -163,10 +157,9 @@ namespace KSP_AVC
                 if (this.IsCompatible || this.IsLockedByCreator || this.IgnoreOverride || Configuration.OverrideIsDisabledGlobal)
                 {
                     return false;
-                }
-                    
+                }                    
 
-                bool compatible = (this.IsForcedCompatibleKspVersion && this.kspVersionMin == null && this.kspVersionMax == null)
+                bool compatible = (this.IsForcedCompatibleKspVersion && this.KspVersionMinIsNull && this.KspVersionMaxIsNull)
                     ||
                     ((!this.KspVersionMinIsNull || !this.KspVersionMaxIsNull) && this.IsForcedCompatibleKspVersionMin && this.IsForcedCompatibleKspVersionMax);
                 return compatible;
@@ -181,14 +174,12 @@ namespace KSP_AVC
                 if (this.IsCompatible || this.IsLockedByCreator  || Configuration.OverrideIsDisabledGlobal)
                 {
                     return false;
-                }
-                    
+                }                    
 
                 bool isForcedCompatible = (from d in Configuration.OverrideCompatibilityByName
                                            where d == this.Name
                                            select d).Any();
 
-                //_IsForcedCompatibleByName = isForcedCompatible;
                 return isForcedCompatible;
             }
         }
@@ -258,13 +249,15 @@ namespace KSP_AVC
             {
                 var b = Equals(this.KspVersion, actualKspVersion);
                 
-                if (!b)
-                {
-                    CompatVersions cv;
-                    if (!Configuration.CompatibleVersions.TryGetValue(this.KspVersion.Version, out cv))
-                        return false;
-                    b = cv.compatibleWithVersion.Contains(actualKspVersion.Version);
-                }
+                //This code mixes up the regular version control with the compatibility override but I need separated boolean values
+                //If someone doesn't like my LINQ method to access the dictionary, feel free to replace it with something like this ;) 
+                //if (!b)
+                //{
+                //    CompatVersions cv;
+                //    if (!Configuration.CompatibleVersions.TryGetValue(this.KspVersion.Version, out cv))
+                //        return false;
+                //    b = cv.compatibleWithVersion.Contains(actualKspVersion.Version);
+                //}
                 return b;
             }
         }
@@ -535,7 +528,6 @@ namespace KSP_AVC
 
         private void ValidateKspMinMax()
         {
-            Logger.Log("ValidateKspMinMax, KspVersionMin: " + KspVersionMin + ", KspVersionMax: " + KspVersionMax);
             if ( KspVersionMin > KspVersionMax)
             {
                 this.ParseError = true;

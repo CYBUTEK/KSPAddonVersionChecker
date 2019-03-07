@@ -221,7 +221,7 @@ namespace KSP_AVC
 
         public void SetVersion(string version)
         {
-            var sections = Regex.Replace(version, @"[^\d\.]", String.Empty).Split('.');
+            var sections = Regex.Replace(version, @"[^\d\.\-]", String.Empty).Split('.');
 
             switch (sections.Length)
             {

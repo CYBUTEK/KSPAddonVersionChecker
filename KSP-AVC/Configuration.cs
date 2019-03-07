@@ -44,7 +44,7 @@ namespace KSP_AVC
                 this.compatWithVersion.Add(new VersionInfo(version));
                 return;
             }
-            Logger.Log($"Cannot add {version} to the compatibility list, entry already exists");
+            //Logger.Log($"Cannot add {version} to the compatibility list, entry already exists");
         }
 
         public void RemoveCompatibleWithVersion(string version)
@@ -55,7 +55,7 @@ namespace KSP_AVC
                 this.compatWithVersion.Remove(new VersionInfo(version));
                 return;
             }
-            Logger.Log($"Cannot remove {version} from the compatibility list, entry doesn't exists");
+            //Logger.Log($"Cannot remove {version} from the compatibility list, entry doesn't exists");
         }
     }
 
@@ -65,6 +65,7 @@ namespace KSP_AVC
         
         private static readonly string fileName = Path.ChangeExtension(Assembly.GetExecutingAssembly().Location, "xml");
         readonly static string AvcConfigFile = KSPUtil.ApplicationRootPath + "GameData/KSP-AVC/PluginData/AVC.cfg";
+        readonly static string AvcConfigFilePath = KSPUtil.ApplicationRootPath + "GameData/KSP-AVC/PluginData";
 
         #endregion
 
@@ -100,22 +101,30 @@ namespace KSP_AVC
 
         public static bool CfgUpdated { get; set; }
 
+        //public static bool UseKspSkin { get; set; }
+
         public static List<string> ToDelete { get; private set; } = new List<string>();
 
         #endregion
 
         #region Methods: public
 
+        public static void ToggleOverrideFeature()
+        {
+            OverrideIsDisabledGlobal = !OverrideIsDisabledGlobal;
+            CfgUpdated = true;
+        }
+
         public static void AddOverrideName(Addon addon)
         {
             if(!OverrideCompatibilityByName.Contains(addon.Name))
             {
                 OverrideCompatibilityByName.Add(addon.Name);
-                Logger.Log($"Compatibility Override (by name) enabled for {addon.Name}");
+                //Logger.Log($"Compatibility Override (by name) enabled for {addon.Name}");
                 CfgUpdated = true;
                 return;
             }
-            Logger.Log($"Cannot add {addon.Name}, entry already exists."); //Should never happen but just in case
+            //Logger.Log($"Cannot add {addon.Name}, entry already exists."); //Should never happen but just in case
         }
 
         public static void RemoveOverrideName(Addon addon)
@@ -123,21 +132,23 @@ namespace KSP_AVC
             if (OverrideCompatibilityByName.Contains(addon.Name))
             {
                 OverrideCompatibilityByName.Remove(addon.Name);
-                Logger.Log($"Compatibility Override (by name) disabled for {addon.Name}");
+                //Logger.Log($"Compatibility Override (by name) disabled for {addon.Name}");
                 CfgUpdated = true;
                 return;
             }
-            Logger.Log($"Cannot remove {addon.Name}. Entry doesn't exists."); //Should never happen but just in case
+            //Logger.Log($"Cannot remove {addon.Name}. Entry doesn't exists."); //Should never happen but just in case
         }
         
         public static void AddOverrideVersion(string oldVersion, string newVersion)
         {
+            string tempOldVersion = oldVersion.Replace("*", "-1");
+
             //check if there is already an dictionary key which contains the oldversion
             var dictKeys = CompatibleVersions.Keys;
-            if (dictKeys.Contains(oldVersion))
+            if (dictKeys.Contains(tempOldVersion))
             {
                 //add an additional new version to the list of compatible versions
-                CompatibleVersions[oldVersion].AddCompatibleWithVersion(newVersion);
+                CompatibleVersions[tempOldVersion].AddCompatibleWithVersion(newVersion);
                 CfgUpdated = true;
                 return;
             }
@@ -146,7 +157,7 @@ namespace KSP_AVC
             //Basically the same code which is used to load the config
             CompatVersions cv = new CompatVersions();
 
-            cv.currentVersion = oldVersion;
+            cv.currentVersion = tempOldVersion;
             cv.curVersion = new VersionInfo(cv.currentVersion);
             cv.compatibleWithVersion = new List<string>();
             cv.compatWithVersion = new List<VersionInfo>();
@@ -160,17 +171,18 @@ namespace KSP_AVC
         public static void RemoveOverrideVersion(string oldVersion, string newVersion)
         {
             var dictKeys = CompatibleVersions.Keys;
+            string tempOldVersion = oldVersion.Replace("*", "-1");
 
-            if (dictKeys.Contains(oldVersion))
+            if (dictKeys.Contains(tempOldVersion))
             {
-                if(CompatibleVersions[oldVersion].compatibleWithVersion.Count == 1)
+                if(CompatibleVersions[tempOldVersion].compatibleWithVersion.Count == 1)
                 {
                     //CompatibleVersions.Remove(oldVersion);
-                    ToDelete.Add(oldVersion); //need to collect keys which are meant to be deleted, bad things will happen if you try this while iterating over the dictionary :o
+                    ToDelete.Add(tempOldVersion); //need to collect keys which are meant to be deleted, bad things will happen if you try this while iterating over the dictionary :o
                     CfgUpdated = true;
                     return;
                 }
-                CompatibleVersions[oldVersion].RemoveCompatibleWithVersion(newVersion);
+                CompatibleVersions[tempOldVersion].RemoveCompatibleWithVersion(newVersion);
                 CfgUpdated = true;
             }
         }
@@ -192,10 +204,10 @@ namespace KSP_AVC
             if(!modsIgnoreOverride.Contains(addon.Name))
             {
                 modsIgnoreOverride.Add(addon.Name);
-                Logger.Log($"{addon.Name} added to ignore list.");
+                //Logger.Log($"{addon.Name} added to ignore list.");
                 CfgUpdated = true;
             }
-            Logger.Log($"Cannot add {addon.Name} to ignore list, entry already exists.");
+            //Logger.Log($"Cannot add {addon.Name} to ignore list, entry already exists.");
         }
 
         public static void RemoveFromIgnore(Addon addon)
@@ -203,10 +215,10 @@ namespace KSP_AVC
             if (modsIgnoreOverride.Contains(addon.Name))
             {
                 modsIgnoreOverride.Remove(addon.Name);
-                Logger.Log($"{addon.Name} removed from ignore list.");
+                //Logger.Log($"{addon.Name} removed from ignore list.");
                 CfgUpdated = true;
             }
-            Logger.Log($"Cannot remove {addon.Name} to ignore list, entry already exists.");
+            //Logger.Log($"Cannot remove {addon.Name} from ignore list, doesn't exists.");
         }
 
         public static bool GetFirstRun()
@@ -275,13 +287,15 @@ namespace KSP_AVC
             Logger.Log("SaveCfg");
             CfgUpdated = false;
 
-            if (!File.Exists(AvcConfigFile))
+            if (!File.Exists(AvcConfigFile) || !Directory.Exists(AvcConfigFilePath))
             {
+                Directory.CreateDirectory(AvcConfigFilePath);
                 File.Create(AvcConfigFile);
                 //Some default values so this method can create a config file
                 //modsIgnoreOverride.Add("Kopernicus"); Unfortunately, the name of Kopernicus is actually "<b><color=#CA7B3C>Kopernicus</color></b>" which may irritates some users
                 OverrideIsDisabledGlobal = true;
                 AvcInterval = 0;
+                //UseKspSkin = true;
                 CfgUpdated = true;
                 //For some reason, if a config file is missing, it will just create an empty config.
                 //By setting the bool CfgUpdated = true, this method will run again on destroy of the starter, which creates the empty config nodes within the file.
@@ -290,6 +304,7 @@ namespace KSP_AVC
             ConfigNode cfgnode = new ConfigNode();
             ConfigNode KSPAVC = cfgnode.AddNode("KSP-AVC");
 
+            //KSPAVC.AddValue("KSP_SKIN", UseKspSkin);
             KSPAVC.AddValue("OVERRIDE_PRIORITY", OverridePriority);
             KSPAVC.AddValue("SIMPLE_PRIORITY", SimplePriority);
             KSPAVC.AddValue("DISABLE_COMPATIBLE_VERSION_OVERRIDE", OverrideIsDisabledGlobal);
@@ -303,7 +318,7 @@ namespace KSP_AVC
             ConfigNode OverrideVersion = KSPAVC.AddNode("OVERRIDE_VERSION");            
             foreach (KeyValuePair<string, CompatVersions> kvp in CompatibleVersions)
             {
-                string temp = kvp.Key;
+                string temp = kvp.Key.Replace("-1", "*");
                 for (int i = 0; i < kvp.Value.compatibleWithVersion.Count; i++)
                 {
                     temp = temp + $", {kvp.Value.compatibleWithVersion[i]}";
@@ -348,14 +363,26 @@ namespace KSP_AVC
             }
             
             ConfigNode LoadNodeFromFile = ConfigNode.Load(AvcConfigFile);
-            ConfigNode node = LoadNodeFromFile.GetNode("KSP-AVC"); 
-
+            ConfigNode node = LoadNodeFromFile.GetNode("KSP-AVC");
+            
+            //if (node.HasValue("KSP_SKIN"))
+            //{
+            //    try
+            //    {
+            //        if (node.GetValue("KSP_SKIN").ToLower() == "false")
+            //            UseKspSkin = false;
+            //        else
+            //            UseKspSkin = true;
+            //        //Logger.Log($"UseKspSkin: {UseKspSkin}");
+            //    }
+            //    catch { }
+            //}
             if (node.HasValue("OVERRIDE_PRIORITY﻿﻿"))
             {
                 try
                 {
                     OverridePriority = (LocalRemotePriority)Enum.Parse(typeof(LocalRemotePriority), node.GetValue("OVERRIDE_PRIORITY﻿﻿"));
-                    Logger.Log("OverridePriority: " + OverridePriority);
+                    //Logger.Log("OverridePriority: " + OverridePriority);
                 }
                 catch { }
             }
@@ -364,7 +391,7 @@ namespace KSP_AVC
                 try
                 {
                     SimplePriority = (LocalRemotePriority)Enum.Parse(typeof(LocalRemotePriority), node.GetValue("SIMPLE_PRIORITY﻿﻿"));
-                    Logger.Log("SimplePriority: " + SimplePriority);
+                    //Logger.Log("SimplePriority: " + SimplePriority);
                 }
                 catch { }
             }
@@ -376,7 +403,7 @@ namespace KSP_AVC
                         OverrideIsDisabledGlobal = false;
                     else
                         OverrideIsDisabledGlobal = true;
-                    Logger.Log($"OverrideIsDisabled: {OverrideIsDisabledGlobal}");
+                    //Logger.Log($"OverrideIsDisabled: {OverrideIsDisabledGlobal}");
                 }
                 catch { }
             }
@@ -388,10 +415,6 @@ namespace KSP_AVC
                     _temp = node.GetNode("OVERRIDE_NAME");
 
                     OverrideCompatibilityByName = _temp.GetValuesList("OverrideEnabled");
-                    foreach (var item in OverrideCompatibilityByName)
-                    {
-                        Logger.Log($"OverrideCompatibilityByName: {item}");
-                    }
                 }
                 catch { }
             }
@@ -407,7 +430,7 @@ namespace KSP_AVC
                         CompatVersions cv = new CompatVersions();
                         var ar = a.Split(',').Select(x => x.Trim()).ToArray();
 
-                        cv.currentVersion = ar[0];
+                        cv.currentVersion = ar[0].Replace("*", "-1");
                         cv.curVersion = new VersionInfo(cv.currentVersion);
                         cv.compatibleWithVersion = new List<string>();
                         cv.compatWithVersion = new List<VersionInfo>(); //initializing the list before adding stuff to it helps to prevent a NRE :) 
@@ -415,7 +438,7 @@ namespace KSP_AVC
                         {
                             cv.compatibleWithVersion.Add(ar[i]);
                             cv.compatWithVersion.Add(new VersionInfo(ar[i]));
-                            Logger.Log("OVERRIDE_VERSION, currentVersion: " + ar[0] + ", compatibleWithVersion: " + ar[i]);
+                            Logger.Log("OVERRIDE_VERSION, currentVersion: " + ar[0].Replace("-1", "*") + ", compatibleWithVersion: " + ar[i]);
                         }
                         CompatibleVersions.Add(cv.currentVersion, cv);
                     }
@@ -433,7 +456,7 @@ namespace KSP_AVC
                     foreach (string modName in ignoredMods)
                     {                            
                         modsIgnoreOverride.Add(modName);
-                        Logger.Log($"IGNORE_OVERRIDE: {modName}");
+                        //Logger.Log($"IGNORE_OVERRIDE: {modName}");
                     }
                 }
                 catch { }

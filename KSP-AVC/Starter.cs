@@ -175,9 +175,10 @@ namespace KSP_AVC
             {
                 this.gameObject.AddComponent<GuiHelper>();
             }
-            if(AddonLibrary.Addons.Any(a => a.IsUpdateAvailable || a.TriggerIssueGui))
+            if (AddonLibrary.Addons.Any(a => a.IsUpdateAvailable || a.TriggerIssueGui))
             {
-                this.gameObject.AddComponent<IssueGui>();                
+                this.gameObject.AddComponent<IssueGui>();
+                //this.gameObject.AddComponent<SimpleOverrideGui>();
             }
             Destroy(this);
             return true;

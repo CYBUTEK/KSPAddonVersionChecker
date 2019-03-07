@@ -52,7 +52,7 @@ namespace KSP_AVC
 
         public bool IsCompatible
         {
-            get { return (this.IsLocalReady && this.LocalInfo.IsCompatible); } //|| (this.LocalInfo.IsForcedCompatible && !this.LocalInfo.DisableOverride); }
+            get { return (this.IsLocalReady && this.LocalInfo.IsCompatible); }
 
         }
 

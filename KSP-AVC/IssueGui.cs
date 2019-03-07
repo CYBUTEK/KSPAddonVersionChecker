@@ -42,6 +42,7 @@ namespace KSP_AVC
         private GUIStyle nameTitleStyle;
         private Rect position = new Rect(Screen.width, Screen.height, 0, 0);
         private GUIStyle titleStyle;
+        //private bool isInitialised = false;
 
         #endregion
 
@@ -86,7 +87,7 @@ namespace KSP_AVC
             catch (Exception ex)
             {
                 Logger.Exception(ex);
-            }
+            }     
         }
 
         protected void Start()
@@ -227,6 +228,10 @@ namespace KSP_AVC
 
         private void InitialiseStyles()
         {
+            //if (Configuration.UseKspSkin)
+            //{
+            //    GUI.skin = HighLogic.Skin;
+            //}
             this.boxStyle = new GUIStyle(HighLogic.Skin.box)
             {
                 padding = new RectOffset(10, 10, 5, 5)
@@ -278,6 +283,8 @@ namespace KSP_AVC
                     textColor = Color.white
                 }
             };
+
+            //isInitialised = true;
         }
 
         private void Window(int id)
