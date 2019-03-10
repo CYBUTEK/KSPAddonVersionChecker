@@ -50,13 +50,11 @@ namespace KSP_AVC
         {
             if (!this.GetComponent<CompatibilityOverrideGui>())
             {
-                //this.gameObject.AddComponent<CompatibilityOverrideGui>();
                 this.gameObject.AddComponent<CompatibilityOverrideGui>();
                 return;
             }
             else
             {
-                //Destroy(this.GetComponent<CompatibilityOverrideGui>());
                 Destroy(this.GetComponent<CompatibilityOverrideGui>());
             }
         }

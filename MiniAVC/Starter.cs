@@ -55,17 +55,42 @@ namespace MiniAVC
                     Destroy(this);
                     return;
                 }
+
+                
             }
             catch (Exception ex)
             {
                 Logger.Exception(ex);
             }
-            Logger.Log("Starter was created.");
+        }
+
+        protected void Start()
+        {
+            if (!UpdateFrequency.ConfigLoaded)
+            {
+                UpdateFrequency.LoadConfig();
+
+                if (UpdateFrequency.DisableCheck)
+                {
+                    ScreenMessages.PostScreenMessage("Mini-AVC disabled", 10);
+                    Destroy(this);
+                    return;
+                }
+                if (UpdateFrequency.SkipRun)
+                {
+                    ScreenMessages.PostScreenMessage("Mini-AVC version check skipped", 10);
+                    ScreenMessages.PostScreenMessage($"Mini-AVC runs next: {UpdateFrequency.NextRun}", 10);
+                    Destroy(this);
+                }
+            }
         }
 
         protected void OnDestroy()
         {
-            Logger.Log("Starter was destroyed.");
+            if (UpdateFrequency.ConfigLoaded)
+            {
+                UpdateFrequency.SaveConfig(); 
+            }
         }
 
         protected void Update()

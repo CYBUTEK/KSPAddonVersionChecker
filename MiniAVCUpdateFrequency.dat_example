@@ -1,0 +1,11 @@
+//Rename this file to MiniAVCUpdateFrequency.dat and put it into the GameData folder
+//If you don't feel confident in the DateTime format, just edit the "MinTimeBetweenAvcRuns" value and MiniAVC creates the proper timestamp on the next launch
+//If you change the timespan, you should always delete the "AvcRunsNext" entry.
+MINI-AVC
+{
+	UPDATE_FREQUENCY
+	{
+		MinTimeBetweenAvcRuns = 0 //Timespan between AVC runs in hours (-1 = Disable MiniAVC, 0 = Run on each game start)
+		AvcRunsNext = 1/1/0001 12:00:00 AM
+	}
+}

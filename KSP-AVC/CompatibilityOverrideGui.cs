@@ -64,7 +64,7 @@ namespace KSP_AVC
             {
                 Configuration.SaveCfg();
             }
-            Logger.Log("OnDestroy ForceCompatibilityGui.");
+            Logger.Log("Destroy ForceCompatibilityGui.");
         }
 
         protected void OnGUI()
@@ -102,7 +102,7 @@ namespace KSP_AVC
         {            
             GUILayout.BeginVertical();
             DrawHeadingsOverrideVersion();
-            scrollPositionVersionInfo = GUILayout.BeginScrollView(scrollPositionVersionInfo, this.scrollList, GUILayout.Width(200), GUILayout.Height(275));
+            scrollPositionVersionInfo = GUILayout.BeginScrollView(scrollPositionVersionInfo, this.scrollList, GUILayout.Width(230), GUILayout.Height(275));
             DrawVersionList();
             GUILayout.EndScrollView();
             DrawInputOverrideVersion();
@@ -147,8 +147,7 @@ namespace KSP_AVC
         private void DrawInputOverrideVersion()
         {
             GUILayout.BeginHorizontal();
-            GuiHelper.userInput = GUILayout.TextField(GuiHelper.userInput, GUILayout.Width(110.0f), GUILayout.Height(20));
-            GUILayout.FlexibleSpace();
+            GuiHelper.userInput = GUILayout.TextField(GuiHelper.userInput, GUILayout.Width(150.0f), GUILayout.Height(20));
             if (GUILayout.Button("ADD", this.buttonStyle, GUILayout.Width(75), GUILayout.Height(20)))
             {
                 GuiHelper.UpdateCompatibilityState(OverrideType.version, null, GuiHelper.userInput);
@@ -165,7 +164,7 @@ namespace KSP_AVC
         {
             GUILayout.BeginVertical();
             DrawHeadingsAddonList();
-            scrollPositionAddonList = GUILayout.BeginScrollView(scrollPositionAddonList, this.scrollList, GUILayout.MinWidth(420), GUILayout.Height(300));
+            scrollPositionAddonList = GUILayout.BeginScrollView(scrollPositionAddonList, this.scrollList, GUILayout.MinWidth(430), GUILayout.Height(300));
             DrawIncompatibleMods();
             GUILayout.EndScrollView();
             GUILayout.EndVertical();
@@ -177,8 +176,7 @@ namespace KSP_AVC
             GUILayout.Space(63);
             GUILayout.Label("INCOMPATIBLE MODS", this.topLevelTitleStyle, GUILayout.MinWidth(230.0f));
             GUILayout.Space(10);
-            GUILayout.Label("FOR KSP", this.topLevelTitleStyle, GUILayout.MinWidth(65));
-            GUILayout.FlexibleSpace();
+            GUILayout.Label("FOR KSP", this.topLevelTitleStyle, GUILayout.MinWidth(60));
             GUILayout.EndHorizontal();
         }
 
@@ -199,11 +197,11 @@ namespace KSP_AVC
 
                 GUILayout.BeginHorizontal();
                 DrawButtonArrowLeft(addon);
-                GUILayout.Space(25);
+                GUILayout.Space(18);
                 GUILayout.Label(addon.Name, coloredLabel, GUILayout.MinWidth(230.0f));
                 GUILayout.Space(10);
                 GUILayout.Label($"{versionNumber}", coloredLabel, GUILayout.MinWidth(65));
-                GUILayout.FlexibleSpace();
+                GUILayout.Space(18);
                 DrawButtonArrowRight(addon);
                 GUILayout.FlexibleSpace();
                 GUILayout.EndHorizontal();
@@ -314,7 +312,9 @@ namespace KSP_AVC
             GUILayout.BeginVertical();
             GUILayout.BeginHorizontal();
             DrawOverrideNameList();
+            GUILayout.Space(10);
             DrawOverrideAddonList();
+            GUILayout.Space(13);
             DrawOverrideVersionInfo();
             GUILayout.EndHorizontal();
             GUILayout.EndVertical();
@@ -363,7 +363,6 @@ namespace KSP_AVC
                     if (GuiHelper.CompatibilityState(OverrideType.ignore, addon))
                     {
                         Configuration.RemoveFromIgnore(addon);
-                        continue;
                     }
                     if (GuiHelper.CompatibilityState(OverrideType.name, addon))
                     {

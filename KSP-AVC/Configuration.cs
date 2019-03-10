@@ -93,9 +93,9 @@ namespace KSP_AVC
 
         public static List<string> OverrideCompatibilityByName { get; private set; } = new List<string>();
 
-        public static bool OverrideIsDisabledGlobal { get; private set; }
+        public static bool OverrideIsDisabledGlobal { get; set; }
 
-        public static int AvcInterval { get; private set; }
+        public static int AvcInterval { get; set; }
 
         public static DateTime NextRun { get; private set; }
 
@@ -290,9 +290,10 @@ namespace KSP_AVC
             if (!File.Exists(AvcConfigFile) || !Directory.Exists(AvcConfigFilePath))
             {
                 Directory.CreateDirectory(AvcConfigFilePath);
-                File.Create(AvcConfigFile);
+                var ConfigFileStream = File.Create(AvcConfigFile);
+                ConfigFileStream.Close(); //avoid System.IO access violation
                 //Some default values so this method can create a config file
-                //modsIgnoreOverride.Add("Kopernicus"); Unfortunately, the name of Kopernicus is actually "<b><color=#CA7B3C>Kopernicus</color></b>" which may irritates some users
+                //modsIgnoreOverride.Add("Kopernicus"); //Unfortunately, the name of Kopernicus is actually "<b><color=#CA7B3C>Kopernicus</color></b>" which may irritates some users
                 OverrideIsDisabledGlobal = true;
                 AvcInterval = 0;
                 //UseKspSkin = true;
@@ -360,6 +361,7 @@ namespace KSP_AVC
             if (!File.Exists(AvcConfigFile))
             {
                 SaveCfg();
+                return;
             }
             
             ConfigNode LoadNodeFromFile = ConfigNode.Load(AvcConfigFile);

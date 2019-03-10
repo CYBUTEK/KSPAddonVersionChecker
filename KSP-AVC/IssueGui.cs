@@ -43,6 +43,7 @@ namespace KSP_AVC
         private Rect position = new Rect(Screen.width, Screen.height, 0, 0);
         private GUIStyle titleStyle;
         //private bool isInitialised = false;
+        
 
         #endregion
 
