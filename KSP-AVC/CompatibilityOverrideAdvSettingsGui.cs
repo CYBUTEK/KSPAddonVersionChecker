@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace KSP_AVC
 {
-    class AdvancedOverrideSettingsGui : MonoBehaviour
+    class CompatibilityOverrideAdvSettingsGui : MonoBehaviour
     {
         #region Fields
 
@@ -80,10 +80,7 @@ namespace KSP_AVC
 
         private void Window(int id)
         {
-            if (AddonLibrary.Addons.Any(a => !a.IsCompatible))
-            {
-                this.DrawIgnoreOverride();
-            }
+            this.DrawIgnoreOverride();
             if (GUILayout.Button("CLOSE", this.buttonStyle))
             {
                 Configuration.SaveCfg();

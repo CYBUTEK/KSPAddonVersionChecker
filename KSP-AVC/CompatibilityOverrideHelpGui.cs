@@ -137,10 +137,7 @@ namespace KSP_AVC
 
         private void Window(int id)
         {
-            if (AddonLibrary.Addons.Any(a => !a.IsCompatible))
-            {
-                this.DrawHelpWindow();
-            }
+            this.DrawHelpWindow();
             if (GUILayout.Button("CLOSE", this.buttonStyle))
             {
                 Destroy(this);

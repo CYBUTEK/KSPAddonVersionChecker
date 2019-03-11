@@ -43,7 +43,7 @@ namespace KSP_AVC.Toolbar
         private GameObject helper;
         private GuiHelper InstanceGuiHelper;
         private string overrideAvailable = "<color=#00FF00>Compatibility Override GUI</color>";
-        private string overrideNotAvailable = "<color=#FF0000>Compatibility Override GUI</color>";
+        private string overrideNotAvailable = "<color=#FF0000>Wait for AVC processing...</color>";
         private string buttonText;
 
         #endregion

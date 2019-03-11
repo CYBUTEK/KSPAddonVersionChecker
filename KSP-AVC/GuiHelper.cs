@@ -33,6 +33,11 @@ namespace KSP_AVC
             bool modKey = GameSettings.MODIFIER_KEY.GetKey(); 
             if (modKey && Input.GetKeyDown(KeyCode.Alpha2))
             {
+                if (this.GetComponent<CompatibilityOverrideGui>())
+                {
+                    Destroy(this.GetComponent<CompatibilityOverrideGui>());
+                    return;
+                }
                 ToggleGUI();
             }
             if (HighLogic.LoadedScene == GameScenes.SPACECENTER)
@@ -48,6 +53,11 @@ namespace KSP_AVC
 
         public void ToggleGUI()
         {
+            if(Configuration.OverrideIsDisabledGlobal)
+            {
+                this.gameObject.AddComponent<CompatibilityOverrideEnableGui>();
+                return;
+            }
             if (!this.GetComponent<CompatibilityOverrideGui>())
             {
                 this.gameObject.AddComponent<CompatibilityOverrideGui>();

@@ -93,6 +93,30 @@ namespace KSP_AVC
             GUILayout.EndHorizontal();
         }
 
+        private void DrawNoIncompatibleAddons()
+        {
+            GUILayout.BeginHorizontal();
+            GUILayout.FlexibleSpace();
+            GUILayout.Label("NO INCOMPATIBLE ADDONS DETECTED", this.centeredTitelStyle);
+            GUILayout.FlexibleSpace();
+            GUILayout.EndHorizontal();
+        }
+
+        private void DrawEnableDisableButton()
+        {
+            string buttonLabel = "DISABLED";
+            GUIStyle coloredButton = this.buttonStyleRed;
+            if (!Configuration.OverrideIsDisabledGlobal)
+            {
+                buttonLabel = "ENABLED";
+                coloredButton = this.buttonStyleGreen;
+            }
+            if (GUILayout.Button(buttonLabel, coloredButton, GUILayout.Height(20)))
+            {
+                Configuration.ToggleOverrideFeature();
+            }
+        }
+
         #endregion
 
         #region WindowOverrideVersionInfo
@@ -113,7 +137,8 @@ namespace KSP_AVC
         private void DrawHeadingsOverrideVersion()
         {
             GUILayout.BeginHorizontal();
-            GUILayout.Label("VERSION OVERRIDE", this.topLevelTitleStyle, GUILayout.MinWidth(200));
+            GUILayout.Label("VERSION OVERRIDE", this.topLevelTitleStyle, GUILayout.MinWidth(140));
+            DrawEnableDisableButton();
             GUILayout.EndHorizontal();
         }
 
@@ -173,8 +198,8 @@ namespace KSP_AVC
         private void DrawHeadingsAddonList()
         {
             GUILayout.BeginHorizontal();
-            GUILayout.Space(63);
-            GUILayout.Label("INCOMPATIBLE MODS", this.topLevelTitleStyle, GUILayout.MinWidth(230.0f));
+            GUILayout.Space(55);
+            GUILayout.Label("INCOMPATIBLE ADDON", this.topLevelTitleStyle, GUILayout.MinWidth(230.0f));
             GUILayout.Space(10);
             GUILayout.Label("FOR KSP", this.topLevelTitleStyle, GUILayout.MinWidth(60));
             GUILayout.EndHorizontal();
@@ -189,6 +214,11 @@ namespace KSP_AVC
             }
             List<Addon> listIncompatibleMods = AddonLibrary.Addons.Where(a => !a.IsCompatible).ToList();
             int m = listIncompatibleMods.Count();
+            if (m == 0)
+            {
+                DrawNoIncompatibleAddons();
+                return;
+            }
             for (int i = 0; i < m; i++)
             {
                 Addon addon = listIncompatibleMods[i];
@@ -322,10 +352,10 @@ namespace KSP_AVC
 
         private void Window(int id)
         {
-            if (AddonLibrary.Addons.Any(a => !a.IsCompatible))
-            {
-                this.DrawCompatibilityOverrideGui();
-            }
+            //if (AddonLibrary.Addons.Any(a => !a.IsCompatible))
+            //{
+            this.DrawCompatibilityOverrideGui();
+            //}
             DrawBottomButtons();
             GUI.DragWindow();
         }
@@ -335,26 +365,16 @@ namespace KSP_AVC
             GUILayout.BeginHorizontal();
             if (GUILayout.Button("ADVANCED SETTINGS", this.buttonStyle, GUILayout.Width(180)))
             {
-                if (!this.GetComponent<AdvancedOverrideSettingsGui>())
+                if (!this.GetComponent<CompatibilityOverrideAdvSettingsGui>())
                 {
-                    this.gameObject.AddComponent<AdvancedOverrideSettingsGui>();
+                    this.gameObject.AddComponent<CompatibilityOverrideAdvSettingsGui>();
                     return;
                 }
                 else
                 {
-                    Destroy(this.GetComponent<AdvancedOverrideSettingsGui>());
+                    Destroy(this.GetComponent<CompatibilityOverrideAdvSettingsGui>());
                 }
-            }
-            GUILayout.FlexibleSpace();
-            string buttonLabel = "DISABLE OVERRIDE";
-            if (Configuration.OverrideIsDisabledGlobal)
-            {
-                buttonLabel = "ENABLE OVERRIDE";
-            }
-            if (GUILayout.Button(buttonLabel, this.buttonStyle, GUILayout.Width(180)))
-            {
-                Configuration.ToggleOverrideFeature();
-            }
+            }            
             GUILayout.FlexibleSpace();
             if (GUILayout.Button("RESET", this.buttonStyle, GUILayout.Width(180)))
             {
@@ -430,6 +450,15 @@ namespace KSP_AVC
                 fontStyle = FontStyle.Bold,
             };
 
+            this.buttonStyleRed = new GUIStyle(HighLogic.Skin.button)
+            {
+                normal =
+                {
+                    textColor = Color.red
+                },
+                fontStyle = FontStyle.Bold,
+            };
+
             this.scrollList = new GUIStyle(HighLogic.Skin.box);
 
             this.topLevelTitleStyle = new GUIStyle(HighLogic.Skin.label)
@@ -446,7 +475,7 @@ namespace KSP_AVC
             {
                 normal =
                 {
-                    textColor = Color.white
+                    textColor = Color.red
                 },
                 alignment = TextAnchor.MiddleCenter,
                 fontStyle = FontStyle.Bold,

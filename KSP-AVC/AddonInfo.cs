@@ -467,7 +467,7 @@ namespace KSP_AVC
                         }
                         break;
 
-                    case "DISABLE_COMPATIBLE_VERSION_OVERRIDE":
+                    case "DISALLOW_VERSION_OVERRIDE":
                         this.IsLockedByCreator = (bool)data[key];
                         break;
 

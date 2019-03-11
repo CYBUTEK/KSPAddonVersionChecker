@@ -174,7 +174,7 @@ namespace KSP_AVC
             {
                 return false;
             }
-            if (AddonLibrary.Addons.Any(a => !a.IsCompatible) && !GetComponent<GuiHelper>())
+            if (!GetComponent<GuiHelper>()) // if (GameObject.Find("GuiHelper") == null)
             {
                 this.gameObject.AddComponent<GuiHelper>();
             }
