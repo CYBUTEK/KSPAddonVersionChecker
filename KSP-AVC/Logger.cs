@@ -22,6 +22,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
+using System.Linq;
 
 using UnityEngine;
 
@@ -117,7 +118,7 @@ namespace KSP_AVC
                     foreach (var message in messages)
                     {
                         file.WriteLine(message.Length > 0 ? message.Length > 1 ? "[" + message[0] + "]: " + message[1] : message[0] : string.Empty);
-                        if (message.Length > 0)
+                        if (message.Length > 0 && !Environment.GetCommandLineArgs().Contains("-AVC-log-only")) //thanks @blowfish for suggesting the command line flag
                         {
                             print(message.Length > 1 ? assemblyName.Name + " -> " + message[1] : assemblyName.Name + " -> " + message[0]);
                         }

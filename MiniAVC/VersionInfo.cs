@@ -41,7 +41,7 @@ namespace MiniAVC
             }
             catch (Exception e)
             {
-                Logger.Log("SafeParseInt64, exception: string: " + s);
+                Logger.Log("SafeParseInt64, exception: string: " + e);
                 return 0;
             }
         }

@@ -42,6 +42,8 @@ namespace KSP_AVC
         private GUIStyle nameTitleStyle;
         private Rect position = new Rect(Screen.width, Screen.height, 0, 0);
         private GUIStyle titleStyle;
+        //private bool isInitialised = false;
+        
 
         #endregion
 
@@ -86,7 +88,7 @@ namespace KSP_AVC
             catch (Exception ex)
             {
                 Logger.Exception(ex);
-            }
+            }     
         }
 
         protected void Start()
@@ -170,12 +172,13 @@ namespace KSP_AVC
                 list.ToolTip.Text = GUILayoutUtility.GetLastRect().Contains(Event.current.mousePosition) ? list.ToolTip.Text = addon.RemoteInfo.Download : String.Empty;
             }
         }
+
         VersionInfo zero = new VersionInfo();
         private void DrawCompatibilityIssues()
         {
             GUILayout.BeginVertical(this.boxStyle);
             GUILayout.Label("COMPATIBILITY ISSUES", this.nameTitleStyle);
-            foreach (var addon in AddonLibrary.Addons.Where(a => !a.IsCompatible))
+            foreach (var addon in AddonLibrary.Addons.Where(a => !a.IsCompatible && !a.IsForcedCompatibleByVersion && !a.IsForcedCompatibleByName))
             {
                 string built = "";
                 if (addon.LocalInfo.KspVersionMinIsNull && addon.LocalInfo.KspVersionMaxIsNull) //|| addon.LocalInfo.KspVersion == addon.LocalInfo.KspVersionMin)
@@ -191,7 +194,7 @@ namespace KSP_AVC
             }
             GUILayout.EndVertical();
         }
-
+        
         private void DrawUpdateHeadings()
         {
             GUILayout.BeginHorizontal();
@@ -226,6 +229,10 @@ namespace KSP_AVC
 
         private void InitialiseStyles()
         {
+            //if (Configuration.UseKspSkin)
+            //{
+            //    GUI.skin = HighLogic.Skin;
+            //}
             this.boxStyle = new GUIStyle(HighLogic.Skin.box)
             {
                 padding = new RectOffset(10, 10, 5, 5)
@@ -277,6 +284,8 @@ namespace KSP_AVC
                     textColor = Color.white
                 }
             };
+
+            //isInitialised = true;
         }
 
         private void Window(int id)
@@ -287,7 +296,7 @@ namespace KSP_AVC
                 {
                     this.DrawUpdateIssues();
                 }
-                if (AddonLibrary.Addons.Any(a => !a.IsCompatible))
+                if (AddonLibrary.Addons.Any(a => !a.IsCompatible && !a.IsForcedCompatibleByVersion && !a.IsForcedCompatibleByName))
                 {
                     this.DrawCompatibilityIssues();
                 }

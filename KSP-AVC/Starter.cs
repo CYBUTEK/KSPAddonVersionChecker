@@ -20,7 +20,7 @@
 using System;
 using System.Linq;
 using System.Reflection;
-
+using System.IO;
 using UnityEngine;
 
 #endregion
@@ -54,6 +54,7 @@ namespace KSP_AVC
             {
                 Logger.Exception(ex);
             }
+
             Logger.Log("Starter was created.");
         }
 
@@ -74,6 +75,11 @@ namespace KSP_AVC
             {
                 Logger.Exception(ex);
             }
+
+            if(Configuration.CfgUpdated)
+            {
+                Configuration.SaveCfg();
+            }
             Logger.Log("Starter was destroyed.");
         }
 
@@ -84,6 +90,19 @@ namespace KSP_AVC
                 if (!Configuration.CfgLoaded)
                 {
                     Configuration.LoadCfg();
+                }
+                if(Configuration.AvcInterval == -1)
+                {
+                    ScreenMessages.PostScreenMessage("AVC disabled", 10);
+                    Destroy(this);
+                    return;
+                }
+                else if (DateTime.Compare(DateTime.Now, Configuration.NextRun) <= 0 && Configuration.AvcInterval != 0)
+                {
+                    ScreenMessages.PostScreenMessage("AVC version check skipped", 10);
+                    ScreenMessages.PostScreenMessage($"AVC runs next: {Configuration.NextRun}", 10);
+                    Destroy(this);
+                    return;
                 }
                 if (new System.Version(Configuration.GetVersion()) < Assembly.GetExecutingAssembly().GetName().Version)
                 {
@@ -155,7 +174,11 @@ namespace KSP_AVC
             {
                 return false;
             }
-            if (AddonLibrary.Addons.Any(a => a.IsUpdateAvailable || !a.IsCompatible))
+            if (!GetComponent<GuiHelper>()) // if (GameObject.Find("GuiHelper") == null)
+            {
+                this.gameObject.AddComponent<GuiHelper>();
+            }
+            if (AddonLibrary.Addons.Any(a => a.IsUpdateAvailable || a.TriggerIssueGui))
             {
                 this.gameObject.AddComponent<IssueGui>();
             }
