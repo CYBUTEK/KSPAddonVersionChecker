@@ -212,7 +212,7 @@ namespace KSP_AVC.Toolbar
                     this.scrollPosition = GUILayout.BeginScrollView(this.scrollPosition, GUILayout.Height(Screen.height * 0.5f));
 
                 }
-                catch  (Exception ex )
+                catch  /* (Exception ex ) */
                 {
                     // Strange, the above call generates a single exception, not the first time called.  But after that
                     // it's ok, so this will just bypass the error
