@@ -44,8 +44,13 @@
     </Compile>
     <Compile Include="ChangeLogGui.cs" />
     <Compile Include="CheckerProgressGui.cs" />
+    <Compile Include="CompatibilityOverrideAdvSettingsGui.cs" />
+    <Compile Include="CompatibilityOverrideEnableGui.cs" />
+    <Compile Include="CompatibilityOverrideGui.cs" />
+    <Compile Include="CompatibilityOverrideHelpGui.cs" />
     <Compile Include="DropDownList.cs" />
     <Compile Include="FirstRunGui.cs" />
+    <Compile Include="GuiHelper.cs" />
     <Compile Include="IssueGui.cs" />
     <Compile Include="Json.cs" />
     <Compile Include="Logger.cs" />
@@ -59,12 +64,16 @@
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Assembly-CSharp">
-      <HintPath>R:\KSP_1.5.1_dev\KSP_x64_Data\Managed\Assembly-CSharp.dll</HintPath>
+      <HintPath>R:\KSP_1.6.1_dev\KSP_x64_Data\Managed\Assembly-CSharp.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Xml" />
     <Reference Include="UnityEngine">
-      <HintPath>R:\KSP_1.5.1_dev\KSP_x64_Data\Managed\UnityEngine.dll</HintPath>
+      <HintPath>R:\KSP_1.6.1_dev\KSP_x64_Data\Managed\UnityEngine.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.UI, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>R:\KSP_1.6.1_dev\KSP_x64_Data\Managed\UnityEngine.UI.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -90,15 +99,19 @@
         $(PostBuildEventDependsOn);
         PostBuildMacros;
       </PostBuildEventDependsOn>
-    <PostBuildEvent>del R:\KSP_1.5.1_dev\GameData\KSP-AVC\KSP-AVC.dll
+    <PostBuildEvent>del R:\KSP_1.6.1_dev\GameData\KSP-AVC\KSP-AVC.dll
 
 
-copy D:\Users\jbb\github\KSPAddonVersionChecker\Output\KSP-AVC\KSP-AVC.dll R:\KSP_1.5.1_dev\GameData\KSP-AVC
+
+
+copy D:\Users\jbb\github\KSPAddonVersionChecker\Output\KSP-AVC\KSP-AVC.dll R:\KSP_1.6.1_dev\GameData\KSP-AVC
 </PostBuildEvent>
   </PropertyGroup>
   <PropertyGroup>
     <PreBuildEvent>
 set textTemplatingPath="%25ProgramFiles(x86)%25\Microsoft Visual Studio\2017\Community\Common7\IDE\texttransform.exe"
+
+
 
 
 

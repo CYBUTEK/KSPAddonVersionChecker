@@ -121,6 +121,7 @@ namespace KSP_AVC
                             userInput = "";
                             List<string> inputs = reformatInput(versionInfo);
                             var dictKeys = Configuration.CompatibleVersions.Keys;
+              
                             if (dictKeys.Contains(inputs[0]) && remove)
                             {
                                 int j = inputs.Count();
@@ -128,6 +129,9 @@ namespace KSP_AVC
                                 {
                                     Configuration.RemoveOverrideVersion(inputs[0], inputs[i]);
                                 }
+
+
+
                                 return;
                             }
                             int m = inputs.Count();
