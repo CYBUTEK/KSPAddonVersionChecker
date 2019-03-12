@@ -1,5 +1,3 @@
-1.1.6.6
-	Fixed MiniAVC dll
 
 1.1.6.5
 KSP-AVC/AddonInfo
@@ -21,6 +19,7 @@ KSP-AVC/AddonInfo
 
 1.1.6.6
 	Fixed crazy numbers being shown when no min or max is specified
+	Fixed MiniAVC dll
 
 Test Cases												
 For all the following, VERSION < remote VERSION.  The following cases  should all result in an update available message
@@ -75,3 +74,31 @@ For all the following, VERSION < remote VERSION.  The following cases  should al
 
 1.2.0.5
 	Version bump to fix .version file
+
+1.3.0
+	Thanks to 4x4cheesecake for this:
+	Added some features to AVC and MiniAVC
+
+		AVC
+
+		Added Compatibility Override incl. GUI
+		Added Update Frequency
+		Added command line flag to write just a separate AVC.log
+		MiniAVC
+
+		-Added Update Frequency
+
+		Compatibility Override
+		Allows to set a single addon or a range of versions to be compatible with a different KSP version, configurable via GUI.
+		GUI becomes available after all addons have been checked for updates. Can be accessed via a button in the dropdown addon list or by pressing "modkey + 2".
+		Mod authors can disallow the override for their mod by adding <"DISALLOW_VERSION_OVERRIDE": true> to the .version file.
+		Update notifications are not affected!
+
+		Update Frequency
+		Allows to skip AVC version check for a some time or to disable it at all. Configurable via config file:
+
+		"-1" to disable AVC
+		"0" to run at each game launch (default)
+		"x > 0" skip AVC for the next x hours
+		Logging
+		Prevent AVC to write into the KSP.log and output_log by adding the command line parameter "-AVC-log-only".

@@ -42,9 +42,39 @@ namespace KSP_AVC
 
         public bool HasError { get; private set; }
 
+        public bool TriggerIssueGui
+        {
+            get
+            {
+                return this.LocalInfo.TriggerIssueGui;
+            }
+        }
+
         public bool IsCompatible
         {
-            get { return this.IsLocalReady && this.LocalInfo.IsCompatible; }
+            get { return (this.IsLocalReady && this.LocalInfo.IsCompatible); }
+
+        }
+
+        public bool IsForcedCompatibleByVersion
+        {
+            get
+            {
+                return this.LocalInfo.IsForcedCompatibleByVersion;
+            }
+        }
+
+        public bool IsForcedCompatibleByName
+        {
+            get
+            {
+                return this.LocalInfo.IsForcedCompatibleByName;
+            }
+        }
+
+        public bool IsLockedByCreator
+        {
+            get { return this.LocalInfo.IsLockedByCreator; }
         }
 
         public bool IsLocalReady { get; private set; }

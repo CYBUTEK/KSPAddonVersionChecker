@@ -34,11 +34,17 @@ namespace KSP_AVC.Toolbar
         private string addonList;
         private GUIStyle labelGreen;
         private GUIStyle labelYellow;
+        private GUIStyle labelCyan;
         private Rect position = new Rect(0.0f, 0.0f, 400.0f, 0.0f);
         private Vector2 scrollPosition = new Vector2(0, 0);
         private bool showAddons;
         private bool useScrollView;
         private GUIStyle windowStyle;
+        private GameObject helper;
+        private GuiHelper InstanceGuiHelper;
+        private string overrideAvailable = "<color=#00FF00>Compatibility Override GUI</color>";
+        private string overrideNotAvailable = "<color=#FF0000>Wait for AVC processing...</color>";
+        private string buttonText;
 
         #endregion
 
@@ -71,6 +77,14 @@ namespace KSP_AVC.Toolbar
 
         protected void Start()
         {
+            if (Configuration.CfgLoaded && Configuration.AvcInterval == -1)
+            {
+                Destroy(this);
+            }
+            else if (Configuration.CfgLoaded && DateTime.Compare(DateTime.Now, Configuration.NextRun) <= 0 && Configuration.AvcInterval != 0)
+            {
+                Destroy(this);
+            }
             try
             {
                 if (AssemblyLoader.loadedAssemblies.Any(a => a.name == "DevHelper"))
@@ -83,6 +97,7 @@ namespace KSP_AVC.Toolbar
             {
                 Logger.Exception(ex);
             }
+
         }
 
         protected void Update()
@@ -97,6 +112,17 @@ namespace KSP_AVC.Toolbar
             catch (Exception ex)
             {
                 Logger.Exception(ex);
+            }
+
+            if(helper == null)
+            {
+                helper = GameObject.Find("GuiHelper");
+                buttonText = overrideNotAvailable;
+                if (helper != null)
+                {
+                    InstanceGuiHelper = helper.GetComponent<GuiHelper>();
+                    buttonText = overrideAvailable;
+                }
             }
         }
 
@@ -113,6 +139,17 @@ namespace KSP_AVC.Toolbar
 
             this.useScrollView = true;
             this.position.height = Screen.height * 0.5f;
+        }
+
+        private void OverrideGUI()
+        {
+            if (GUILayout.Button(buttonText))
+            {
+                if (InstanceGuiHelper != null)
+                {
+                    InstanceGuiHelper.ToggleGUI();  
+                }                  
+            }            
         }
 
         private void CopyToClipboard()
@@ -175,7 +212,7 @@ namespace KSP_AVC.Toolbar
                     this.scrollPosition = GUILayout.BeginScrollView(this.scrollPosition, GUILayout.Height(Screen.height * 0.5f));
 
                 }
-                catch  (Exception ex )
+                catch  /* (Exception ex ) */
                 {
                     // Strange, the above call generates a single exception, not the first time called.  But after that
                     // it's ok, so this will just bypass the error
@@ -203,6 +240,7 @@ namespace KSP_AVC.Toolbar
 
             GUILayout.Space(5.0f);
             this.CopyToClipboard();
+            this.OverrideGUI();
             GUILayout.Space(5.0f);
         }
 
@@ -211,13 +249,13 @@ namespace KSP_AVC.Toolbar
             this.addonList = String.Empty;
             foreach (var addon in AddonLibrary.Addons)
             {
-                    var labelStyle = !addon.IsCompatible || addon.IsUpdateAvailable ? this.labelYellow : this.labelGreen;
-                    this.addonList += Environment.NewLine + addon.Name + " - " + addon.LocalInfo.Version;
-                    GUILayout.BeginHorizontal();
-                    GUILayout.Label(addon.Name, labelStyle);
-                    GUILayout.FlexibleSpace();
-                    GUILayout.Label(addon.LocalInfo.Version != null ? addon.LocalInfo.Version.ToString() : String.Empty, labelStyle);
-                    GUILayout.EndHorizontal();
+                var labelStyle = (addon.IsForcedCompatibleByVersion || addon.IsForcedCompatibleByName) && !addon.IsUpdateAvailable ? this.labelCyan : (!addon.IsCompatible || addon.IsUpdateAvailable) ? this.labelYellow : this.labelGreen;
+                this.addonList += Environment.NewLine + addon.Name + " - " + addon.LocalInfo.Version;
+                GUILayout.BeginHorizontal();
+                GUILayout.Label(addon.Name, labelStyle);
+                GUILayout.FlexibleSpace();
+                GUILayout.Label(addon.LocalInfo.Version != null ? addon.LocalInfo.Version.ToString() : String.Empty, labelStyle);
+                GUILayout.EndHorizontal();
                 
             }
         }
@@ -247,6 +285,14 @@ namespace KSP_AVC.Toolbar
                 normal =
                 {
                     textColor = Color.yellow
+                }
+            };
+
+            this.labelCyan = new GUIStyle
+            {
+                normal =
+                {
+                    textColor = Color.cyan
                 }
             };
         }
