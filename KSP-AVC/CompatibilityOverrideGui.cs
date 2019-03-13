@@ -216,6 +216,16 @@ namespace KSP_AVC
                 }                
             }
         }
+        void CheckCompatVersion(string version)
+        {
+            Debug.Log("CheckCompatVersion, version: " + version);
+            for (int i = 0; i < versions.Count(); i++)
+            {
+                Debug.Log("versions[" + i + "]: " + versions[i]);
+                if (version == versions[i])
+                    enabledCompatVersions[i] = true;
+            }
+        }
         //Input textfield and "ADD" button
         
         void DrawStdCompatToggles()
@@ -252,7 +262,11 @@ namespace KSP_AVC
             GuiHelper.userInput = GUILayout.TextField(GuiHelper.userInput, GUILayout.Width(150.0f), GUILayout.Height(20));
             if (GUILayout.Button("ADD", this.buttonStyle, GUILayout.Width(75), GUILayout.Height(20)))
             {
+                Debug.Log("userInput: " + GuiHelper.userInput);
+                CheckCompatVersion(GuiHelper.userInput);
                 GuiHelper.UpdateCompatibilityState(OverrideType.version, null, GuiHelper.userInput);
+               
+
                 Logger.Log($"AVC Compatibility Override, Version input: {GuiHelper.userInput}");
             }
             GUILayout.EndHorizontal();
@@ -453,6 +467,9 @@ namespace KSP_AVC
             GUILayout.FlexibleSpace();
             if (GUILayout.Button("RESET", this.buttonStyle, GUILayout.Width(180)))
             {
+                for (int i = 0; i < versions.Count(); i++)
+                    enabledCompatVersions[i] = false;
+
                 foreach (Addon addon in AddonLibrary.Addons.Where(x => !x.IsCompatible))
                 {
                     if (GuiHelper.CompatibilityState(OverrideType.ignore, addon))
