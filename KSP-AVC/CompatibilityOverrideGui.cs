@@ -172,6 +172,7 @@ namespace KSP_AVC
                 return;
             }
             var listKeys = Configuration.CompatibleVersions.Keys.ToList();
+            listKeys.Sort();
             foreach (var key in listKeys)
             {
                 for (int i = 0; i < Configuration.CompatibleVersions[key].compatibleWithVersion.Count; i++)
@@ -303,7 +304,7 @@ namespace KSP_AVC
                 DrawDisabled();
                 return;
             }
-            List<Addon> listIncompatibleMods = AddonLibrary.Addons.Where(a => !a.IsCompatible).ToList();
+            List<Addon> listIncompatibleMods = AddonLibrary.Addons.Where(a => !a.IsCompatible).OrderBy(a => a.Name).ToList();
             int m = listIncompatibleMods.Count();
             if (m == 0)
             {
@@ -395,7 +396,7 @@ namespace KSP_AVC
                 DrawDisabled();
                 return;
             }
-            List<Addon> listCompatibleByName = AddonLibrary.Addons.Where(a => a.IsForcedCompatibleByName).ToList();
+            List<Addon> listCompatibleByName = AddonLibrary.Addons.Where(a => a.IsForcedCompatibleByName).OrderBy(a => a.Name).ToList();
             int m = listCompatibleByName.Count();
             for (int i = 0; i < m; i++)
             {

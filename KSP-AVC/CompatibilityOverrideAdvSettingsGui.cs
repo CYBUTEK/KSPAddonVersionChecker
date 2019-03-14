@@ -142,7 +142,7 @@ namespace KSP_AVC
 
         private void DrawIgnoreList()
         {
-            List<Addon> overrideMods = AddonLibrary.Addons.Where(x => x.IsForcedCompatibleByVersion || GuiHelper.CompatibilityState(OverrideType.ignore, x)).ToList();
+            List<Addon> overrideMods = AddonLibrary.Addons.Where(x => x.IsForcedCompatibleByVersion || GuiHelper.CompatibilityState(OverrideType.ignore, x)).OrderBy(x => x.Name).ToList();
             int m = overrideMods.Count;
             for(int i = 0; i < m; i++)
             {
