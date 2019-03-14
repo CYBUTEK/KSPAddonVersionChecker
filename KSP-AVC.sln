@@ -11,7 +11,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AVCToolkit", "AVCToolkit\AV
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{6DF0E8C4-1D1F-40BA-A655-FF074C24FE50}"
 	ProjectSection(SolutionItems) = preProject
+		buildRelease.bat = buildRelease.bat
 		ChangeLog.txt = ChangeLog.txt
+		deploy.bat = deploy.bat
 		jenkins.txt = jenkins.txt
 		jenkinsMiniAVC.txt = jenkinsMiniAVC.txt
 		KSP-AVC.version = KSP-AVC.version

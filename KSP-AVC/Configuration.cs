@@ -309,6 +309,8 @@ namespace KSP_AVC
             KSPAVC.AddValue("OVERRIDE_PRIORITY", OverridePriority);
             KSPAVC.AddValue("SIMPLE_PRIORITY", SimplePriority);
             KSPAVC.AddValue("DISABLE_COMPATIBLE_VERSION_OVERRIDE", OverrideIsDisabledGlobal);
+            KSPAVC.AddValue("STRICT_VERSION", StrictVersion);
+
 
             ConfigNode OverrideName = KSPAVC.AddNode("OVERRIDE_NAME");
             foreach (string ModName in OverrideCompatibilityByName)
@@ -409,6 +411,22 @@ namespace KSP_AVC
                 }
                 catch { }
             }
+
+            if (node.HasValue("STRICT_VERSION"))
+            {
+                try
+                {
+                    if (node.GetValue("STRICT_VERSION").ToLower() == "false")
+                        StrictVersion = false;
+                    else
+                        StrictVersion = true;
+                    //Logger.Log($"OverrideIsDisabled: {OverrideIsDisabledGlobal}");
+                }
+                catch { }
+            }
+            else
+                StrictVersion = false;
+
             if (node.HasNode("OVERRIDE_NAME"))
             {
                 try
@@ -492,6 +510,7 @@ namespace KSP_AVC
 
         public static LocalRemotePriority OverridePriority { get; private set; }
         public static LocalRemotePriority SimplePriority { get; private set; }
+        public static bool StrictVersion { get; private set; }
         public static bool CfgLoaded = false;
 
         public static List<string> modsIgnoreOverride = new List<string>();

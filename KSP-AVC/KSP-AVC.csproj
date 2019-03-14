@@ -99,13 +99,21 @@
         $(PostBuildEventDependsOn);
         PostBuildMacros;
       </PostBuildEventDependsOn>
-    <PostBuildEvent>del R:\KSP_1.6.1_dev\GameData\KSP-AVC\KSP-AVC.dll
+    <PostBuildEvent>rem del R:\KSP_1.6.1_dev\GameData\KSP-AVC\KSP-AVC.dll
 
 
 
 
-copy D:\Users\jbb\github\KSPAddonVersionChecker\Output\KSP-AVC\KSP-AVC.dll R:\KSP_1.6.1_dev\GameData\KSP-AVC
-</PostBuildEvent>
+rem copy D:\Users\jbb\github\KSPAddonVersionChecker\Output\KSP-AVC\KSP-AVC.dll R:\KSP_1.6.1_dev\GameData\KSP-AVC
+
+
+start /D D:\Users\jbb\github\KSPAddonVersionChecker /WAIT deploy.bat  $(TargetDir) $(TargetFileName)
+
+if $(ConfigurationName) == Release (
+
+	start /D D:\Users\jbb\github\KSPAddonVersionChecker /WAIT buildRelease.bat $(TargetDir) $(TargetFileName)
+
+)</PostBuildEvent>
   </PropertyGroup>
   <PropertyGroup>
     <PreBuildEvent>

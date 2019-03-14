@@ -516,11 +516,13 @@ namespace KSP_AVC
                         break;
 
                     case "KSP_VERSION_MIN":
-                        this.kspVersionMin = GetVersion(data[key]);
+                        if (!Configuration.StrictVersion)
+                            this.kspVersionMin = GetVersion(data[key]);
                         break;
 
                     case "KSP_VERSION_MAX":
-                        this.kspVersionMax = GetVersion(data[key]);
+                        if (!Configuration.StrictVersion)
+                            this.kspVersionMax = GetVersion(data[key]);
                         break;
                 }
             }

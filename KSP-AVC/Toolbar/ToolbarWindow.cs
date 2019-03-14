@@ -77,14 +77,6 @@ namespace KSP_AVC.Toolbar
 
         protected void Start()
         {
-            if (Configuration.CfgLoaded && Configuration.AvcInterval == -1)
-            {
-                Destroy(this);
-            }
-            else if (Configuration.CfgLoaded && DateTime.Compare(DateTime.Now, Configuration.NextRun) <= 0 && Configuration.AvcInterval != 0)
-            {
-                Destroy(this);
-            }
             try
             {
                 if (AssemblyLoader.loadedAssemblies.Any(a => a.name == "DevHelper"))
@@ -102,6 +94,14 @@ namespace KSP_AVC.Toolbar
 
         protected void Update()
         {
+            if (Configuration.CfgLoaded && Configuration.AvcInterval == -1)
+            {
+                Destroy(this);
+            }
+            else if (Configuration.CfgLoaded && DateTime.Compare(DateTime.Now, Configuration.NextRun) <= 0 && Configuration.AvcInterval != 0)
+            {
+                Destroy(this);
+            }
             try
             {
                 if (HighLogic.LoadedScene != GameScenes.LOADING && HighLogic.LoadedScene != GameScenes.MAINMENU)
