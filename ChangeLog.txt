@@ -108,3 +108,7 @@ For all the following, VERSION < remote VERSION.  The following cases  should al
 	Fixed toggle not becoming enabled after entering value manually
 	Fixed issue when MinTimeBetweenAvcRuns > 0, the dropdown list was being shown when it wasn't supposed to
 	Added new field in config file:  STRICT_VERSION, if set true, then the Min and Max versions are ignored.
+
+1.3.0.2
+	Disabled the STRICT_VERSION with a compile-time setting.  To enable it, add STRICT to the conditional compilation symbols
+	Added Sorting for mod names and version numbers.

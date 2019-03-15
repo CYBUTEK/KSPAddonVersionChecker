@@ -516,12 +516,16 @@ namespace KSP_AVC
                         break;
 
                     case "KSP_VERSION_MIN":
+#if STRICT
                         if (!Configuration.StrictVersion)
+#endif
                             this.kspVersionMin = GetVersion(data[key]);
                         break;
 
                     case "KSP_VERSION_MAX":
+#if STRICT
                         if (!Configuration.StrictVersion)
+#endif
                             this.kspVersionMax = GetVersion(data[key]);
                         break;
                 }
@@ -570,19 +574,19 @@ namespace KSP_AVC
             }
         }
 
-        #endregion
+#endregion
 
-        #region Nested Type: GitHubInfo
+#region Nested Type: GitHubInfo
 
         public class GitHubInfo
         {
-            #region Fields
+#region Fields
 
             private readonly AddonInfo addonInfo;
 
-            #endregion
+#endregion
 
-            #region Constructors
+#region Constructors
 
             public GitHubInfo(object obj, AddonInfo addonInfo)
             {
@@ -590,9 +594,9 @@ namespace KSP_AVC
                 this.ParseJson(obj);
             }
 
-            #endregion
+#endregion
 
-            #region Properties
+#region Properties
 
             public bool AllowPreRelease { get; private set; }
 
@@ -609,9 +613,9 @@ namespace KSP_AVC
 
             public VersionInfo Version { get; private set; }
 
-            #endregion
+#endregion
 
-            #region Methods: public
+#region Methods: public
 
             public void FetchRemoteData()
             {
@@ -643,9 +647,9 @@ namespace KSP_AVC
                        "\n\t\tAllowPreRelease: " + this.AllowPreRelease;
             }
 
-            #endregion
+#endregion
 
-            #region Methods: private
+#region Methods: private
 
             private void ParseGitHubJson(string json)
             {
@@ -711,9 +715,9 @@ namespace KSP_AVC
                 }
             }
 
-            #endregion
+#endregion
         }
 
-        #endregion
+#endregion
     }
 }
