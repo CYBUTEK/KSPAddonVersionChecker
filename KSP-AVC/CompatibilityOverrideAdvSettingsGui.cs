@@ -14,6 +14,7 @@ namespace KSP_AVC
         private GUIStyle boxStyle;
         private GUIStyle buttonStyle;
         private GUIStyle labelStyle;
+        private GUIStyle labelStyleWhite;
         private GUIStyle labelStyleYellow;
         private GUIStyle labelStyleCyan;
         private GUIStyle toggleStyle;
@@ -108,14 +109,40 @@ namespace KSP_AVC
             GUILayout.BeginHorizontal();
             DrawIgnoreOverrideSettings();
             GUILayout.EndHorizontal();
+            GUILayout.BeginHorizontal();
+            DrawDefaultValueSettings();
+            GUILayout.EndHorizontal();
             GUILayout.EndVertical();
+        }
+
+        private void DrawDefaultValueSettings()
+        {
+            bool toggleState = Configuration.ShowDefaultValues;
+            GUILayout.BeginVertical();
+            DrawHeadingsDefaultValue();
+            GUILayout.BeginHorizontal(this.scrollList);
+            GUILayout.Label("Show preset values in addon list", this.labelStyleWhite);
+            GUILayout.FlexibleSpace();
+            toggleState = GUILayout.Toggle(toggleState, "", this.toggleStyle);
+            if(toggleState != Configuration.ShowDefaultValues)
+            {
+                Configuration.ShowDefaultValues = !Configuration.ShowDefaultValues;
+            }
+            GUILayout.Space(25);
+            GUILayout.EndHorizontal();
+            GUILayout.EndVertical();
+        }
+
+        private void DrawHeadingsDefaultValue()
+        {
+            GUILayout.Label("OTHER SETTINGS", this.topLevelTitleStyle);
         }
 
         private void DrawAdvancedInfo()
         {
             GUILayout.BeginHorizontal();
             GUILayout.Label("This is the ignore list for the compatibile version override." +
-                "\nAny mod on the ignore list will no longer be affected by the version range." +
+                "\nAny mod on the ignore list will no longer be affected by the version range. " +
                 "It is still possible to put an ignored mod, on the \"ALWAYS OVERRIDE\" list.", this.labelStyle);
             GUILayout.EndHorizontal();
         }
@@ -187,6 +214,16 @@ namespace KSP_AVC
             this.labelStyle = new GUIStyle(HighLogic.Skin.label)
             {
                 alignment = TextAnchor.MiddleLeft
+            };
+
+            this.labelStyleWhite = new GUIStyle(HighLogic.Skin.label)
+            {
+                normal =
+                {
+                    textColor = Color.white
+                },
+                alignment = TextAnchor.MiddleLeft,
+                fontStyle = FontStyle.Bold,
             };
 
             this.labelStyleYellow = new GUIStyle(HighLogic.Skin.label)

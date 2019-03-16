@@ -42,7 +42,7 @@ namespace KSP_AVC
             }
             if (HighLogic.LoadedScene == GameScenes.SPACECENTER)
             {
-                Destroy(this);
+                Destroy(this.gameObject);
             }
         }
 
@@ -69,7 +69,7 @@ namespace KSP_AVC
             }
         }
 
-        public static bool CompatibilityState(OverrideType type, Addon addon)
+        public static bool CompatibilityState(OverrideType type, Addon addon, string oldVersion = "") //requires -1 instead of *
         {
             switch (type)
             {
@@ -80,6 +80,15 @@ namespace KSP_AVC
 
                 case OverrideType.version:
                     {
+                        if (oldVersion != "")
+                        {
+                            oldVersion = oldVersion.Replace("*", "-1");
+                             bool b = (from d in Configuration.CompatibleVersions
+                                       where oldVersion == d.Key
+                                       where d.Value.compatWithVersion.Contains(AddonInfo.ActualKspVersion)
+                                       select d).Any();
+                            return b;
+                        }
                         return addon.IsForcedCompatibleByVersion;
                     }
 
@@ -129,9 +138,6 @@ namespace KSP_AVC
                                 {
                                     Configuration.RemoveOverrideVersion(inputs[0], inputs[i]);
                                 }
-
-
-
                                 return;
                             }
                             int m = inputs.Count();
@@ -166,7 +172,7 @@ namespace KSP_AVC
         
         private static bool validateInput(string userInput)
         {
-            if (!Regex.IsMatch(userInput, @"[^\d\.\-\*\,]")) //matches any character which isn't going to be valid at all
+            if (!Regex.IsMatch(userInput, @"[^\d\.\-\*\,\s]")) //matches any character which isn't going to be valid at all
             {
                 string regexPatternMulti = @"(\d\.\d)\,\s?(\d\.\d)"; //just a rough pattern, should filter out most invalid inputs but definitly not all of them
                 string regexPatternSingle = @"(\d\.\d)"; //checks for at least 2 numbers, sparated by a dot
