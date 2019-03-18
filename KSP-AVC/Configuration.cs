@@ -105,6 +105,8 @@ namespace KSP_AVC
 
         public static List<string> ToDelete { get; private set; } = new List<string>();
 
+        public static bool ShowDefaultValues { get; set; }
+
         #endregion
 
         #region Methods: public
@@ -295,6 +297,7 @@ namespace KSP_AVC
                 //Some default values so this method can create a config file
                 //modsIgnoreOverride.Add("Kopernicus"); //Unfortunately, the name of Kopernicus is actually "<b><color=#CA7B3C>Kopernicus</color></b>" which may irritates some users
                 OverrideIsDisabledGlobal = true;
+                ShowDefaultValues = true;
                 AvcInterval = 0;
                 //UseKspSkin = true;
                 CfgUpdated = true;
@@ -309,6 +312,7 @@ namespace KSP_AVC
             KSPAVC.AddValue("OVERRIDE_PRIORITY", OverridePriority);
             KSPAVC.AddValue("SIMPLE_PRIORITY", SimplePriority);
             KSPAVC.AddValue("DISABLE_COMPATIBLE_VERSION_OVERRIDE", OverrideIsDisabledGlobal);
+            KSPAVC.AddValue("SHOW_DEFAULT_VALUES", ShowDefaultValues);
 #if STRICT
             KSPAVC.AddValue("STRICT_VERSION", StrictVersion);
 #endif
@@ -408,6 +412,18 @@ namespace KSP_AVC
                         OverrideIsDisabledGlobal = false;
                     else
                         OverrideIsDisabledGlobal = true;
+                    //Logger.Log($"OverrideIsDisabled: {OverrideIsDisabledGlobal}");
+                }
+                catch { }
+            }
+            if (node.HasValue("SHOW_DEFAULT_VALUES"))
+            {
+                try
+                {
+                    if (node.GetValue("SHOW_DEFAULT_VALUES").ToLower() == "false")
+                        ShowDefaultValues = false;
+                    else
+                        ShowDefaultValues = true;
                     //Logger.Log($"OverrideIsDisabled: {OverrideIsDisabledGlobal}");
                 }
                 catch { }

@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Reflection;
 using System.Linq;
 using UnityEngine;
-using System.Text.RegularExpressions;
 
 namespace KSP_AVC
 {
@@ -25,6 +24,7 @@ namespace KSP_AVC
         private GUIStyle labelStyleYellow;
         private GUIStyle labelStyleCyan;
         private GUIStyle buttonStyleGreen;
+        private GUIStyle labelStyleIgnore;
         private Vector2 scrollPositionVersionInfo = Vector2.zero;
         private Vector2 scrollPositionAddonList = Vector2.zero;
         private Vector2 scrollPositionNameList = Vector2.zero;
@@ -59,7 +59,7 @@ namespace KSP_AVC
                 for (int i = 3; i <= Versioning.version_minor; i++)
                     versions.Add("1." + i.ToString() + ".*");
 
-                InitEnabledCompatVersions();
+                //InitEnabledCompatVersions();
             }
             catch (Exception ex)
             {
@@ -146,10 +146,9 @@ namespace KSP_AVC
         {
             GUILayout.BeginVertical();
             DrawHeadingsOverrideVersion();
-            scrollPositionVersionInfo = GUILayout.BeginScrollView(scrollPositionVersionInfo, this.scrollList, GUILayout.Width(230), GUILayout.Height(275));
-          
+            scrollPositionVersionInfo = GUILayout.BeginScrollView(scrollPositionVersionInfo, this.scrollList, GUILayout.Width(230), GUILayout.Height(275));          
             DrawVersionList();
-            DrawStdCompatToggles();
+            //DrawStdCompatToggles();
             GUILayout.EndScrollView();
             DrawInputOverrideVersion();
             GUILayout.EndVertical();
@@ -159,7 +158,7 @@ namespace KSP_AVC
         private void DrawHeadingsOverrideVersion()
         {
             GUILayout.BeginHorizontal();
-            GUILayout.Label("COMPAT. VERSION OVERRIDE", this.topLevelTitleStyle, GUILayout.MinWidth(200));
+            GUILayout.Label("COMPATIBLE VERSION OVERRIDE", this.topLevelTitleStyle, GUILayout.MinWidth(230));
             GUILayout.EndHorizontal();
         }
 
@@ -183,16 +182,16 @@ namespace KSP_AVC
                     if (GUILayout.Button("X", this.buttonStyleRed, GUILayout.Width(25), GUILayout.Height(25)))
                     {
                         GuiHelper.UpdateCompatibilityState(OverrideType.version, null, Configuration.CompatibleVersions[key].currentVersion + "," + Configuration.CompatibleVersions[key].compatibleWithVersion[i], true);
-                        if (Configuration.CompatibleVersions[key].compatibleWithVersion[i] == AddonInfo.ActualKspVersion.ToString() )
-                        {
-                            for (int i1 = 0; i1 < versions.Count(); i1++)
-                            {
-                                if (versions[i1] == Configuration.CompatibleVersions[key].currentVersion.Replace("-1", "*"))
-                                {
-                                    enabledCompatVersions[i1] = false;
-                                }
-                            }
-                        }
+                        //if (Configuration.CompatibleVersions[key].compatibleWithVersion[i] == AddonInfo.ActualKspVersion.ToString() )
+                        //{
+                        //    for (int i1 = 0; i1 < versions.Count(); i1++)
+                        //    {
+                        //        if (versions[i1] == Configuration.CompatibleVersions[key].currentVersion.Replace("-1", "*"))
+                        //        {
+                        //            enabledCompatVersions[i1] = false;
+                        //        }
+                        //    }
+                        //}
                     }
                     GUILayout.EndHorizontal();
                 }
@@ -200,62 +199,62 @@ namespace KSP_AVC
             Configuration.DeleteFinally();
         }
 
-        void InitEnabledCompatVersions()
-        {
-            for (int i = 0; i < versions.Count(); i++)
-            {
-                string v = versions[i].Replace("*", "-1");
-                CompatVersions cv;
-                if (Configuration.CompatibleVersions.TryGetValue(v, out cv))
-                {
-                    VersionInfo vi = new VersionInfo(Versioning.version_major, Versioning.version_minor, Versioning.Revision, 0);
+        //void InitEnabledCompatVersions()
+        //{
+        //    for (int i = 0; i < versions.Count(); i++)
+        //    {
+        //        string v = versions[i].Replace("*", "-1");
+        //        CompatVersions cv;
+        //        if (Configuration.CompatibleVersions.TryGetValue(v, out cv))
+        //        {
+        //            VersionInfo vi = new VersionInfo(Versioning.version_major, Versioning.version_minor, Versioning.Revision, 0);
 
-                    if (cv.compatWithVersion.Contains(vi))
-                    {
-                        enabledCompatVersions[i] = true;
-                    }
-                }                
-            }
-        }
-        void CheckCompatVersion(string version)
-        {
-            Debug.Log("CheckCompatVersion, version: " + version);
-            for (int i = 0; i < versions.Count(); i++)
-            {
-                Debug.Log("versions[" + i + "]: " + versions[i]);
-                if (version == versions[i])
-                    enabledCompatVersions[i] = true;
-            }
-        }
-        //Input textfield and "ADD" button
+        //            if (cv.compatWithVersion.Contains(vi))
+        //            {
+        //                enabledCompatVersions[i] = true;
+        //            }
+        //        }                
+        //    }
+        //}
+
+        //void CheckCompatVersion(string version)
+        //{
+        //    Debug.Log("CheckCompatVersion, version: " + version);
+        //    for (int i = 0; i < versions.Count(); i++)
+        //    {
+        //        Debug.Log("versions[" + i + "]: " + versions[i]);
+        //        if (version == versions[i])
+        //            enabledCompatVersions[i] = true;
+        //    }
+        //}
         
-        void DrawStdCompatToggles()
-        {
-            if (Configuration.OverrideIsDisabledGlobal)
-                return;
-            for (int i = 0; i < versions.Count(); i++)
-            {
-                Debug.Log("DrawStdCompatToggles, i:" + i);
-                GUILayout.BeginHorizontal();
-                bool b = GUILayout.Toggle(enabledCompatVersions[i], versions[i]);
-                if (b != enabledCompatVersions[i])
-                {
-                    string v = versions[i].Replace("*", "-1");
-                    enabledCompatVersions[i] = b;
-                    if (enabledCompatVersions[i])
-                    {
-                        GuiHelper.UpdateCompatibilityState(OverrideType.version, null, v);
-                        Logger.Log($"AVC Compatibility Override, Version input: " + v);
-                    }
-                    else
-                    {                       
-                        GuiHelper.UpdateCompatibilityState(OverrideType.version , null, v + "," + AddonInfo.ActualKspVersion.ToString(), true);
-                        Logger.Log($"AVC Compatibility Override remove , Version input: " + v);
-                    }
-                }
-                GUILayout.EndHorizontal();
-            }
-        }
+        //void DrawStdCompatToggles()
+        //{
+        //    if (Configuration.OverrideIsDisabledGlobal)
+        //        return;
+        //    for (int i = 0; i < versions.Count(); i++)
+        //    {
+        //        Debug.Log("DrawStdCompatToggles, i:" + i);
+        //        GUILayout.BeginHorizontal();
+        //        bool b = GUILayout.Toggle(enabledCompatVersions[i], versions[i]);
+        //        if (b != enabledCompatVersions[i])
+        //        {
+        //            string v = versions[i].Replace("*", "-1");
+        //            enabledCompatVersions[i] = b;
+        //            if (enabledCompatVersions[i])
+        //            {
+        //                GuiHelper.UpdateCompatibilityState(OverrideType.version, null, v);
+        //                Logger.Log($"AVC Compatibility Override, Version input: " + v);
+        //            }
+        //            else
+        //            {                       
+        //                GuiHelper.UpdateCompatibilityState(OverrideType.version , null, v + "," + AddonInfo.ActualKspVersion.ToString(), true);
+        //                Logger.Log($"AVC Compatibility Override remove , Version input: " + v);
+        //            }
+        //        }
+        //        GUILayout.EndHorizontal();
+        //    }
+        //}
 
         private void DrawInputOverrideVersion()
         {
@@ -264,9 +263,8 @@ namespace KSP_AVC
             if (GUILayout.Button("ADD", this.buttonStyle, GUILayout.Width(75), GUILayout.Height(20)))
             {
                 Debug.Log("userInput: " + GuiHelper.userInput);
-                CheckCompatVersion(GuiHelper.userInput);
-                GuiHelper.UpdateCompatibilityState(OverrideType.version, null, GuiHelper.userInput);
-               
+                //CheckCompatVersion(GuiHelper.userInput);
+                GuiHelper.UpdateCompatibilityState(OverrideType.version, null, GuiHelper.userInput);               
 
                 Logger.Log($"AVC Compatibility Override, Version input: {GuiHelper.userInput}");
             }
@@ -311,10 +309,14 @@ namespace KSP_AVC
                 DrawNoIncompatibleAddons();
                 return;
             }
+            if (Configuration.ShowDefaultValues)
+            {
+                DrawDefaultValues(); 
+            }
             for (int i = 0; i < m; i++)
             {
                 Addon addon = listIncompatibleMods[i];
-                GUIStyle coloredLabel = (GuiHelper.CompatibilityState(OverrideType.version, addon) || GuiHelper.CompatibilityState(OverrideType.name, addon)) ? this.labelStyleCyan : this.labelStyleYellow;
+                GUIStyle coloredLabel = (GuiHelper.CompatibilityState(OverrideType.version, addon) || GuiHelper.CompatibilityState(OverrideType.name, addon)) ? this.labelStyleCyan : GuiHelper.CompatibilityState(OverrideType.ignore, addon) ? this.labelStyleIgnore : this.labelStyleYellow; //highlighting ignored mods
                 VersionInfo versionNumber = addon.LocalInfo.KspVersionMaxIsNull && addon.LocalInfo.KspVersionMinIsNull ? addon.LocalInfo.KspVersion : addon.LocalInfo.KspVersionMax;
 
                 GUILayout.BeginHorizontal();
@@ -325,6 +327,23 @@ namespace KSP_AVC
                 GUILayout.Label($"{versionNumber}", coloredLabel, GUILayout.MinWidth(65));
                 GUILayout.Space(18);
                 DrawButtonArrowRight(addon);
+                GUILayout.FlexibleSpace();
+                GUILayout.EndHorizontal();
+            }
+        }
+
+        private void DrawDefaultValues()
+        {
+            for (int i = 0; i < versions.Count(); i++)
+            {
+                GUIStyle coloredLabel = GuiHelper.CompatibilityState(OverrideType.version, null, versions[i]) ? this.labelStyleCyan : this.labelStyleYellow;
+                GUILayout.BeginHorizontal();
+                GUILayout.Space(51);
+                GUILayout.Label("(PRESET) Enable Override for:", coloredLabel, GUILayout.MinWidth(230.0f));
+                GUILayout.Space(10);
+                GUILayout.Label(versions[i], coloredLabel, GUILayout.MinWidth(65));
+                GUILayout.Space(18);
+                DrawButtonArrowRight(versions[i]);
                 GUILayout.FlexibleSpace();
                 GUILayout.EndHorizontal();
             }
@@ -344,7 +363,20 @@ namespace KSP_AVC
             {
                 if (!GuiHelper.CompatibilityState(OverrideType.version, addon))
                 {
-                    GuiHelper.UpdateCompatibilityState(OverrideType.version, null, addon.LocalInfo.KspVersionMaxIsNull && addon.LocalInfo.KspVersionMinIsNull ? addon.LocalInfo.KspVersion.ToString() : addon.LocalInfo.KspVersionMax.ToString()); //addon.LocalInfo.KspVersionMax == AddonInfo.ActualKspVersion ? addon.LocalInfo.KspVersion.ToString() : addon.LocalInfo.KspVersionMax.ToString()
+                    GuiHelper.UpdateCompatibilityState(OverrideType.version, null, addon.LocalInfo.KspVersionMaxIsNull && addon.LocalInfo.KspVersionMinIsNull ? addon.LocalInfo.KspVersion.ToString() : addon.LocalInfo.KspVersionMax.ToString());
+                }
+            }
+        }
+
+        private void DrawButtonArrowRight(string VersionNumber)
+        {
+            GUIStyle coloredButtonStyle = GuiHelper.CompatibilityState(OverrideType.version, null, VersionNumber) ? buttonStyleGreen : buttonStyle;
+            string buttonLabel = "\u25B6"; //unicode for a triangle, pointing to the right
+            if (GUILayout.Button(buttonLabel, coloredButtonStyle, GUILayout.Width(25), GUILayout.Height(25)))
+            {
+                if (!GuiHelper.CompatibilityState(OverrideType.version, null, VersionNumber))
+                {
+                    GuiHelper.UpdateCompatibilityState(OverrideType.version, null, VersionNumber);
                 }
             }
         }
@@ -519,8 +551,8 @@ namespace KSP_AVC
             this.hasCentred = true;
         }
 
-#endregion
-
+        #endregion
+        
 #region Styles
 
         private void InitialiseStyles()
@@ -611,6 +643,15 @@ namespace KSP_AVC
                     textColor = Color.cyan
                 },
                 alignment = TextAnchor.MiddleLeft,
+            };
+
+            this.labelStyleIgnore = new GUIStyle(HighLogic.Skin.label)
+            {
+                normal =
+                {
+                    textColor = Color.yellow
+                },
+                fontStyle = FontStyle.BoldAndItalic,
             };
         }
 #endregion
