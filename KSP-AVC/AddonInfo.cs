@@ -341,7 +341,7 @@ namespace KSP_AVC
                    "\n\tURL: " + (String.IsNullOrEmpty(this.Url) ? "NULL" : this.Url) +
                    "\n\tDOWNLOAD: " + (String.IsNullOrEmpty(this.Download) ? "NULL" : this.Download) +
                    "\n\tGITHUB: " + (this.GitHub != null ? this.GitHub.ToString() : "NULL") +
-                   "\n\tDISABLE_COMPATIBLE_VERSION_OVERRIDE: " + this.IsLockedByCreator.ToString() +
+                   "\n\tDISALLOW_VERSION_OVERRIDE: " + this.IsLockedByCreator.ToString() +
                    "\n\tVERSION: " + (this.Version != null ? this.Version.ToString() : "NULL (required)") +
                    "\n\tKSP_VERSION: " + this.KspVersion +
                    "\n\tKSP_VERSION_MIN: " + (this.kspVersionMin != null ? this.kspVersionMin.ToString() : "NULL") +
@@ -468,7 +468,18 @@ namespace KSP_AVC
                         break;
 
                     case "DISALLOW_VERSION_OVERRIDE":
-                        this.IsLockedByCreator = (bool)data[key];
+                        {
+                            string s = (string)data[key];
+                            switch(s.ToUpper())
+                            {
+                                case "TRUE":
+                                    this.IsLockedByCreator = true;
+                                    break;
+                                case "FALSE":
+                                    this.IsLockedByCreator = false;
+                                    break;
+                            }
+                        }
                         break;
 
                     case "NAME":
