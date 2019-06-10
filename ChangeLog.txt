@@ -120,3 +120,15 @@ For all the following, VERSION < remote VERSION.  The following cases  should al
 	Fixed: Issue during text input validation
 	Fixed: Windows don't close after loading a savegame
 	Some internal code changes (CompatibilityState)
+
+1.3.0.4
+	Added KSP_VERSION_EXCLUDE to allow specific versions to be excluded from being seen as compatible
+		  "KSP_VERSION_EXCLUDE": [
+			{      "MAJOR": 1,      "MINOR": 6,      "PATCH": 1    },
+			{      "MAJOR": 2,      "MINOR": 6,      "PATCH": 2    }
+		  ]
+	Added KSP_VERSION_INCLUDE to allow specific versions to be compatible
+		  "KSP_VERSION_INCLUDE": [
+			{      "MAJOR": 1,      "MINOR": 6,      "PATCH": 1    },
+			{      "MAJOR": 2,      "MINOR": 6,      "PATCH": 2    }
+		  ]

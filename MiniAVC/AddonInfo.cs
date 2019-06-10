@@ -30,6 +30,8 @@ namespace MiniAVC
         private VersionInfo kspVersion;
         private VersionInfo kspVersionMax;
         private VersionInfo kspVersionMin;
+        private List<VersionInfo> kspExcludeVersions = null;
+        private List<VersionInfo> kspIncludeVersions = null;
 
         static AddonInfo()
         {
@@ -73,9 +75,17 @@ namespace MiniAVC
         {
             get
             {
-                return (this.IsCompatibleKspVersion && this.kspVersionMin == null && this.kspVersionMax == null)
+                if (kspIncludeVersions != null && this.IsKspIncludedVersion)
+                    return true;
+                bool b = (this.IsCompatibleKspVersion && this.kspVersionMin == null && this.kspVersionMax == null)
                  ||
                  ((this.kspVersionMin != null || this.kspVersionMax != null) && this.IsCompatibleKspVersionMin && this.IsCompatibleKspVersionMax);
+                if (b)
+                {
+                    if (kspExcludeVersions != null && this.IsKspExcludedVersion)
+                        b = false;
+                }
+                return b;
             }
         }
 
@@ -113,6 +123,25 @@ namespace MiniAVC
         {
             get { return (kspVersionMin ?? VersionInfo.MinValue); }
         }
+        public bool IsKspExcludedVersion
+        {
+            get
+            {
+                bool b = this.kspExcludeVersions.Contains(actualKspVersion);
+                return b;
+            }
+        }
+        public bool IsKspIncludedVersion
+        {
+            get
+            {
+                if (this.kspIncludeVersions == null)
+                    return false;
+                bool b = this.kspIncludeVersions.Contains(actualKspVersion);
+                return b;
+            }
+        }
+        public bool KspExcludeVersionIsNull { get { return this.kspExcludeVersions == null; } }
 
         public string Name { get; private set; }
 
@@ -132,7 +161,7 @@ namespace MiniAVC
 
         public override string ToString()
         {
-            return path +
+            string str = path +
                    "\n\tNAME: " + (String.IsNullOrEmpty(Name) ? "NULL (required)" : Name) +
                    "\n\tURL: " + (String.IsNullOrEmpty(Url) ? "NULL" : Url) +
                    "\n\tDOWNLOAD: " + (String.IsNullOrEmpty(Download) ? "NULL" : Download) +
@@ -140,11 +169,21 @@ namespace MiniAVC
                    "\n\tVERSION: " + (Version != null ? Version.ToString() : "NULL (required)") +
                    "\n\tKSP_VERSION: " + KspVersion +
                    "\n\tKSP_VERSION_MIN: " + (kspVersionMin != null ? kspVersionMin.ToString() : "NULL") +
-                   "\n\tKSP_VERSION_MAX: " + (kspVersionMax != null ? kspVersionMax.ToString() : "NULL") +
+                   "\n\tKSP_VERSION_MAX: " + (kspVersionMax != null ? kspVersionMax.ToString() : "NULL");
+            if (kspExcludeVersions != null)
+            {
+                str += "\n\tKSP_VERSION_EXCLUDE:";
+                foreach (var s in kspExcludeVersions)
+                {
+                    str += "\n\t\t" + s;
+                }
+            }
+            str +=
                    "\n\tCompatibleKspVersion: " + IsCompatibleKspVersion +
                    "\n\tCompatibleKspVersionMin: " + IsCompatibleKspVersionMin +
                    "\n\tCompatibleKspVersionMax: " + IsCompatibleKspVersionMax +
                    "\n\tCompatibleGitHubVersion: " + IsCompatibleGitHubVersion;
+            return str;
         }
 
         private static string FormatCompatibleUrl(string url)
@@ -240,6 +279,15 @@ namespace MiniAVC
 
                     case "KSP_VERSION_MAX":
                         kspVersionMax = GetVersion(data[key]);
+                        break;
+                    case "KSP_VERSION_EXCLUDE":
+                        kspExcludeVersions = new List<VersionInfo>();
+                        List<System.Object> ExcludeList = (List<System.Object>)data[key];
+                        foreach (System.Object el in ExcludeList)
+                        {
+                            var s = GetVersion(el);
+                            kspExcludeVersions.Add(s);
+                        }
                         break;
                 }
             }

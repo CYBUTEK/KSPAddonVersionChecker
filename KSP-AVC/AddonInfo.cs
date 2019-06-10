@@ -39,6 +39,8 @@ namespace KSP_AVC
         private VersionInfo kspVersion;
         private VersionInfo kspVersionMax;
         private VersionInfo kspVersionMin;
+        private List<VersionInfo> kspExcludeVersions;
+        private List<VersionInfo> kspIncludeVersions;
 
         #endregion
 
@@ -142,9 +144,16 @@ namespace KSP_AVC
         public bool IsCompatible
         {
             get {
+                if (kspIncludeVersions != null && this.IsKspIncludedVersion)
+                    return true;
                 bool b = (this.IsCompatibleKspVersion && this.KspVersionMinIsNull && this.KspVersionMaxIsNull)
                     || 
                     ((this.kspVersionMin != null || this.kspVersionMax != null) && this.IsCompatibleKspVersionMin && this.IsCompatibleKspVersionMax);
+                if (b)
+                {
+                    if (kspExcludeVersions != null && this.IsKspExcludedVersion)
+                        b = false;
+                }
                 return b;
             }
         }
@@ -274,6 +283,26 @@ namespace KSP_AVC
                 return b;
             }
         }
+        public bool IsKspExcludedVersion
+        {
+            get
+            {
+                if (this.kspExcludeVersions == null)
+                    return false;
+                bool b = this.kspExcludeVersions.Contains(actualKspVersion);
+                return b;
+            }
+        }
+        public bool IsKspIncludedVersion
+        {
+            get
+            {
+                if (this.kspIncludeVersions == null)
+                    return false;
+                bool b = this.kspIncludeVersions.Contains(actualKspVersion);
+                return b;
+            }
+        }
 
         public string KerbalStuffUrl { get; private set; }
 
@@ -295,6 +324,10 @@ namespace KSP_AVC
         public bool KspVersionMinIsNull {
             get { return this.kspVersionMin == null; }
         }
+
+        public bool KspExcludeVersionsIsNull { get { return this.kspExcludeVersions == null; } }
+
+        public bool KspIncludeVersionsIsNull { get { return this.kspIncludeVersions == null; } }
 
         public VersionInfo KspVersionMin
         {
@@ -336,7 +369,7 @@ namespace KSP_AVC
 
         public override string ToString()
         {
-            return this.path +
+            string str = this.path +
                    "\n\tNAME: " + (String.IsNullOrEmpty(this.Name) ? "NULL (required)" : this.Name) +
                    "\n\tURL: " + (String.IsNullOrEmpty(this.Url) ? "NULL" : this.Url) +
                    "\n\tDOWNLOAD: " + (String.IsNullOrEmpty(this.Download) ? "NULL" : this.Download) +
@@ -345,11 +378,30 @@ namespace KSP_AVC
                    "\n\tVERSION: " + (this.Version != null ? this.Version.ToString() : "NULL (required)") +
                    "\n\tKSP_VERSION: " + this.KspVersion +
                    "\n\tKSP_VERSION_MIN: " + (this.kspVersionMin != null ? this.kspVersionMin.ToString() : "NULL") +
-                   "\n\tKSP_VERSION_MAX: " + (this.kspVersionMax != null ? this.kspVersionMax.ToString() : "NULL") +
+                   "\n\tKSP_VERSION_MAX: " + (this.kspVersionMax != null ? this.kspVersionMax.ToString() : "NULL");
+            if (kspExcludeVersions != null)
+            {
+                str += "\n\tKSP_VERSION_EXCLUDE:";
+                foreach (var s in kspExcludeVersions)
+                {
+                    str += "\n\t\t" + s;
+                }
+            }
+            if (kspIncludeVersions != null)
+            {
+                str += "\n\tKSP_VERSION_INCLUDE:";
+                foreach (var s in kspIncludeVersions)
+                {
+                    str += "\n\t\t" + s;
+                }
+            }
+            str +=
                    "\n\tCompatibleKspVersion: " + this.IsCompatibleKspVersion +
                    "\n\tCompatibleKspVersionMin: " + this.IsCompatibleKspVersionMin +
                    "\n\tCompatibleKspVersionMax: " + this.IsCompatibleKspVersionMax +
                    "\n\tCompatibleGitHubVersion: " + this.IsCompatibleGitHubVersion;
+
+            return str;
         }
 
         #endregion
@@ -527,6 +579,24 @@ namespace KSP_AVC
                         if (!Configuration.StrictVersion)
 #endif
                             this.kspVersionMax = GetVersion(data[key]);
+                        break;
+                    case "KSP_VERSION_EXCLUDE":
+                        kspExcludeVersions = new List<VersionInfo>();
+                        List<System.Object> ExcludeList = (List<System.Object>)data[key];
+                        foreach (System.Object el in ExcludeList)
+                        {
+                            var s = GetVersion(el);
+                            kspExcludeVersions.Add(s);
+                        }
+                        break;
+                    case "KSP_VERSION_INCLUDE":
+                        kspIncludeVersions = new List<VersionInfo>();
+                        List<System.Object> IncludeList = (List<System.Object>)data[key];
+                        foreach (System.Object el in IncludeList)
+                        {
+                            var s = GetVersion(el);
+                            kspIncludeVersions.Add(s);
+                        }
                         break;
                 }
             }

@@ -108,7 +108,15 @@ namespace MiniAVC
             }
 
             GUILayout.BeginVertical(HighLogic.Skin.box);
-            GUILayout.Label($"Unsupported by KSP v{VersioningBase.GetVersionString()}, please use v{Addon.LocalInfo.KspVersion}.", titleStyle, GUILayout.Width(400.0f));
+            if (Addon.LocalInfo.IsKspExcludedVersion)
+            {
+                GUILayout.Label("The currently installed version of " + Addon.Name + " is not compatible with " +
+                    AddonInfo.ActualKspVersion, titleStyle, GUILayout.MinWidth(575.0f));
+            }
+            else
+            {
+                GUILayout.Label($"Unsupported by KSP v{VersioningBase.GetVersionString()}, please use v{Addon.LocalInfo.KspVersion}.", titleStyle, GUILayout.Width(400.0f));
+            }
             GUILayout.EndVertical();
         }
 
