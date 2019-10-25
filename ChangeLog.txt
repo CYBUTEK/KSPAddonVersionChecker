@@ -151,3 +151,6 @@ For all the following, VERSION < remote VERSION.  The following cases  should al
 	Updated Event.repaint to Event.Repaint in IssueGui.cs, DropDownList.cs
 	Replaced all WWW with UnityWebRequest
 	Rebuild both for 1.8
+
+1.4.0.1
+	Changed install loc for KSP-AVC.dll to Plugins
