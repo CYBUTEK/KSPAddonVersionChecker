@@ -18,6 +18,7 @@ using System.Text.RegularExpressions;
 using System.Threading;
 
 using UnityEngine;
+using UnityEngine.Networking;
 
 namespace MiniAVC
 {
@@ -319,7 +320,7 @@ namespace MiniAVC
             {
                 try
                 {
-                    using (var www = new WWW("https://api.github.com/repos/" + Username + "/" + Repository + "/releases"))
+                    using (UnityWebRequest www = UnityWebRequest.Get("https://api.github.com/repos/" + Username + "/" + Repository + "/releases"))
                     {
                         while (!www.isDone)
                         {
@@ -327,7 +328,7 @@ namespace MiniAVC
                         }
                         if (www.error == null)
                         {
-                            ParseGitHubJson(www.text);
+                            ParseGitHubJson(www.url);
                         }
                     }
                 }

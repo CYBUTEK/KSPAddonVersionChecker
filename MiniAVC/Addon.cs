@@ -15,6 +15,7 @@ using System;
 using System.IO;
 using System.Threading;
 using UnityEngine;
+using UnityEngine.Networking;
 
 namespace MiniAVC
 {
@@ -112,7 +113,7 @@ namespace MiniAVC
 
         private void FetchRemoteInfo()
         {
-            using (var www = new WWW(Uri.EscapeUriString(LocalInfo.Url)))
+            using (UnityWebRequest www = UnityWebRequest.Get(Uri.EscapeUriString(LocalInfo.Url)))
             {
                 while (!www.isDone)
                 {
@@ -191,12 +192,12 @@ namespace MiniAVC
             Logger.Blank();
         }
 
-        private void SetRemoteInfo(WWW www)
+        private void SetRemoteInfo(UnityWebRequest www)
         {
-            RemoteInfo = new AddonInfo(LocalInfo.Url, www.text);
+            RemoteInfo = new AddonInfo(LocalInfo.Url, www.url);
             RemoteInfo.FetchRemoteData();
 
-            Logger.Log("LocalInfo.Url: " + LocalInfo.Url + ",   www.text: " + www.text);
+            Logger.Log("LocalInfo.Url: " + LocalInfo.Url + ",   www.text: " + www.url);
 #if true
             if (LocalInfo.Version == RemoteInfo.Version)
             {

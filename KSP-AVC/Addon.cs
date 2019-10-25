@@ -22,7 +22,7 @@ using System.IO;
 using System.Threading;
 
 using UnityEngine;
-
+using UnityEngine.Networking;
 #endregion
 
 namespace KSP_AVC
@@ -149,7 +149,7 @@ namespace KSP_AVC
 
             if (string.IsNullOrEmpty(this.LocalInfo.Url) == false)
             {
-				using (var www = new WWW(Uri.EscapeUriString(this.LocalInfo.Url)))
+				using (UnityWebRequest www = UnityWebRequest.Get(Uri.EscapeUriString(this.LocalInfo.Url)))
                 {
 					while ((!www.isDone) && ((currentTime - startTime) < timeoutSeconds))
                     {
@@ -231,10 +231,11 @@ namespace KSP_AVC
             Logger.Blank();
         }
 
-        private void SetRemoteAvcInfo(WWW www)
+        private void SetRemoteAvcInfo(UnityWebRequest www)
         {
 
-            this.RemoteInfo = new AddonInfo(this.LocalInfo.Url, www.text, AddonInfo.RemoteType.AVC);
+//            this.RemoteInfo = new AddonInfo(this.LocalInfo.Url, www.text, AddonInfo.RemoteType.AVC);
+            this.RemoteInfo = new AddonInfo(this.LocalInfo.Url, www.url, AddonInfo.RemoteType.AVC);
             this.RemoteInfo.FetchRemoteData();
 
 
@@ -258,9 +259,9 @@ namespace KSP_AVC
             this.IsProcessingComplete = true;
         }
 
-        private void SetRemoteKerbalStuffInfo(WWW www)
+        private void SetRemoteKerbalStuffInfo(UnityWebRequest www)
         {
-            this.RemoteInfo = new AddonInfo(this.LocalInfo.KerbalStuffUrl, www.text, AddonInfo.RemoteType.KerbalStuff);
+            this.RemoteInfo = new AddonInfo(this.LocalInfo.KerbalStuffUrl, www.url, AddonInfo.RemoteType.KerbalStuff);
 
             if (this.LocalInfo.Version == this.RemoteInfo.Version)
             {

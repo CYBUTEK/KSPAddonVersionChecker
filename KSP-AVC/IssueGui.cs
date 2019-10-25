@@ -167,7 +167,7 @@ namespace KSP_AVC
                 Application.OpenURL(addon.RemoteInfo.Download);
                 list.ShowList = false;
             }
-            if (Event.current.type == EventType.repaint)
+            if (Event.current.type == EventType.Repaint)
             {
                 list.ToolTip.Text = GUILayoutUtility.GetLastRect().Contains(Event.current.mousePosition) ? list.ToolTip.Text = addon.RemoteInfo.Download : String.Empty;
             }

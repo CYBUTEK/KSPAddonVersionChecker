@@ -23,6 +23,7 @@ using System.Linq;
 using System.Threading;
 
 using UnityEngine;
+using UnityEngine.Networking;
 
 #endregion
 
@@ -461,7 +462,7 @@ namespace KSP_AVC
 
         private void FetchChangeLog()
         {
-            using (var www = new WWW(this.ChangeLogUrl))
+            using (UnityWebRequest www = UnityWebRequest.Get(this.ChangeLogUrl))
             {
                 while (!www.isDone)
                 {
@@ -469,7 +470,7 @@ namespace KSP_AVC
                 }
                 if (www.error == null)
                 {
-                    this.ChangeLog = www.text;
+                    this.ChangeLog = www.url;
                 }
             }
         }
@@ -702,7 +703,7 @@ namespace KSP_AVC
             {
                 try
                 {
-                    using (var www = new WWW("https://api.github.com/repos/" + this.Username + "/" + this.Repository + "/releases"))
+                    using (UnityWebRequest www = UnityWebRequest.Get("https://api.github.com/repos/" + this.Username + "/" + this.Repository + "/releases"))
                     {
                         while (!www.isDone)
                         {
@@ -710,7 +711,7 @@ namespace KSP_AVC
                         }
                         if (www.error == null)
                         {
-                            this.ParseGitHubJson(www.text);
+                            this.ParseGitHubJson(www.url);
                         }
                     }
                 }

@@ -4,33 +4,34 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{F1351BAB-76F1-41DE-B01C-496163CB44D8}</ProjectGuid>
+    <ProjectGuid>{F745CC0C-B7A0-4EF2-BF5A-1D3F0C19202C}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>MiniAVC</RootNamespace>
-    <AssemblyName>MiniAVC</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <RootNamespace>KSP_AVC</RootNamespace>
+    <AssemblyName>KSP-AVC</AssemblyName>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
+    <DebugSymbols>false</DebugSymbols>
+    <DebugType>none</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
+    <OutputPath>..\Output\KSP-AVC\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <Prefer32Bit>false</Prefer32Bit>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>none</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>..\Output\MiniAVC\</OutputPath>
+    <OutputPath>..\Output\KSP-AVC\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <Prefer32Bit>false</Prefer32Bit>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
+    <DebugSymbols>false</DebugSymbols>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Addon.cs" />
@@ -41,26 +42,39 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>AssemblyVersion.tt</DependentUpon>
     </Compile>
-    <Compile Include="IssueGui.cs" />
+    <Compile Include="ChangeLogGui.cs" />
+    <Compile Include="CheckerProgressGui.cs" />
+    <Compile Include="CompatibilityOverrideAdvSettingsGui.cs" />
+    <Compile Include="CompatibilityOverrideEnableGui.cs" />
+    <Compile Include="CompatibilityOverrideGui.cs" />
+    <Compile Include="CompatibilityOverrideHelpGui.cs" />
+    <Compile Include="DropDownList.cs" />
     <Compile Include="FirstRunGui.cs" />
+    <Compile Include="GuiHelper.cs" />
+    <Compile Include="IssueGui.cs" />
     <Compile Include="Json.cs" />
     <Compile Include="Logger.cs" />
-    <Compile Include="Starter.cs" />
+    <Compile Include="Toolbar\ToolbarWindow.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="AddonSettings.cs" />
+    <Compile Include="Configuration.cs" />
+    <Compile Include="Starter.cs" />
     <Compile Include="ToolTipGui.cs" />
-    <Compile Include="UpdateFrequency.cs" />
+    <Compile Include="Utils.cs" />
     <Compile Include="VersionInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="$(KSPDIR)\KSP_x64_Data\Managed\Assembly*.dll">
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="$(KSPDIR)\KSP_x64_Data\Managed\UnityEngine*.dll">
-      <Private>False</Private>
+    <Reference Include="Assembly-CSharp">
+      <HintPath>R:\KSP_1.7.3_dev\KSP_x64_Data\Managed\Assembly-CSharp.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Xml" />
+    <Reference Include="UnityEngine">
+      <HintPath>R:\KSP_1.7.3_dev\KSP_x64_Data\Managed\UnityEngine.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.UI, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>R:\KSP_1.7.3_dev\KSP_x64_Data\Managed\UnityEngine.UI.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Content Include="AssemblyVersion.tt">
@@ -85,12 +99,29 @@
         $(PostBuildEventDependsOn);
         PostBuildMacros;
       </PostBuildEventDependsOn>
-    <PostBuildEvent>
-    </PostBuildEvent>
+    <PostBuildEvent>rem del R:\KSP_1.7.3_dev\GameData\KSP-AVC\KSP-AVC.dll
+
+
+
+
+rem copy D:\Users\jbb\github\KSPAddonVersionChecker\Output\KSP-AVC\KSP-AVC.dll R:\KSP_1.7.3_dev\GameData\KSP-AVC
+
+
+start /D D:\Users\jbb\github\KSPAddonVersionChecker /WAIT deploy.bat  $(TargetDir) $(TargetFileName)
+
+if $(ConfigurationName) == Release (
+
+	start /D D:\Users\jbb\github\KSPAddonVersionChecker /WAIT buildRelease.bat $(TargetDir) $(TargetFileName)
+
+)</PostBuildEvent>
   </PropertyGroup>
   <PropertyGroup>
     <PreBuildEvent>
 set textTemplatingPath="%25ProgramFiles(x86)%25\Microsoft Visual Studio\2017\Community\Common7\IDE\texttransform.exe"
+
+
+
+
 
 %25textTemplatingPath%25 "$(ProjectDir)AssemblyVersion.tt"
 </PreBuildEvent>

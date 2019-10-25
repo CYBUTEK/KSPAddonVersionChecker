@@ -59,7 +59,7 @@ namespace KSP_AVC
         public void DrawButton(string label, Rect parent, float width)
         {
             this.ShowList = GUILayout.Toggle(this.ShowList, label, this.toggleStyle, GUILayout.Width(width));
-            if (Event.current.type == EventType.repaint)
+            if (Event.current.type == EventType.Repaint)
             {
                 this.SetPosition(GUILayoutUtility.GetLastRect(), parent);
             }
