@@ -154,3 +154,6 @@ For all the following, VERSION < remote VERSION.  The following cases  should al
 
 1.4.0.1
 	Changed install loc for KSP-AVC.dll to Plugins
+
+1.4.0.2
+	Fixed a nasty bug with MiniAVC and KSP 1.8 which was causing the game to crash badly

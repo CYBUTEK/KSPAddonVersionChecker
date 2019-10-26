@@ -44,6 +44,7 @@ namespace MiniAVC
 
         public static AddonSettings Load(string rootPath)
         {
+            Debug.Log("AddonSettings.Load, rootPath: " + rootPath);
             var filePath = Path.Combine(rootPath, "MiniAVC.xml");
 
             if (!File.Exists(filePath))
