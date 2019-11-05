@@ -31,7 +31,7 @@ namespace KSP_AVC
     {
         #region Fields
 
-        private static readonly string textureDirectory = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "Textures");
+        private static readonly string textureDirectory = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "../Textures");
 
         #endregion
 
