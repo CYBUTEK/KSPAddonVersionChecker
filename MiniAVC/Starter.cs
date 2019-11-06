@@ -23,8 +23,8 @@ using UnityEngine;
 
 namespace MiniAVC
 {
-//    [KSPAddon(KSPAddon.Startup.Instantly, false)]
-    [KSPAddon(KSPAddon.Startup.MainMenu, false)]
+    [KSPAddon(KSPAddon.Startup.Instantly, false)]
+//    [KSPAddon(KSPAddon.Startup.MainMenu, false)]
     public class Starter : MonoBehaviour
     {
         #region Fields

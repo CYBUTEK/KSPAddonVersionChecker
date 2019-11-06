@@ -12,7 +12,7 @@ namespace MiniAVC
         public static bool ConfigLoaded { get; private set; }
         public static int AvcInterval { get; private set; }
         public static DateTime NextRun { get; private set; }
-        readonly static string configPath = KSPUtil.ApplicationRootPath + "GameData/MiniAVCUpdateFrequency.dat";
+        static string configPath = KSPUtil.ApplicationRootPath + "GameData/MiniAVCUpdateFrequency.dat";
 
         public static bool SkipRun
         {
