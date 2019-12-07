@@ -163,3 +163,6 @@ For all the following, VERSION < remote VERSION.  The following cases  should al
 
 1.4.1
 	Replaced Unity web calls with HttpWebRequest calls because Unity is not thread safe
+
+1.4.1.1
+	Shortened the timeout on HttpWebRequest

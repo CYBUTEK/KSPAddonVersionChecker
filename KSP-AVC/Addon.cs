@@ -154,6 +154,7 @@ namespace KSP_AVC
             if (string.IsNullOrEmpty(this.LocalInfo.Url) == false)
             {
                 HttpWebRequest request = HttpWebRequest.Create(Uri.EscapeUriString(this.LocalInfo.Url)) as HttpWebRequest;
+                request.Timeout = 10;
                 request.Method = WebRequestMethods.Http.Get;
                 HttpWebResponse response = request.GetResponse() as HttpWebResponse;
                 if (response.StatusCode == HttpStatusCode.OK)
