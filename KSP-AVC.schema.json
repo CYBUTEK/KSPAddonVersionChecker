@@ -107,14 +107,6 @@
         "NAME",
         "VERSION"
     ],
-    "dependencies": {
-        "KSP_VERSION_MAX": [
-            "KSP_VERSION"
-        ],
-        "KSP_VERSION_MIN": [
-            "KSP_VERSION"
-        ]
-    },
     "definitions": {
         "version": {
             "description": "A semantic(?) version",
