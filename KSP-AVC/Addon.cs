@@ -19,6 +19,7 @@
 
 using System;
 using System.IO;
+using System.Net;
 using System.Threading;
 
 using UnityEngine;
@@ -140,23 +141,46 @@ namespace KSP_AVC
                 Logger.Log("FetchLocalInfo, LocalInfo", this.LocalInfo);
             }
         }
-
+        //const long TicsPerSec = 10000000;
         private void FetchRemoteInfo()
         {
-			const float timeoutSeconds = 10.0f;
-			float startTime = Time.time;
-			float currentTime = startTime;
 
+            Logger.Log("FetchRemoteInfo");
+#if false
+            const float timeoutSeconds = 10.0f;
+			long startTime =  DateTime.Now.Ticks;
+			long currentTime = startTime;
+#endif
             if (string.IsNullOrEmpty(this.LocalInfo.Url) == false)
             {
-				using (UnityWebRequest www = UnityWebRequest.Get(Uri.EscapeUriString(this.LocalInfo.Url)))
+                HttpWebRequest request = HttpWebRequest.Create(Uri.EscapeUriString(this.LocalInfo.Url)) as HttpWebRequest;
+                request.Method = WebRequestMethods.Http.Get;
+                HttpWebResponse response = request.GetResponse() as HttpWebResponse;
+                if (response.StatusCode == HttpStatusCode.OK)
                 {
-					while ((!www.isDone) && ((currentTime - startTime) < timeoutSeconds))
+                    Stream data = response.GetResponseStream();
+                    string html = String.Empty;
+                    using (StreamReader sr = new StreamReader(data))
+                    {
+                        html = sr.ReadToEnd();
+                    }
+                    response.Close();
+
+                    this.SetRemoteAvcInfo(html);
+                }
+                else
+                {
+                    this.SetLocalInfoOnly();
+                }
+#if false
+                using (UnityWebRequest www = UnityWebRequest.Get(Uri.EscapeUriString(this.LocalInfo.Url)))
+                {
+					while ((!www.isDone) && ((currentTime - startTime) / TicsPerSec < timeoutSeconds))
                     {
                         Thread.Sleep(100);
-						currentTime = Time.time;
+						currentTime = DateTime.Now.Ticks;
                     }
-					if ((www.error == null) && ((currentTime - startTime) < timeoutSeconds))
+					if ((www.error == null) && ((currentTime - startTime)/TicsPerSec < timeoutSeconds))
                     {
                         this.SetRemoteAvcInfo(www);
                     }
@@ -165,6 +189,7 @@ namespace KSP_AVC
                         this.SetLocalInfoOnly();
                     }
                 }
+#endif
             }
             else
             {
@@ -197,10 +222,12 @@ namespace KSP_AVC
 
         private void ProcessRemoteInfo(object state)
         {
+            Logger.Log("ProcessRemoteInfo");
             try
             {
                 if (String.IsNullOrEmpty(this.LocalInfo.Url) && String.IsNullOrEmpty(this.LocalInfo.KerbalStuffUrl))
                 {
+                    Logger.Log("Both LocalInfo.Url & LocalInfo.KerbalStuffUrl are empty");
                     this.SetLocalInfoOnly();
                     return;
                 }
@@ -230,12 +257,17 @@ namespace KSP_AVC
             Logger.Log("SetLocalInfoOnly, LocalInfo", this.LocalInfo);
             Logger.Blank();
         }
-
+#if false
         private void SetRemoteAvcInfo(UnityWebRequest www)
         {
+            SetRemoteAvcInfo(www.url);
+        }
+#endif
+        private void SetRemoteAvcInfo(string json)
+        { 
 
 //            this.RemoteInfo = new AddonInfo(this.LocalInfo.Url, www.text, AddonInfo.RemoteType.AVC);
-            this.RemoteInfo = new AddonInfo(this.LocalInfo.Url, www.url, AddonInfo.RemoteType.AVC);
+            this.RemoteInfo = new AddonInfo(this.LocalInfo.Url, json, AddonInfo.RemoteType.AVC);
             this.RemoteInfo.FetchRemoteData();
 
 

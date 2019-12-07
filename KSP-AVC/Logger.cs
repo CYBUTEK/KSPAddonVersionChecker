@@ -120,7 +120,7 @@ namespace KSP_AVC
                         file.WriteLine(message.Length > 0 ? message.Length > 1 ? "[" + message[0] + "]: " + message[1] : message[0] : string.Empty);
                         if (message.Length > 0 && !Environment.GetCommandLineArgs().Contains("-AVC-log-only")) //thanks @blowfish for suggesting the command line flag
                         {
-                            print(message.Length > 1 ? assemblyName.Name + " -> " + message[1] : assemblyName.Name + " -> " + message[0]);
+                            //print(message.Length > 1 ? assemblyName.Name + " -> " + message[1] : assemblyName.Name + " -> " + message[0]);
                         }
                     }
                 }

@@ -13,6 +13,7 @@
 
 using System;
 using System.IO;
+using System.Net;
 using System.Threading;
 using UnityEngine;
 using UnityEngine.Networking;
@@ -113,6 +114,28 @@ namespace MiniAVC
 
         private void FetchRemoteInfo()
         {
+            HttpWebRequest request = HttpWebRequest.Create(Uri.EscapeUriString(this.LocalInfo.Url)) as HttpWebRequest;
+            request.Method = WebRequestMethods.Http.Get;
+            HttpWebResponse response = request.GetResponse() as HttpWebResponse;
+            if (response.StatusCode == HttpStatusCode.OK)
+            {
+                Stream data = response.GetResponseStream();
+                string html = String.Empty;
+                using (StreamReader sr = new StreamReader(data))
+                {
+                    html = sr.ReadToEnd();
+                }
+                response.Close();
+
+                this.SetRemoteInfo(html);
+            }
+            else
+            {
+                SetLocalInfoOnly();
+            }
+
+
+#if false
             using (UnityWebRequest www = UnityWebRequest.Get(Uri.EscapeUriString(LocalInfo.Url)))
             {
                 while (!www.isDone)
@@ -128,6 +151,7 @@ namespace MiniAVC
                     SetLocalInfoOnly();
                 }
             }
+#endif
         }
 
         private void ProcessLocalInfo(object state)
@@ -192,12 +216,16 @@ namespace MiniAVC
             Logger.Blank();
         }
 
+#if false
         private void SetRemoteInfo(UnityWebRequest www)
         {
-            RemoteInfo = new AddonInfo(LocalInfo.Url, www.url);
+            SetRemoteInfo(www.url);
+        }
+#endif
+        private void SetRemoteInfo(string json)
+        {
+            RemoteInfo = new AddonInfo(LocalInfo.Url, json);
             RemoteInfo.FetchRemoteData();
-
-            Logger.Log("LocalInfo.Url: " + LocalInfo.Url + ",   www.text: " + www.url);
 #if true
             if (LocalInfo.Version == RemoteInfo.Version)
             {
