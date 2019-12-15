@@ -101,6 +101,10 @@
         "REMOTE_HAS_PRIORITY": {
             "type": "boolean",
             "description": "DO NOT USE, won't work with CKAN; if false, don't override properties using the remote version file"
+        },
+        "INSTALL_LOC|INSTALL_LOC*": {
+            "description": "Stanza to define file location to check, used by MADLAD",
+            "$ref": "#/definitions/install_loc"
         }
     },
     "required": [
@@ -110,7 +114,7 @@
     "definitions": {
         "version": {
             "description": "A semantic(?) version",
-            "anyOf" : [
+            "anyOf": [
                 {
                     "type": "string",
                     "pattern": "^(any|[0-9]+\\.[0-9]+(\\.[0-9]+)?)$"
@@ -139,6 +143,29 @@
                         "MAJOR"
                     ]
                 }
+            ]
+        },
+        "install_loc": {
+            "description": "definition of the install_loc fields",
+            "NAME": {
+                "type": "string",
+                "description": "Name of the mod, If not specified, uses the Modname from the .version file"
+            },
+            "PATH": {
+                "type": "string",
+                "description": "Path to the directory, begins below the GameData.  Must be there, but will be empty in most cases"
+            },
+            "DIRECTORY": {
+                "type": "string",
+                "description": "Directory where file is"
+            },
+            "FILE": {
+                "type": "string",
+                "description": "filename to be checked.  If not specified, then it checks for the directory only"
+            },
+            "required": [
+                "PATH",
+                "DIRECTORY"
             ]
         }
     }
