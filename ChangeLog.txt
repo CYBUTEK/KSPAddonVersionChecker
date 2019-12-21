@@ -166,3 +166,7 @@ For all the following, VERSION < remote VERSION.  The following cases  should al
 
 1.4.1.1
 	Shortened the timeout on HttpWebRequest
+
+1.4.1.2
+	Thanks to github user @ccaviness for these:
+		 Update HttpWebRequest Timeout to be 10 seconds, not 10 milliseconds
