@@ -116,7 +116,7 @@ namespace MiniAVC
         {
             HttpWebRequest request = HttpWebRequest.Create(Uri.EscapeUriString(this.LocalInfo.Url)) as HttpWebRequest;
             request.Method = WebRequestMethods.Http.Get;
-            request.Timeout = 10;
+            request.Timeout = 10000;  // milliseconds
             HttpWebResponse response = request.GetResponse() as HttpWebResponse;
             if (response.StatusCode == HttpStatusCode.OK)
             {
