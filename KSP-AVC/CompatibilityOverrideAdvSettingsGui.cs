@@ -38,7 +38,6 @@ namespace KSP_AVC
             {
                 Logger.Exception(ex);
             }
-            Logger.Log("Awake AdvancedOverrideSettingsGui.");
         }
 
         protected void Start()
@@ -59,7 +58,6 @@ namespace KSP_AVC
             {
                 Configuration.SaveCfg();
             }
-            Logger.Log("OnDestroy AdvancedOverrideSettingsGui.");
         }
 
         protected void OnGUI()

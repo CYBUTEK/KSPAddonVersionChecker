@@ -56,7 +56,6 @@ namespace KSP_AVC
             {
                 Logger.Exception(ex);
             }
-            Logger.Log("ChangeLogGui was created.");
         }
 
         protected void OnDestroy()

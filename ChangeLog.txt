@@ -170,3 +170,7 @@ For all the following, VERSION < remote VERSION.  The following cases  should al
 1.4.1.2
 	Thanks to github user @ccaviness for these:
 		 Update HttpWebRequest Timeout to be 10 seconds, not 10 milliseconds
+
+1.4.1.3
+	Fixed a few more Unity calls, were causing mod to hang when getting changelogs
+	Disabled all old Kerbalstuff code

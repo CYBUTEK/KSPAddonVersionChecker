@@ -58,7 +58,6 @@ namespace KSP_AVC
             {
                 Logger.Exception(ex);
             }
-            Logger.Log("FirstRunGui was created.");
         }
 
         protected void OnDestroy()

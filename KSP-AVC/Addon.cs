@@ -138,14 +138,12 @@ namespace KSP_AVC
                 {
                     this.SetHasError();
                 }
-                Logger.Log("FetchLocalInfo, LocalInfo", this.LocalInfo);
             }
         }
         //const long TicsPerSec = 10000000;
         private void FetchRemoteInfo()
         {
 
-            Logger.Log("FetchRemoteInfo");
 #if false
             const float timeoutSeconds = 10.0f;
 			long startTime =  DateTime.Now.Ticks;
@@ -210,7 +208,7 @@ namespace KSP_AVC
                 }
                 else
                 {
-                    Logger.Log("File Not Found: " + path);
+                    Logger.Error("File Not Found: " + path);
                     this.SetHasError();
                 }
             }
@@ -223,12 +221,11 @@ namespace KSP_AVC
 
         private void ProcessRemoteInfo(object state)
         {
-            Logger.Log("ProcessRemoteInfo");
             try
             {
-                if (String.IsNullOrEmpty(this.LocalInfo.Url) && String.IsNullOrEmpty(this.LocalInfo.KerbalStuffUrl))
+                if (String.IsNullOrEmpty(this.LocalInfo.Url)) // && String.IsNullOrEmpty(this.LocalInfo.KerbalStuffUrl))
                 {
-                    Logger.Log("Both LocalInfo.Url & LocalInfo.KerbalStuffUrl are empty");
+                    Logger.Log("Both LocalInfo.Url are empty");
                     this.SetLocalInfoOnly();
                     return;
                 }
@@ -250,12 +247,10 @@ namespace KSP_AVC
 
         private void SetLocalInfoOnly()
         {
-
             this.RemoteInfo = this.LocalInfo;
             this.IsRemoteReady = true;
             this.IsProcessingComplete = true;
             
-            Logger.Log("SetLocalInfoOnly, LocalInfo", this.LocalInfo);
             Logger.Blank();
         }
 #if false
@@ -265,10 +260,10 @@ namespace KSP_AVC
         }
 #endif
         private void SetRemoteAvcInfo(string json)
-        { 
-
-//            this.RemoteInfo = new AddonInfo(this.LocalInfo.Url, www.text, AddonInfo.RemoteType.AVC);
+        {
+            //            this.RemoteInfo = new AddonInfo(this.LocalInfo.Url, www.text, AddonInfo.RemoteType.AVC);
             this.RemoteInfo = new AddonInfo(this.LocalInfo.Url, json, AddonInfo.RemoteType.AVC);
+
             this.RemoteInfo.FetchRemoteData();
 
 
@@ -276,14 +271,14 @@ namespace KSP_AVC
             if (this.LocalInfo.Version == this.RemoteInfo.Version)
             {
                 Logger.Log("Identical remote version found: Using remote version information only.");
-                Logger.Log("SetRemoteAvcInfo, RemoteInfo", this.RemoteInfo);
+                Logger.Log("SetRemoteAvcInfo, RemoteInfo "+ this.RemoteInfo.ToString());
                 Logger.Blank();
                 this.LocalInfo = this.RemoteInfo;
             }
             else
 #endif
             {
-                Logger.Log("SetRemoteAvcInfo, LocalInfo", this.LocalInfo);
+                Logger.Log("SetRemoteAvcInfo, LocalInfo" + this.LocalInfo.ToString());
                 Logger.Log(this.RemoteInfo + "\n\tUpdateAvailable: " + this.IsUpdateAvailable);
                 Logger.Blank();
             }
@@ -291,7 +286,7 @@ namespace KSP_AVC
             this.IsRemoteReady = true;
             this.IsProcessingComplete = true;
         }
-
+#if false
         private void SetRemoteKerbalStuffInfo(UnityWebRequest www)
         {
             this.RemoteInfo = new AddonInfo(this.LocalInfo.KerbalStuffUrl, www.url, AddonInfo.RemoteType.KerbalStuff);
@@ -313,6 +308,7 @@ namespace KSP_AVC
             this.IsRemoteReady = true;
             this.IsProcessingComplete = true;
         }
+#endif
 
 #endregion
     }

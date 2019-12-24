@@ -182,6 +182,7 @@ namespace KSP_AVC
             {
                 this.gameObject.AddComponent<IssueGui>();
             }
+
             Destroy(this);
             return true;
         }

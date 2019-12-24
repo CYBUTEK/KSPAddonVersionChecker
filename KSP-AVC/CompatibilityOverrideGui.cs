@@ -47,7 +47,6 @@ namespace KSP_AVC
             {
                 Logger.Exception(ex);
             }
-            Logger.Log("Awake CompatibilityOverrideGui.");
         }
 
         protected void Start()
@@ -73,7 +72,6 @@ namespace KSP_AVC
             {
                 Configuration.SaveCfg();
             }
-            Logger.Log("Destroy ForceCompatibilityGui.");
         }
 
         protected void OnGUI()
@@ -262,7 +260,7 @@ namespace KSP_AVC
             GuiHelper.userInput = GUILayout.TextField(GuiHelper.userInput, GUILayout.Width(150.0f), GUILayout.Height(20));
             if (GUILayout.Button("ADD", this.buttonStyle, GUILayout.Width(75), GUILayout.Height(20)))
             {
-                Debug.Log("userInput: " + GuiHelper.userInput);
+                Logger.Log("userInput: " , GuiHelper.userInput);
                 //CheckCompatVersion(GuiHelper.userInput);
                 GuiHelper.UpdateCompatibilityState(OverrideType.version, null, GuiHelper.userInput);               
 

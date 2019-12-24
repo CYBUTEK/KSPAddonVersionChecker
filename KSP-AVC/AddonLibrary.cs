@@ -23,6 +23,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Threading;
+using UnityEngine; 
 
 #endregion
 
@@ -42,7 +43,6 @@ namespace KSP_AVC
         static AddonLibrary()
         {
             rootPath = GetRootPath();
-            Logger.Log("Checking Root: " + rootPath);
             ThreadPool.QueueUserWorkItem(ProcessAddonPopulation);
         }
 
@@ -93,6 +93,9 @@ namespace KSP_AVC
             try
             {
                 Populated = false;
+                var addonList = Directory.GetFiles(rootPath, "*.version", SearchOption.AllDirectories).ToList();
+                foreach (var a in addonList)
+                    Logger.Log("addonList: " + a);
                 addons = Directory.GetFiles(rootPath, "*.version", SearchOption.AllDirectories).Select(path => new Addon(path)).ToList();
                 Populated = true;
             }

@@ -23,7 +23,10 @@ using System.Linq;
 using System.Threading;
 
 using UnityEngine;
-using UnityEngine.Networking;
+//using UnityEngine.Networking;
+
+using System.IO;
+using System.Net;
 
 #endregion
 
@@ -60,10 +63,11 @@ namespace KSP_AVC
                     case RemoteType.AVC:
                         this.ParseAvc(path, json);
                         break;
-
+#if false
                     case RemoteType.KerbalStuff:
                         this.ParseKerbalStuff(json);
                         break;
+#endif
                 }
                 
                 ValidateKspMinMax();
@@ -101,19 +105,19 @@ namespace KSP_AVC
             actualKspVersion = new VersionInfo(Versioning.version_major, Versioning.version_minor, Versioning.Revision);
         }
 
-        #endregion
+#endregion
 
-        #region Enums
+#region Enums
 
         public enum RemoteType
         {
-            AVC,
-            KerbalStuff
+            AVC
+              //  ,            KerbalStuff
         }
 
-        #endregion
+#endregion
 
-        #region Properties
+#region Properties
 
         public static VersionInfo ActualKspVersion
         {
@@ -305,7 +309,7 @@ namespace KSP_AVC
             }
         }
 
-        public string KerbalStuffUrl { get; private set; }
+        //public string KerbalStuffUrl { get; private set; }
 
         public VersionInfo KspVersion
         {
@@ -351,9 +355,9 @@ namespace KSP_AVC
 
         public VersionInfo Version { get; private set; }
 
-        #endregion
+#endregion
 
-        #region Methods: public
+#region Methods: public
 
         public void FetchRemoteData()
         {
@@ -405,9 +409,9 @@ namespace KSP_AVC
             return str;
         }
 
-        #endregion
+#endregion
 
-        #region Methods: private
+#region Methods: private
 
         private static string FormatCompatibleUrl(string url)
         {
@@ -462,7 +466,25 @@ namespace KSP_AVC
 
         private void FetchChangeLog()
         {
-            using (UnityWebRequest www = UnityWebRequest.Get(this.ChangeLogUrl))
+            HttpWebRequest request = HttpWebRequest.Create(Uri.EscapeUriString(this.ChangeLogUrl)) as HttpWebRequest;
+            request.Timeout = 10000;  // milliseconds
+            request.Method = WebRequestMethods.Http.Get;
+            HttpWebResponse response = request.GetResponse() as HttpWebResponse;
+            if (response.StatusCode == HttpStatusCode.OK)
+            {
+                Stream data = response.GetResponseStream();
+                string html = String.Empty;
+                using (StreamReader sr = new StreamReader(data))
+                {
+                    html = sr.ReadToEnd();
+                }
+                response.Close();
+
+            }
+
+#if false
+
+                using (UnityWebRequest www = UnityWebRequest.Get(this.ChangeLogUrl))
             {
                 while (!www.isDone)
                 {
@@ -473,6 +495,7 @@ namespace KSP_AVC
                     this.ChangeLog = www.url;
                 }
             }
+#endif
         }
 
         private void ParseAvc(string path, string json)
@@ -538,10 +561,11 @@ namespace KSP_AVC
                     case "NAME":
                         this.Name = (string)data[key];
                         break;
-
+#if false
                     case "KERBAL_STUFF_URL":
                         this.KerbalStuffUrl = (string)data[key];
                         break;
+#endif
 
                     case "URL":
                         this.Url = FormatCompatibleUrl((string)data[key]);
@@ -638,7 +662,7 @@ namespace KSP_AVC
 
             this.Name = (string)data["name"];
         }
-
+#if false
         private void ParseKerbalStuffVersion(Dictionary<string, object> data)
         {
             foreach (var key in data.Keys)
@@ -655,6 +679,7 @@ namespace KSP_AVC
                 }
             }
         }
+#endif
 
 #endregion
 
@@ -703,6 +728,25 @@ namespace KSP_AVC
             {
                 try
                 {
+                    string url = "https://api.github.com/repos/" + this.Username + "/" + this.Repository + "/releases";
+                    HttpWebRequest request = HttpWebRequest.Create(Uri.EscapeUriString(url)) as HttpWebRequest;
+                    request.Timeout = 10000;  // milliseconds
+                    request.Method = WebRequestMethods.Http.Get;
+                    HttpWebResponse response = request.GetResponse() as HttpWebResponse;
+                    if (response.StatusCode == HttpStatusCode.OK)
+                    {
+                        Stream data = response.GetResponseStream();
+                        string html = String.Empty;
+                        using (StreamReader sr = new StreamReader(data))
+                        {
+                            html = sr.ReadToEnd();
+                        }
+                        response.Close();
+
+                    }
+
+#if false
+
                     using (UnityWebRequest www = UnityWebRequest.Get("https://api.github.com/repos/" + this.Username + "/" + this.Repository + "/releases"))
                     {
                         while (!www.isDone)
@@ -714,6 +758,7 @@ namespace KSP_AVC
                             this.ParseGitHubJson(www.url);
                         }
                     }
+#endif
                 }
                 catch (Exception ex)
                 {

@@ -33,7 +33,7 @@ namespace KSP_AVC
             {
                 v = "VersionNotAvailable";
             }
-            Debug.Log("[" + title + "] Version " + v);
+            Logger.Log("[" + title + "] Version " + v);
         }
     }
 
@@ -62,7 +62,7 @@ namespace KSP_AVC
                     false,
                     HighLogic.UISkin
                 );
-                Debug.Log("Incorrect " + MODNAME + " Installation: " + MODNAME + " has been installed incorrectly and will not function properly. All files should be located in KSP/GameData/" + EXPECTEDPATH + ". Do not move any files from inside that folder.\n\nIncorrect path(s):\n" + String.Join("\n", badPaths.ToArray())
+                Logger.Log("Incorrect " + MODNAME + " Installation: " + MODNAME + " has been installed incorrectly and will not function properly. All files should be located in KSP/GameData/" + EXPECTEDPATH + ". Do not move any files from inside that folder.\n\nIncorrect path(s):\n" + String.Join("\n", badPaths.ToArray())
 
                      );
 
@@ -89,7 +89,7 @@ namespace KSP_AVC
             }
             catch (Exception ex)
             {
-                Debug.LogError("-ERROR- " + this.GetType().FullName + "[" + this.GetInstanceID().ToString("X") + "][" + Time.time.ToString("0.00") + "]: " +
+                Logger.Error("-ERROR- " + this.GetType().FullName + "[" + this.GetInstanceID().ToString("X") + "][" + Time.time.ToString("0.00") + "]: " +
                    "Exception caught while cleaning up old files.\n" + ex.Message + "\n" + ex.StackTrace);
 
             }

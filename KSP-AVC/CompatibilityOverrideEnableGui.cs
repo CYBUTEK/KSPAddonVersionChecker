@@ -32,7 +32,6 @@ namespace KSP_AVC
                 Logger.Exception(ex);
             }
             this.name = "OverrideEnableGui";
-            Logger.Log("Awake CompatibilityOverrideEnableGui.");
         }
 
         protected void Start()
@@ -53,7 +52,6 @@ namespace KSP_AVC
             {
                 Configuration.SaveCfg();
             }
-            Logger.Log("Destroy CompatibilityOverrideEnableGui.");
         }
 
         protected void OnGUI()

@@ -50,7 +50,6 @@ namespace KSP_AVC
             {
                 Logger.Exception(ex);
             }
-            Logger.Log("CheckerProgressGui was created.");
         }
 
         protected void OnDestroy()
