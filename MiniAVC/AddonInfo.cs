@@ -128,6 +128,8 @@ namespace MiniAVC
         {
             get
             {
+                if (this.kspExcludeVersions == null)
+                    return false;
                 bool b = this.kspExcludeVersions.Contains(actualKspVersion);
                 return b;
             }
