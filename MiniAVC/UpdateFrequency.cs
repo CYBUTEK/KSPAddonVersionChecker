@@ -42,7 +42,7 @@ namespace MiniAVC
         {
             if (!File.Exists(configPath))
             {
-                Logger.Log("Config not found");
+                Logger.Log($"Config not found: {configPath}");
                 return;
             }
 
