@@ -38,15 +38,20 @@ namespace KSP_AVC
         private static AssemblyName assemblyName;
         private static string fileName;
         private static readonly List<string[]> messages = new List<string[]>();
-
+        private static string LogsPath = null;
         #endregion
 
         #region Constructors
 
         static void LoggerInit()
         {
+            LogsPath = KSPUtil.ApplicationRootPath + "Logs";
+            if (!Directory.Exists(LogsPath))
+                Directory.CreateDirectory(LogsPath);
+
             assemblyName = Assembly.GetExecutingAssembly().GetName();
-            fileName = Path.ChangeExtension(Assembly.GetExecutingAssembly().Location, "log");
+            //fileName = Path.ChangeExtension(Assembly.GetExecutingAssembly().Location, "log");
+            fileName = LogsPath + "/" + assemblyName.Name + ".log";
             File.Delete(fileName);
 
             lock (messages)
@@ -69,6 +74,7 @@ namespace KSP_AVC
         #endregion
 
         #region Methods: public
+
 
         public static void Blank()
         {

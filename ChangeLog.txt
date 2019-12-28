@@ -174,3 +174,14 @@ For all the following, VERSION < remote VERSION.  The following cases  should al
 1.4.1.3
 	Fixed a few more Unity calls, were causing mod to hang when getting changelogs
 	Disabled all old Kerbalstuff code
+
+1.4.1.4
+	Thanks to Github user @WuphonsReach for this:
+		Add null check in MiniAVC for kspExcludeVersions
+		Report which configPath was not found
+	Removed threading from full AVC, was not working properly with HTTPWebRequest
+	Added checks for null or empty changelog to avoid exception with empty changelog
+	Cleaned up error logging, no need to exception for a web error
+	Moved log into Logs directory for full KSP-AVC
+	Removed all threading from MiniAVC
+	Converted UnityWebRequest to HTTPWebRequest in MiniAVC

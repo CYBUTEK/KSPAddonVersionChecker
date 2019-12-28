@@ -14,7 +14,7 @@
 using System;
 using System.IO;
 using System.Net;
-using System.Threading;
+//using System.Threading;
 using UnityEngine;
 using UnityEngine.Networking;
 
@@ -90,12 +90,14 @@ namespace MiniAVC
 
         public void RunProcessLocalInfo(string file)
         {
-            ThreadPool.QueueUserWorkItem(ProcessLocalInfo, file);
+            ProcessLocalInfo(file);
+            //ThreadPool.QueueUserWorkItem(ProcessLocalInfo, file);
         }
 
         public void RunProcessRemoteInfo()
         {
-            ThreadPool.QueueUserWorkItem(ProcessRemoteInfo);
+            ProcessRemoteInfo(null);
+            //ThreadPool.QueueUserWorkItem(ProcessRemoteInfo);
         }
 
         private void FetchLocalInfo(string path)
@@ -114,27 +116,41 @@ namespace MiniAVC
 
         private void FetchRemoteInfo()
         {
-            HttpWebRequest request = HttpWebRequest.Create(Uri.EscapeUriString(this.LocalInfo.Url)) as HttpWebRequest;
-            request.Method = WebRequestMethods.Http.Get;
-            request.Timeout = 10000;  // milliseconds
-            HttpWebResponse response = request.GetResponse() as HttpWebResponse;
-            if (response.StatusCode == HttpStatusCode.OK)
+            try
             {
-                Stream data = response.GetResponseStream();
-                string html = String.Empty;
-                using (StreamReader sr = new StreamReader(data))
+                HttpWebRequest request = HttpWebRequest.Create(Uri.EscapeUriString(this.LocalInfo.Url)) as HttpWebRequest;
+                request.Method = WebRequestMethods.Http.Get;
+                request.Timeout = 10000;  // milliseconds
+                HttpWebResponse response = request.GetResponse() as HttpWebResponse;
+                if (response.StatusCode == HttpStatusCode.OK)
                 {
-                    html = sr.ReadToEnd();
+                    Stream data = response.GetResponseStream();
+                    string html = String.Empty;
+                    using (StreamReader sr = new StreamReader(data))
+                    {
+                        html = sr.ReadToEnd();
+                    }
+                    response.Close();
+                    this.SetRemoteInfo(html);
                 }
-                response.Close();
-
-                this.SetRemoteInfo(html);
+                else
+                {
+                    SetLocalInfoOnly();
+                }
             }
-            else
+            catch (WebException ex)
             {
-                SetLocalInfoOnly();
-            }
+                Logger.Log("Exception fetching data from: " + this.LocalInfo.Url);
+                if (ex.Status == WebExceptionStatus.ProtocolError)
+                {
+                    Logger.Log("Status Code : " + ((int)((HttpWebResponse)ex.Response).StatusCode).ToString() + " - " + ((HttpWebResponse)ex.Response).StatusCode.ToString());
+                    Logger.Log("Status Description : " + ((HttpWebResponse)ex.Response).StatusDescription);
+                }
+                else
+                    Logger.Exception(ex);
 
+                this.SetLocalInfoOnly();
+            }
 
 #if false
             using (UnityWebRequest www = UnityWebRequest.Get(Uri.EscapeUriString(LocalInfo.Url)))

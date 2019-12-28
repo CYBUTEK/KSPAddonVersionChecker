@@ -20,7 +20,7 @@
 using System;
 using System.IO;
 using System.Net;
-using System.Threading;
+//using System.Threading;
 
 using UnityEngine;
 using UnityEngine.Networking;
@@ -115,12 +115,14 @@ namespace KSP_AVC
 
         public void RunProcessLocalInfo(string path)
         {
-            ThreadPool.QueueUserWorkItem(this.ProcessLocalInfo, path);
+            this.ProcessLocalInfo( path);
+            //ThreadPool.QueueUserWorkItem(this.ProcessLocalInfo, path);
         }
 
         public void RunProcessRemoteInfo()
         {
-            ThreadPool.QueueUserWorkItem(this.ProcessRemoteInfo);
+            this.ProcessRemoteInfo(null);
+            //ThreadPool.QueueUserWorkItem(this.ProcessRemoteInfo);
         }
 
         #endregion
@@ -151,24 +153,44 @@ namespace KSP_AVC
 #endif
             if (string.IsNullOrEmpty(this.LocalInfo.Url) == false)
             {
-                HttpWebRequest request = HttpWebRequest.Create(Uri.EscapeUriString(this.LocalInfo.Url)) as HttpWebRequest;
-                request.Timeout = 10000;  // milliseconds
-                request.Method = WebRequestMethods.Http.Get;
-                HttpWebResponse response = request.GetResponse() as HttpWebResponse;
-                if (response.StatusCode == HttpStatusCode.OK)
+                HttpWebResponse response = null;
+                try
                 {
-                    Stream data = response.GetResponseStream();
-                    string html = String.Empty;
-                    using (StreamReader sr = new StreamReader(data))
-                    {
-                        html = sr.ReadToEnd();
-                    }
-                    response.Close();
+                    HttpWebRequest request = HttpWebRequest.Create(Uri.EscapeUriString(this.LocalInfo.Url)) as HttpWebRequest;
 
-                    this.SetRemoteAvcInfo(html);
+                    request.Proxy.Credentials = System.Net.CredentialCache.DefaultCredentials;
+                    request.Accept= "text/html,application/xhtml+xm…plication/xml; q=0.9,*/*;q=0.8";
+                    request.UserAgent = "KSP-AVC";
+                    request.Timeout = 10000;  // milliseconds
+                    request.Method = WebRequestMethods.Http.Get;
+                    response = request.GetResponse() as HttpWebResponse;
+                    if (response.StatusCode == HttpStatusCode.OK)
+                    {
+                        Stream data = response.GetResponseStream();
+                        string html = String.Empty;
+                        using (StreamReader sr = new StreamReader(data))
+                        {
+                            html = sr.ReadToEnd();
+                        }
+                        response.Close();
+                        this.SetRemoteAvcInfo(html);
+                    }
+                    else
+                    {
+                        this.SetLocalInfoOnly();
+                    }
                 }
-                else
+                catch (WebException ex)
                 {
+                    Logger.Log("Exception fetching data from: " + this.LocalInfo.Url);
+                    if (ex.Status == WebExceptionStatus.ProtocolError)
+                    {
+                        Logger.Log("Status Code : " + ((int)((HttpWebResponse)ex.Response).StatusCode).ToString() + " - " + ((HttpWebResponse)ex.Response).StatusCode.ToString());
+                        Logger.Log("Status Description : " + ((HttpWebResponse)ex.Response).StatusDescription);
+                    }
+                    else
+                        Logger.Exception(ex);
+
                     this.SetLocalInfoOnly();
                 }
 #if false
@@ -225,7 +247,7 @@ namespace KSP_AVC
             {
                 if (String.IsNullOrEmpty(this.LocalInfo.Url)) // && String.IsNullOrEmpty(this.LocalInfo.KerbalStuffUrl))
                 {
-                    Logger.Log("Both LocalInfo.Url are empty");
+                    Logger.Log("LocalInfo.Url are empty");
                     this.SetLocalInfoOnly();
                     return;
                 }
@@ -234,6 +256,7 @@ namespace KSP_AVC
             }
             catch (Exception ex)
             {
+                Logger.Log("Exception with URL: " + this.LocalInfo.Url);
                 Logger.Exception(ex);
                 this.SetLocalInfoOnly();
             }

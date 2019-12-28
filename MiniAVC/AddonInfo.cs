@@ -1,4 +1,4 @@
-﻿// Copyright (C) 2014 CYBUTEK
+﻿// Copyright (C)2014 CYBUTEK
 //
 // This program is free software: you can redistribute it and/or modify it under the terms of the GNU
 // General Public License as published by the Free Software Foundation, either version 3 of the
@@ -15,10 +15,11 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading;
+using System.Net;
+//using System.Threading;
 
-using UnityEngine;
-using UnityEngine.Networking;
+using System.IO;
+
 
 namespace MiniAVC
 {
@@ -320,6 +321,44 @@ namespace MiniAVC
 
             public void FetchRemoteData()
             {
+                HttpWebResponse response = null;
+                try
+                {
+
+                    string uri = "https://api.github.com/repos/" + this.Username + "/" + this.Repository + "/releases";
+                    HttpWebRequest request = HttpWebRequest.Create(Uri.EscapeUriString(uri)) as HttpWebRequest;
+
+                    request.Proxy.Credentials = System.Net.CredentialCache.DefaultCredentials;
+                    request.Accept = "text/html,application/xhtml+xm…plication/xml; q=0.9,*/*;q=0.8";
+                    request.UserAgent = "KSP-AVC";
+                    request.Timeout = 10000;  // milliseconds
+                    request.Method = WebRequestMethods.Http.Get;
+                    response = request.GetResponse() as HttpWebResponse;
+                    if (response.StatusCode == HttpStatusCode.OK)
+                    {
+                        Stream data = response.GetResponseStream();
+                        string html = String.Empty;
+                        using (StreamReader sr = new StreamReader(data))
+                        {
+                            html = sr.ReadToEnd();
+                        }
+                        response.Close();
+                        ParseGitHubJson(html);
+                    }
+                }
+                catch (WebException ex)
+                {
+                    Logger.Log("Exception fetching data from Github: " + "https://api.github.com/repos/" + this.Username + "/" + this.Repository + "/releases");
+                    if (ex.Status == WebExceptionStatus.ProtocolError)
+                    {
+                        Logger.Log("Status Code : " + ((int)((HttpWebResponse)ex.Response).StatusCode).ToString() + " - " + ((HttpWebResponse)ex.Response).StatusCode.ToString());
+                        Logger.Log("Status Description : " + ((HttpWebResponse)ex.Response).StatusDescription);
+                    }
+                    else
+                        Logger.Exception(ex);
+                }
+
+#if false
                 try
                 {
                     using (UnityWebRequest www = UnityWebRequest.Get("https://api.github.com/repos/" + Username + "/" + Repository + "/releases"))
@@ -338,6 +377,7 @@ namespace MiniAVC
                 {
                     Logger.Exception(ex);
                 }
+#endif
             }
 
             public override string ToString()

@@ -36,7 +36,7 @@ namespace MiniAVC
 
         private static  AssemblyName assemblyName;
         private static  string fileName;
-
+        private static string LogsPath = null;
         private static readonly List<string[]> messages = new List<string[]>();
 
         #endregion
@@ -45,7 +45,7 @@ namespace MiniAVC
 
         // Following was originally a constructor, Unity 5 doesn't like some of what's happening, so 
         // it's now called from the Awake method
-        static void LoggerInit()
+        static void LoggerInit2()
         {
             assemblyName = Assembly.GetExecutingAssembly().GetName();
             fileName = assemblyName.Name + ".log";
@@ -55,7 +55,24 @@ namespace MiniAVC
             messages.Add(new[] {"Assembly: " + Assembly.GetExecutingAssembly().Location});
             Blank();
         }
+        static void LoggerInit()
+        {
+            LogsPath = KSPUtil.ApplicationRootPath + "Logs";
+            if (!Directory.Exists(LogsPath))
+                Directory.CreateDirectory(LogsPath);
 
+            assemblyName = Assembly.GetExecutingAssembly().GetName();
+            //fileName = Path.ChangeExtension(Assembly.GetExecutingAssembly().Location, "log");
+            fileName = LogsPath + "/" + assemblyName.Name + ".log";
+            //File.Delete(fileName);
+
+            lock (messages)
+            {
+                messages.Add(new[] { "Executing: " + assemblyName.Name + " - " + assemblyName.Version });
+                messages.Add(new[] { "Assembly: " + Assembly.GetExecutingAssembly().Location });
+            }
+            Blank();
+        }
         #endregion
 
         #region Destructors

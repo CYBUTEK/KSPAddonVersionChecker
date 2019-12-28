@@ -20,7 +20,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
+//using System.Threading;
 
 using UnityEngine;
 //using UnityEngine.Networking;
@@ -69,7 +69,7 @@ namespace KSP_AVC
                         break;
 #endif
                 }
-                
+
                 ValidateKspMinMax();
             }
             catch
@@ -96,7 +96,7 @@ namespace KSP_AVC
             if (i == 0)
                 return json;
             if (i == -1)
-                return "";         
+                return "";
             return json.Substring(i);
 
         }
@@ -105,19 +105,19 @@ namespace KSP_AVC
             actualKspVersion = new VersionInfo(Versioning.version_major, Versioning.version_minor, Versioning.Revision);
         }
 
-#endregion
+        #endregion
 
-#region Enums
+        #region Enums
 
         public enum RemoteType
         {
             AVC
-              //  ,            KerbalStuff
+            //  ,            KerbalStuff
         }
 
-#endregion
+        #endregion
 
-#region Properties
+        #region Properties
 
         public static VersionInfo ActualKspVersion
         {
@@ -138,7 +138,7 @@ namespace KSP_AVC
         {
             get
             {
-                if(!IsCompatible && !IsForcedCompatibleByName && !IsForcedCompatibleByVersion)
+                if (!IsCompatible && !IsForcedCompatibleByName && !IsForcedCompatibleByVersion)
                 {
                     return true;
                 }
@@ -148,11 +148,12 @@ namespace KSP_AVC
 
         public bool IsCompatible
         {
-            get {
+            get
+            {
                 if (kspIncludeVersions != null && this.IsKspIncludedVersion)
                     return true;
                 bool b = (this.IsCompatibleKspVersion && this.KspVersionMinIsNull && this.KspVersionMaxIsNull)
-                    || 
+                    ||
                     ((this.kspVersionMin != null || this.kspVersionMax != null) && this.IsCompatibleKspVersionMin && this.IsCompatibleKspVersionMax);
                 if (b)
                 {
@@ -171,7 +172,7 @@ namespace KSP_AVC
                 if (this.IsCompatible || this.IsLockedByCreator || this.IgnoreOverride || Configuration.OverrideIsDisabledGlobal)
                 {
                     return false;
-                }                    
+                }
 
                 bool compatible = (this.IsForcedCompatibleKspVersion && this.KspVersionMinIsNull && this.KspVersionMaxIsNull)
                     ||
@@ -185,10 +186,10 @@ namespace KSP_AVC
         {
             get
             {
-                if (this.IsCompatible || this.IsLockedByCreator  || Configuration.OverrideIsDisabledGlobal)
+                if (this.IsCompatible || this.IsLockedByCreator || Configuration.OverrideIsDisabledGlobal)
                 {
                     return false;
-                }                    
+                }
 
                 bool isForcedCompatible = (from d in Configuration.OverrideCompatibilityByName
                                            where d == this.Name
@@ -262,7 +263,7 @@ namespace KSP_AVC
             get
             {
                 var b = Equals(this.KspVersion, actualKspVersion);
-                
+
                 //This code mixes up the regular version control with the compatibility override but I need separated boolean values
                 //If someone doesn't like my LINQ method to access the dictionary, feel free to replace it with something like this ;) 
                 //if (!b)
@@ -278,13 +279,18 @@ namespace KSP_AVC
 
         public bool IsCompatibleKspVersionMax
         {
-            get { bool b = this.KspVersionMax >= actualKspVersion;
-                return b; }
+            get
+            {
+                bool b = this.KspVersionMax >= actualKspVersion;
+                return b;
+            }
         }
 
         public bool IsCompatibleKspVersionMin
         {
-            get { bool b = this.KspVersionMin <= actualKspVersion;
+            get
+            {
+                bool b = this.KspVersionMin <= actualKspVersion;
                 return b;
             }
         }
@@ -326,7 +332,8 @@ namespace KSP_AVC
             get { return this.kspVersionMax ?? actualKspVersion; }
         }
 
-        public bool KspVersionMinIsNull {
+        public bool KspVersionMinIsNull
+        {
             get { return this.kspVersionMin == null; }
         }
 
@@ -340,7 +347,7 @@ namespace KSP_AVC
         }
 
         public string Name { get; private set; }
-        
+
         public LocalRemotePriority Priority { get; private set; }
 
         public bool IsLockedByCreator { get; private set; } //Enable/Disable the Compatibility Override feature for this mod, set in the version file
@@ -355,9 +362,9 @@ namespace KSP_AVC
 
         public VersionInfo Version { get; private set; }
 
-#endregion
+        #endregion
 
-#region Methods: public
+        #region Methods: public
 
         public void FetchRemoteData()
         {
@@ -366,7 +373,7 @@ namespace KSP_AVC
                 this.GitHub.FetchRemoteData();
             }
 
-            if (this.ChangeLogUrl != null)
+            if (!String.IsNullOrEmpty(this.ChangeLogUrl))
             {
                 this.FetchChangeLog();
             }
@@ -409,9 +416,9 @@ namespace KSP_AVC
             return str;
         }
 
-#endregion
+        #endregion
 
-#region Methods: private
+        #region Methods: private
 
         private static string FormatCompatibleUrl(string url)
         {
@@ -466,20 +473,43 @@ namespace KSP_AVC
 
         private void FetchChangeLog()
         {
-            HttpWebRequest request = HttpWebRequest.Create(Uri.EscapeUriString(this.ChangeLogUrl)) as HttpWebRequest;
-            request.Timeout = 10000;  // milliseconds
-            request.Method = WebRequestMethods.Http.Get;
-            HttpWebResponse response = request.GetResponse() as HttpWebResponse;
-            if (response.StatusCode == HttpStatusCode.OK)
+            try
             {
-                Stream data = response.GetResponseStream();
-                string html = String.Empty;
-                using (StreamReader sr = new StreamReader(data))
-                {
-                    html = sr.ReadToEnd();
-                }
-                response.Close();
+                HttpWebRequest request = HttpWebRequest.Create(Uri.EscapeUriString(this.ChangeLogUrl)) as HttpWebRequest;
 
+                request.Proxy.Credentials = System.Net.CredentialCache.DefaultCredentials;
+                request.Accept = "text/html,application/xhtml+xm…plication/xml; q=0.9,*/*;q=0.8"; ;
+                request.UserAgent = "KSP-AVC";
+                request.Timeout = 10000;  // milliseconds
+                request.Method = WebRequestMethods.Http.Get;
+                HttpWebResponse response = request.GetResponse() as HttpWebResponse;
+
+                if (response.StatusCode == HttpStatusCode.OK)
+                {
+                    Stream data = response.GetResponseStream();
+                    string html = String.Empty;
+                    using (StreamReader sr = new StreamReader(data))
+                    {
+                        html = sr.ReadToEnd();
+                    }
+                    response.Close();
+                    this.ChangeLog = html;
+                }
+                else
+                {
+                    Logger.Log( "HTTP error: " + response.StatusCode + ", fetching data from URL: " + this.ChangeLogUrl);
+                }
+            }
+            catch (WebException ex)
+            {
+                Logger.Log("Exception fetching data from: " + this.ChangeLogUrl);
+                if (ex.Status == WebExceptionStatus.ProtocolError)
+                {
+                    Logger.Log("Status Code : " + ((int)((HttpWebResponse)ex.Response).StatusCode).ToString() + " - " + ((HttpWebResponse)ex.Response).StatusCode.ToString());
+                    Logger.Log("Status Description : " + ((HttpWebResponse)ex.Response).StatusDescription);
+                }
+                else
+                    Logger.Exception(ex);
             }
 
 #if false
@@ -512,7 +542,7 @@ namespace KSP_AVC
             {
                 switch (key.ToUpper())
                 {
- 
+
                     case "LOCAL_HAS_PRIORITY":
                         {
                             string s = (string)data[key];
@@ -546,7 +576,7 @@ namespace KSP_AVC
                     case "DISALLOW_VERSION_OVERRIDE":
                         {
                             string s = (string)data[key];
-                            switch(s.ToUpper())
+                            switch (s.ToUpper())
                             {
                                 case "TRUE":
                                     this.IsLockedByCreator = true;
@@ -607,14 +637,14 @@ namespace KSP_AVC
 #if STRICT
                         if (!Configuration.StrictVersion)
 #endif
-                            this.kspVersionMin = GetVersion(data[key]);
+                        this.kspVersionMin = GetVersion(data[key]);
                         break;
 
                     case "KSP_VERSION_MAX":
 #if STRICT
                         if (!Configuration.StrictVersion)
 #endif
-                            this.kspVersionMax = GetVersion(data[key]);
+                        this.kspVersionMax = GetVersion(data[key]);
                         break;
                     case "KSP_VERSION_EXCLUDE":
                         kspExcludeVersions = new List<VersionInfo>();
@@ -640,14 +670,14 @@ namespace KSP_AVC
 
         private void ValidateKspMinMax()
         {
-            if ( KspVersionMin > KspVersionMax)
+            if (KspVersionMin > KspVersionMax)
             {
                 this.ParseError = true;
                 this.AddParseErrorMsg = "KSP_VERSION_MIN greater than KSP_VERSION_MAX";
                 throw new ArgumentException("KSP_VERSION_MIN greater than KSP_VERSION_MAX");
             }
 
-            
+
         }
 
         private void ParseKerbalStuff(string json)
@@ -681,19 +711,19 @@ namespace KSP_AVC
         }
 #endif
 
-#endregion
+        #endregion
 
-#region Nested Type: GitHubInfo
+        #region Nested Type: GitHubInfo
 
         public class GitHubInfo
         {
-#region Fields
+            #region Fields
 
             private readonly AddonInfo addonInfo;
 
-#endregion
+            #endregion
 
-#region Constructors
+            #region Constructors
 
             public GitHubInfo(object obj, AddonInfo addonInfo)
             {
@@ -701,9 +731,9 @@ namespace KSP_AVC
                 this.ParseJson(obj);
             }
 
-#endregion
+            #endregion
 
-#region Properties
+            #region Properties
 
             public bool AllowPreRelease { get; private set; }
 
@@ -720,19 +750,25 @@ namespace KSP_AVC
 
             public VersionInfo Version { get; private set; }
 
-#endregion
+            #endregion
 
-#region Methods: public
+            #region Methods: public
 
             public void FetchRemoteData()
             {
+                HttpWebResponse response = null;
                 try
                 {
-                    string url = "https://api.github.com/repos/" + this.Username + "/" + this.Repository + "/releases";
-                    HttpWebRequest request = HttpWebRequest.Create(Uri.EscapeUriString(url)) as HttpWebRequest;
+#if true
+                    string uri = "https://api.github.com/repos/" + this.Username + "/" + this.Repository + "/releases";
+                    HttpWebRequest request = HttpWebRequest.Create(Uri.EscapeUriString(uri)) as HttpWebRequest;
+
+                    request.Proxy.Credentials = System.Net.CredentialCache.DefaultCredentials;
+                    request.Accept = "text/html,application/xhtml+xm…plication/xml; q=0.9,*/*;q=0.8";
+                    request.UserAgent = "KSP-AVC";
                     request.Timeout = 10000;  // milliseconds
                     request.Method = WebRequestMethods.Http.Get;
-                    HttpWebResponse response = request.GetResponse() as HttpWebResponse;
+                    response = request.GetResponse() as HttpWebResponse;
                     if (response.StatusCode == HttpStatusCode.OK)
                     {
                         Stream data = response.GetResponseStream();
@@ -742,10 +778,10 @@ namespace KSP_AVC
                             html = sr.ReadToEnd();
                         }
                         response.Close();
-
+                        ParseGitHubJson(html);
                     }
 
-#if false
+#else
 
                     using (UnityWebRequest www = UnityWebRequest.Get("https://api.github.com/repos/" + this.Username + "/" + this.Repository + "/releases"))
                     {
@@ -760,10 +796,16 @@ namespace KSP_AVC
                     }
 #endif
                 }
-                catch (Exception ex)
+                catch (WebException ex)
                 {
-                    Logger.Exception(ex);
-                    this.AddParseErrorMsg = "Error fetching data from Github: " + "https://api.github.com/repos/" + this.Username + "/" + this.Repository + "/releases";
+                    Logger.Log("Exception fetching data from Github: " + "https://api.github.com/repos/" + this.Username + "/" + this.Repository + "/releases");
+                    if (ex.Status == WebExceptionStatus.ProtocolError)
+                    {
+                        Logger.Log("Status Code : " + ((int)((HttpWebResponse)ex.Response).StatusCode).ToString() + " - " + ((HttpWebResponse)ex.Response).StatusCode.ToString());
+                        Logger.Log("Status Description : " + ((HttpWebResponse)ex.Response).StatusDescription);
+                    }
+                    else
+                        Logger.Exception(ex);
                 }
             }
 
@@ -774,9 +816,9 @@ namespace KSP_AVC
                        "\n\t\tAllowPreRelease: " + this.AllowPreRelease;
             }
 
-#endregion
+            #endregion
 
-#region Methods: private
+            #region Methods: private
 
             private void ParseGitHubJson(string json)
             {
@@ -842,9 +884,9 @@ namespace KSP_AVC
                 }
             }
 
-#endregion
+            #endregion
         }
 
-#endregion
+        #endregion
     }
 }
