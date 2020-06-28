@@ -21,7 +21,7 @@ using System.Net;
 using System.IO;
 
 
-namespace MiniAVC
+namespace MiniAVC_V2
 {
     public class AddonInfo
     {
@@ -243,7 +243,7 @@ namespace MiniAVC
 
         private void Parse(string json)
         {
-            var data = MiniAVC.Json.Deserialize(json) as Dictionary<string, object>;
+            var data = MiniAVC_V2.Json.Deserialize(json) as Dictionary<string, object>;
             if (data == null)
             {
                 ParseError = true;
@@ -391,7 +391,7 @@ namespace MiniAVC
             {
                 try
                 {
-                    var obj = MiniAVC.Json.Deserialize(json) as List<object>;
+                    var obj = MiniAVC_V2.Json.Deserialize(json) as List<object>;
                     if (obj == null || obj.Count == 0)
                     {
                         ParseError = true;

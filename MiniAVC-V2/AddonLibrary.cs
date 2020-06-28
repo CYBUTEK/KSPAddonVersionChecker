@@ -25,7 +25,7 @@ using System.Linq;
 
 #endregion
 
-namespace MiniAVC
+namespace MiniAVC_V2
 {
     public static class AddonLibrary
     {

@@ -22,7 +22,7 @@ using System.Text.RegularExpressions;
 
 #endregion
 
-namespace MiniAVC
+namespace MiniAVC_V2
 {
     public class VersionInfo : IComparable
     {

@@ -18,7 +18,7 @@ using System.Net;
 using UnityEngine;
 using UnityEngine.Networking;
 
-namespace MiniAVC
+namespace MiniAVC_V2
 {
     public class Addon
     {

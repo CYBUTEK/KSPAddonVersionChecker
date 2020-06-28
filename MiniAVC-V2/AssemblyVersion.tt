@@ -34,7 +34,7 @@
 	//
 	// Update the following with the name of the .version file which is in the root directory
 	//
-	string versionfile = RootDirectory + "KSP-AVC.version";
+	string versionfile = RootDirectory + "MiniAVC-V2.version";
 
 	if (!File.Exists(versionfile))
 	{

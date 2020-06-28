@@ -5,7 +5,7 @@ using System.Text;
 using UnityEngine;
 using System.IO;
 
-namespace MiniAVC
+namespace MiniAVC_V2
 {
     class UpdateFrequency
     {

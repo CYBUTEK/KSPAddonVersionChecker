@@ -25,7 +25,7 @@ using System.Text;
 
 #endregion
 
-namespace MiniAVC
+namespace MiniAVC_V2
 {
     /*
      * Copyright (c) 2013 Calvin Rien

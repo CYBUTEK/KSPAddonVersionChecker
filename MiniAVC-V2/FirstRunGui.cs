@@ -24,7 +24,7 @@ using UnityEngine;
 
 #endregion
 
-namespace MiniAVC
+namespace MiniAVC_V2
 {
     public class FirstRunGui : MonoBehaviour
     {

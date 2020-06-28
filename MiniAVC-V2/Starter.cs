@@ -21,7 +21,7 @@ using UnityEngine;
 
 #endregion Using Directives
 
-namespace MiniAVC
+namespace MiniAVC_V2
 {
     [KSPAddon(KSPAddon.Startup.Instantly, false)]
 //    [KSPAddon(KSPAddon.Startup.MainMenu, false)]

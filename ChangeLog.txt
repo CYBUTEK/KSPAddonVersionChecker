@@ -1,3 +1,9 @@
+Changelog
+
+2.0.0
+MiniAVC-V2
+	Renamed MiniAVC to MiniAVC-V2
+	All threading removed from MiniAVC
 
 1.1.6.5
 KSP-AVC/AddonInfo

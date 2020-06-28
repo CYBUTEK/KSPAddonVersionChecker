@@ -15,7 +15,7 @@ using System;
 
 using UnityEngine;
 
-namespace MiniAVC
+namespace MiniAVC_V2
 {
     public class IssueGui : MonoBehaviour
     {

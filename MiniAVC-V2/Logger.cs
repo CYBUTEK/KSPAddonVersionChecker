@@ -27,7 +27,7 @@ using UnityEngine;
 
 #endregion
 
-namespace MiniAVC
+namespace MiniAVC_V2
 {
     [KSPAddon(KSPAddon.Startup.Instantly, false)]
     public class Logger : MonoBehaviour

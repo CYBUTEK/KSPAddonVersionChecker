@@ -10,7 +10,7 @@
 # 6     Spacedock.info mod id
 # 7		Additional folders in the GameData to be included in the final zip
 # 8		Additional mods to include, will copy into GameData and will be included in zip
-
+# 11  zip file name
 # Special case if files are in the GameData directory itself
 # Special Case:    7:GameData
 
@@ -24,17 +24,17 @@
 # 0:1.3
 
 # 1:GAMEDIR, VERSIONFILE [, GITHUBREPO ]
-1:MiniAVC, KSP-AVC.version, KSPAddonVersionChecker
+1:MiniAVC-V2, MiniAVC-V2.version, KSPAddonVersionChecker
 
 # 2:PROJNAME, PROJFILE, VERSIONFILE, PLUGINSFOLDER
-2:MiniAVC,MiniAVC/MiniAVC.csproj,KSP-AVC.version,GameData/MiniAVC
+2:MiniAVC-V2,MiniAVC-V2/MiniAVC.csproj,MiniAVC-V2.version,GameData/MiniAVC-V2
 
 # 3:SOURCEFILE, DESTDIR
-3:KSP-AVC.version,GameData/MiniAVC
+3:MiniAVC-V2.version,GameData/MiniAVC-V2
 #3:LICENSE.md,GameData/KerbalHotSeat
 #3:README.md,GameData/KerbalHotSeat
 
-11:MiniAVC
+11:MiniAVC-V2
 
 #
 # End of file

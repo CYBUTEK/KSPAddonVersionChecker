@@ -16,7 +16,7 @@ using System.IO;
 using System.Xml.Serialization;
 using UnityEngine;
 
-namespace MiniAVC
+namespace MiniAVC_V2
 {
     public class AddonSettings
     {
