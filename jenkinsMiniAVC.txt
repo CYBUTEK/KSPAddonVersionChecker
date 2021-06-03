@@ -27,7 +27,7 @@
 1:MiniAVC-V2, MiniAVC-V2.version, KSPAddonVersionChecker
 
 # 2:PROJNAME, PROJFILE, VERSIONFILE, PLUGINSFOLDER
-2:MiniAVC-V2,MiniAVC-V2/MiniAVC-V2.csproj,MiniAVC-V2.version,GameData/MiniAVC-V2
+2:MiniAVC-V2,MiniAVC-V2/MiniAVC-V2.csproj,MiniAVC-V2.version,GameData/MiniAVC-V2/Plugins
 
 # 3:SOURCEFILE, DESTDIR
 3:MiniAVC-V2.version,GameData/MiniAVC-V2
