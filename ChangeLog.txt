@@ -5,6 +5,10 @@ MiniAVC-V2
 	Renamed MiniAVC to MiniAVC-V2
 	All threading removed from MiniAVC
 
+1.4.1.6
+	Added AssemblyFileVersion
+	Updated version file for 1.12
+
 1.4.1.5
 KSP-AVC
 	Version bump for Github
