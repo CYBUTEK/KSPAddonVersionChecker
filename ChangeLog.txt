@@ -5,6 +5,9 @@ MiniAVC-V2
 	Renamed MiniAVC to MiniAVC-V2
 	All threading removed from MiniAVC
 
+1.4.1.7
+	Version bump to verify locations
+
 1.4.1.6
 	Added AssemblyFileVersion
 	Updated version file for 1.12

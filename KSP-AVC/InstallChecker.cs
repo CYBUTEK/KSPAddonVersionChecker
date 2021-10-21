@@ -40,7 +40,7 @@ namespace KSP_AVC
     [KSPAddon(KSPAddon.Startup.MainMenu, true)]
     internal class InstallChecker : MonoBehaviour
     {
-        internal const string MODNAME = "KSP- Addon Version Checker";
+        internal const string MODNAME = "KSP Addon Version Checker";
         internal const string FOLDERNAME = "KSP-AVC";
         internal const string EXPECTEDPATH = FOLDERNAME + "/Plugins";
 
