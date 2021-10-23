@@ -42,12 +42,14 @@ namespace KSP_AVC
     {
         internal const string MODNAME = "KSP Addon Version Checker";
         internal const string FOLDERNAME = "KSP-AVC";
+        internal const string FOLDERNAME2 = "ZeroMiniAVC";
         internal const string EXPECTEDPATH = FOLDERNAME + "/Plugins";
+        internal const string EXPECTEDPATH2 = FOLDERNAME2 + "/Plugins";
 
         protected void Start()
         {
             // Search for this mod's DLL existing in the wrong location. This will also detect duplicate copies because only one can be in the right place.
-            var assemblies = AssemblyLoader.loadedAssemblies.Where(a => a.assembly.GetName().Name == Assembly.GetExecutingAssembly().GetName().Name).Where(a => a.url != EXPECTEDPATH);
+            var assemblies = AssemblyLoader.loadedAssemblies.Where(a => a.assembly.GetName().Name == Assembly.GetExecutingAssembly().GetName().Name).Where(a => a.url != EXPECTEDPATH && a.url != EXPECTEDPATH2);
             if (assemblies.Any())
             {
                 var badPaths = assemblies.Select(a => a.path).Select(p => Uri.UnescapeDataString(new Uri(Path.GetFullPath(KSPUtil.ApplicationRootPath)).MakeRelativeUri(new Uri(p)).ToString().Replace('/', Path.DirectorySeparatorChar)));

@@ -5,7 +5,12 @@ MiniAVC-V2
 	Renamed MiniAVC to MiniAVC-V2
 	All threading removed from MiniAVC
 
+KSP-AVC
+1.4.1.8
+	Fixed dummy AVC-dLL in the ZeroMiniAVc from being detected as a duplicate dll
+
 1.4.1.7
+KSP-AVC
 	Version bump to verify locations
 
 1.4.1.6
