@@ -207,3 +207,19 @@ For all the following, VERSION < remote VERSION.  The following cases  should al
 	Moved log into Logs directory for full KSP-AVC
 	Removed all threading from MiniAVC
 	Converted UnityWebRequest to HTTPWebRequest in MiniAVC
+
+1.4.1.5
+	Version bump for Github
+
+1.4.1.6
+	Added AssemblyFileVersion
+	Updated version file for 1.12
+
+1.4.1.7
+	Version bump to verify locations
+
+1.4.1.8 
+	Fixed dummy AVC-dLL in the ZeroMiniAVc from being detected as a duplicate dll
+
+1.4.1.9
+	update to fix install location check
